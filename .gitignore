@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.env*
+.npm-cache/
+.browser-profile*/
+.deploy-package/
+artifacts/
+.sites-preview-source/
+screenshots/
+/*.zip
+/*.tar.gz
+/*.sha256
+/Thinkcat-Labs-*-SHA256.txt

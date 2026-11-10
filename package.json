@@ -1,0 +1,32 @@
+{
+  "name": "thinkcat-labs",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "postbuild": "node scripts/static-rsc-aliases.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "preview": "node scripts/preview.mjs",
+    "audit:licenses": "node scripts/license-audit.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.5",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22.0.0 <23"
+  },
+  "packageManager": "npm@10.9.8"
+}
+

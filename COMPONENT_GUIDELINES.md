@@ -1,0 +1,184 @@
+# Component guidelines V5.4
+
+Reuse the shared primitives before adding a new class or component. The visual system lives in `app/globals.css`; content lives in `content/`; a component should not hardcode bilingual copy.
+
+## Page primitives
+
+### `PageHead`
+
+```tsx
+<PageHead
+  index="03"
+  label={copy.eyebrow}
+  title={copy.title}
+  intro={copy.intro}
+  meta={copy.meta}
+  tone="dark"
+/>
+```
+
+- Index is a section locator, not decoration.
+- Title is one H1 only.
+- Body sits under the title. Do not turn the page intro into a large type left column with a competing small right column.
+- `tone="dark"` is used for vision, solutions, research and contact.
+
+### Header and footer
+
+- `SiteHeader` is the only sticky navigation surface. It is solid paper, not a translucent glass bar.
+- The mobile menu is a dialog: body scroll is locked, main and footer become inert, focus is trapped, Escape closes, and focus returns to the toggle.
+- `SiteFooter` contains the index, legal links and the synthetic-data note. Do not add fake emails or social accounts.
+
+### Shared classes
+
+| Class | Use |
+| --- | --- |
+| `.mono-label` | Small uppercase metadata, coordinates, states |
+| `.button` + `.button-accent` / `.button-ink` / `.button-outline` | Actions |
+| `.text-link` | Secondary inline path |
+| `.status-mark` | Research, preview or pending state |
+| `.section-head` | Section title and supporting paragraph |
+| `.figure-caption` | Figure label and synthetic-data note |
+| `.home-section-rail` | Number + line + label orientation rail |
+
+One primary action per context. Buttons need a visible focus ring and 44px minimum target size.
+
+## Visualisation components
+
+### `NumericalField`
+
+- Hero field on the Home page.
+- The field is a static data stage: contour mesh, axis marks and synthetic-data labels. It has no pointer probe or scanning animation.
+- Keep the `aria-label` localized. The visual is decorative and informational; there is no interaction to announce.
+
+### `RepresentationMap`
+
+- Used by the Vision page and the Unified model study.
+- Four mapping pairs are keyboard focusable. Enter/Space toggles the active pair; Escape clears it.
+- Do not describe the arcs as discovered semantics. They are a testable correspondence hypothesis.
+
+### `TabularMatrix`
+
+- A real table with column and row headers.
+- Roving focus: only the selected cell is in the tab order. Arrow keys move the selection.
+- The readout is the visual value display; cell values are secondary.
+- Keep the table caption available to assistive technology.
+
+### `TimeSeriesStudy`
+
+- The observed path, forecast path, uncertainty band and forecast origin are all labelled.
+- The range input is the accessible control. The visual cursor follows it.
+- The chart is synthetic, not model output.
+
+### Industry studies
+
+Each industry has its own data language:
+
+| Industry | Interaction |
+| --- | --- |
+| Finance | Baseline / shifted distribution toggle and review threshold |
+| Energy | Hour scrubber across a synthetic load curve |
+| Healthcare | Indicator-pair switch over an association scatter |
+| Retail | Week and hour scrubbers over a demand matrix |
+| Industry | Time scrubber across three sensor channels and a deviation window |
+
+Do not collapse these into one reusable card with a different accent. They are separate compositions on purpose.
+
+### `ModelGlyph` and `IndustryMiniature`
+
+These are compact index visuals, not alternate charts. Use them in previews where a full study would overwhelm the hierarchy.
+
+## Playground components
+
+### `components/playground.tsx`
+
+Owns state:
+
+- parsed CSV and file name;
+- selected label column;
+- parameters (`neighbors`, `metric`, `normalize`);
+- idle / running / error / success;
+- download handler.
+
+It must not own parsing or model logic.
+
+### `SourcePanel`
+
+- Drag and drop is an enhancement. The visible file button controls a real file input.
+- Show file name, rows, columns and size.
+- The preview is a named scroll region.
+- Always show the final label column and its empty-value state.
+
+### `ConfigPanel`
+
+- The model selector exposes the tabular local demo only. The other two models are disabled and labelled awaiting API.
+- Label column, neighbours, metric and normalise have visible labels and help text.
+- The run button is disabled while running or invalid.
+- The Demo badge is visible in the panel.
+
+### `ResultPanel`
+
+- Four explicit states: idle, running, error, success.
+- Loading uses shaped skeleton rows and a three-step explanation, not a generic spinner.
+- Error is inline and readable.
+- Success exposes prediction count, mean agreement, context samples, class distribution, per-row agreement and a results table.
+- The CSV download is generated client-side and contains `demo_note` on every row.
+- Announce the state through the hidden live region.
+
+### `ResultChart`
+
+- Uses class distribution bars and a per-row agreement chart.
+- The data table remains the accessible source of exact values.
+- Do not call agreement "accuracy" or "confidence" without the demo boundary.
+
+## Docs components
+
+- `CodeBlock` highlights code without a syntax library, copies through the clipboard with a manual fallback and exposes a live status message.
+- `CodeTabs` supports arrow-key tab navigation.
+- `DeveloperDocs` owns active-section tracking through `IntersectionObserver`.
+- The mobile navigation is a native `details` element. It closes after choosing a section.
+- The draft banner is mandatory. Do not present the sample endpoint as a live API.
+
+## Adding a new model
+
+1. Add the model ID and verified status fields in `config/models.ts`.
+2. Add bilingual copy in `content/products.ts` under `studies`.
+3. Add the visual branch in `components/pages/products-page.tsx`, or a new study component if the data form is different.
+4. Add the home preview only if it remains useful at small size.
+5. Keep `version`, `github` and `huggingFace` null until verified.
+6. Check the product page at 1440, 768 and 390, then update `scripts/check-export.mjs` if a route is added.
+
+## Adding a page
+
+1. Add the slug to `config/i18n.ts`.
+2. Add title and intro copy to `content/i18n.ts`.
+3. Add a page view under `components/pages/`.
+4. Add the route switch in `app/[locale]/[page]/page.tsx`.
+5. Add the page to `navigation` in `app/[locale]/layout.tsx` if it belongs in the main navigation.
+6. Add it to the footer if useful.
+7. Add it to `scripts/visual-qa.mjs` and run the full check.
+
+## CSS rules
+
+- Tokens first. Do not introduce a one-off colour.
+- Prefer hairline rules, surface changes and spacing over card borders and shadows.
+- Keep control radii at 4–8px, media frames at 0–4px and status labels at pill radius.
+- Every interactive element needs hover, focus-visible and disabled/active states.
+- Do not animate layout properties. Use `transform` and `opacity`.
+- No `100vh`. Use `100svh` or `min-height`.
+- Keep mobile table and code overflow inside a labelled scroll region.
+- Avoid hidden text overflow; test Chinese and English independently.
+
+## Content truth
+
+- Every synthetic figure must say it is synthetic.
+- Playground results must say `Demo` in the UI, the state message and the downloaded CSV.
+- The API reference must say `Draft` and `not a live service`.
+- Pending models must show `Pending verification` or the Chinese equivalent.
+- Never invent GitHub, Hugging Face, customer, benchmark or contact details.
+
+## Maintaining homepage studies
+
+- Add a model to `config/models.ts` and complete both locales in `content/products.ts`. Register its glyph in `components/visualizations/model-arts.tsx` and give it a matching Products section ID. The homepage list reads the model registry and derives the detail link from that ID.
+- Add an industry ID and a complete record for both locales in `content/solutions.ts`. Add the homepage caption in `content/home.ts`, register the miniature in `components/visualizations/industry-miniatures.tsx` and keep the Solutions view in sync. Keep the scenario question and reading distinct, and label synthetic data explicitly.
+- Keep numerical geometry in the visualization component and captions in localized content. Preserve each SVG viewBox and test the artwork within the shared plot area at 390px. When adding SVG paint servers, give their IDs instance scope to avoid collisions. Keep the Numerical Field projection and grid in sync when changing the terrain.
+
