@@ -1,5 +1,4 @@
 type Props = {
-  index: string;
   label: string;
   title: string;
   intro: string;
@@ -7,12 +6,10 @@ type Props = {
   tone?: 'paper' | 'dark';
 };
 
-export function PageHead({index, label, title, intro, meta, tone = 'paper'}: Props) {
+export function PageHead({label, title, intro, meta, tone = 'paper'}: Props) {
   return <header className={`page-head page-head-${tone}`}>
     <div className="page-head-rail">
-      <span className="mono-label">{index}</span>
-      <span className="rail-line" aria-hidden="true" />
-      <span className="mono-label">{label}</span>
+      <p className="page-head-label">{label}</p>
     </div>
     <div className="page-head-main">
       <h1>{title}</h1>

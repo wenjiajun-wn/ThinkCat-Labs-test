@@ -49,12 +49,14 @@ function tokenize(code: string, language: string): ReactNode[] {
 }
 
 export function CodeBlock({code, language, label, copyLabel, copiedLabel, failedLabel}: Props) {
-  const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [status, setStatus] = useState<'idle' | 'copying' | 'copied' | 'failed'>('idle');
   const reset = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => () => clearTimeout(reset.current), []);
 
   async function copy() {
+    if (status === 'copying') return;
     clearTimeout(reset.current);
+    setStatus('copying');
     try {
       await navigator.clipboard.writeText(code);
     } catch {
@@ -82,7 +84,10 @@ export function CodeBlock({code, language, label, copyLabel, copiedLabel, failed
   return <figure className="code-block">
     <figcaption>
       <span className="code-label"><span className="code-language">{language}</span>{label}</span>
-      <button type="button" onClick={copy}>{status === 'copied' ? copiedLabel : copyLabel}<span aria-hidden="true">{status === 'copied' ? '✓' : '⧉'}</span></button>
+      <button type="button" onClick={copy} disabled={status === 'copying'} aria-busy={status === 'copying'}>
+        {status === 'copied' ? copiedLabel : copyLabel}
+        <span aria-hidden="true">{status === 'copying' ? '…' : status === 'copied' ? '✓' : '⧉'}</span>
+      </button>
     </figcaption>
     <pre tabIndex={0} aria-label={`${label} · ${language}`}><code>{tokenize(code, language)}</code></pre>
     {status === 'failed' && <p className="code-feedback" role="alert">{failedLabel}</p>}

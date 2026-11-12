@@ -1,129 +1,51 @@
-# Playground guide V5.2
+# Playground
 
-The Playground is a browser-only frontend demo. It is not connected to a GPU, FastAPI service, model endpoint or real inference API.
+The Chinese and English workbenches are available at `/zh/playground/` and `/en/playground/`. Both use the same upload, preview, inference and results components. A compact Data Input title bar places the model name and remote-inference mode opposite the title. The workbench has one column, a six-row preview and a compact action toolbar. Previous and Next navigate the preview without changing the full inference dataset. Uploading or restoring the sample resets the preview to its first page.
 
-## What is implemented
+## CSV input
 
-- Model selector with the tabular local demo active.
-- Time Series and Unified models shown as awaiting API and disabled.
-- CSV drag and drop plus a real file-picker button.
-- Numeric CSV parser with configurable label column.
-- Data preview with the label column highlighted.
-- Parameters: neighbours, Euclidean or Manhattan distance, feature normalisation.
-- Run action with loading, error and success states.
-- Class distribution and per-row agreement charts.
-- Downloadable results CSV.
+- Use a comma-separated file with a header row. The preview selects a target automatically when exactly one header matches `label`, `target`, `class`, `y`, `risk`, or `outcome`, ignoring case. When there is no unique match, choose a target in the preview.
+- Leave the selected target column blank only on rows to predict. All other columns must contain finite numbers.
+- Use 20–500 data rows, at least 10 labeled rows, 1–50 prediction rows, 1–30 feature columns and 2–10 distinct classes. The upload limit is 1 MiB.
+- The built-in sample is identified as Sample data (synthetic) and uses the same explicit target column. It contains 24 rows and 6 prediction rows.
 
-## Boundaries
+The browser parses and validates the file before enabling Run Model. Running the model sends the parsed features and labels to the existing same-origin `POST /api/kumo/predict` endpoint. Use non-sensitive data. Production must provide that route alongside the static export.
 
-- Every result is labelled `Demo` in Chinese and English.
-- The result panel repeats the browser-only boundary.
-- The downloaded file includes `demo_prediction`, `demo_agreement` and `demo_note`.
-- No file, feature value or result leaves the browser.
-- The model selector does not pretend the other models are available.
-- No model weights, API host, token or server contract exists in this repository.
+## Input workspace
 
-## Files
+- The input area uses spacing and hairlines rather than nested card containers. Its data measure is capped at 1040px inside the 1160px workspace so columns remain coordinated on wide screens.
+- The default preview shows four labeled rows followed by two query rows, with real CSV lines 2–5 and 20–21. This featured ordering affects presentation only and never changes the data sent to the API.
+- Shared tokens define 42px header/data rows and 44px controls. Numeric values use tabular figures and right alignment; the target column uses only a low-contrast background.
+- Run Model is the only primary action and sizes to its label on desktop. Upload CSV is secondary, Restore sample is a text action, and mobile keeps the main controls full width.
+- CSV requirements stay inside a lightweight disclosure. Drag-and-drop guidance and the sensitive-data notice remain visible without competing with the table.
 
-```text
-lib/demo-data.ts                  synthetic CSV sample
-lib/csv.ts                        parser, limits, label-column detection
-lib/demo-model.ts                 dataset builder, kNN, metrics, result types
-components/playground.tsx         state owner and file/download actions
-components/playground/source-panel.tsx
-components/playground/config-panel.tsx
-components/playground/result-panel.tsx
-components/playground/result-chart.tsx
-components/playground/data-table.tsx
-content/playground.ts             labels, validation messages and page copy
+## Results workspace
+
+- Idle, loading, error and success use separate compact presentations on the light workspace surface. They do not share a large dark container.
+- Loading uses an indeterminate native progress element and shaped rows. It never invents a percentage.
+- Error copy maps the actual request error type. Retry submits the current valid dataset, the request guard prevents concurrent submissions, and Back to Data preserves the current CSV and moves focus to Run Model.
+- Success shows only available execution facts: prediction count and context-sample count. It does not invent latency, model versions or benchmark metrics.
+- The prediction table includes a global sample number, original CSV line, every input feature, predicted class and predicted-class probability. It paginates ten rows at a time and uses a named, keyboard-focusable horizontal scroll region on narrow screens.
+- CSV export contains every prediction row, independent of table pagination. The class-distribution graphic is computed from the actual model response; there is no decorative probability chart.
+
+## Implementation and verification
+
+- `lib/demo-data.ts` defines the fixed sample target and synthetic sample. `lib/csv.ts` parses CSV and keeps source line numbers.
+- `components/playground.tsx` owns file loading, validation, the request lifecycle and CSV export. `source-panel.tsx` renders drag-and-drop upload, action hierarchy, help and privacy guidance. `data-table.tsx` owns the six-row preview, real source-line mapping and input pagination.
+- `result-panel.tsx` provides the shared result header. `prediction-status.tsx` renders idle, loading and error; `prediction-results.tsx` composes the success summary, table and distribution.
+- `prediction-table.tsx` owns result pagination and accessible table markup. `result-chart.tsx` renders only the actual predicted-class distribution. Shared run-state types live in `result-types.ts`.
+- `lib/kumo-api.ts` builds requests, validates responses and maps results to the original CSV lines. The results CSV appends `source_row`, `kumo_prediction`, `kumo_probability` and `kumo_probabilities` to the original columns.
+
+For controlled browser acceptance, build and start the static preview, then run:
+
+```sh
+npm run build
+npm run preview
+node scripts/playground-results-qa.mjs artifacts/playground-workspace-qa/after
 ```
 
-## CSV contract
+The acceptance script intercepts only `/api/kumo/predict` with deterministic browser-only fixtures. It does not call the live model service. It verifies both locales at 1440px, 768px and 390px, all four result states, typed errors, retry, double-submit prevention, CSV preservation and download, input and result pagination, file-picker and drag-and-drop uploads, custom target selection, sample restoration, control dimensions and horizontal overflow. Screenshots and `qa-report.json` are written to the selected output directory. Browser-injected third-party assistant UI is excluded from screenshot evidence and recorded in the report.
 
-- UTF-8 text, comma separated.
-- First row is a header.
-- 2–14 columns.
-- Up to 200 data rows and 64 KiB.
-- Quoted or unquoted fields are accepted by the parser, but quoted multiline cells are not supported.
-- The chosen label column can be anywhere.
-- A labeled row has a non-empty label and acts as context.
-- An unlabeled row has an empty label and becomes a prediction row.
-- Every other column must parse as a finite number.
-- At least one context row and one query row are required.
+Use `THINKCAT_QA_CAPTURE_ONLY=1` with the same command and a different output directory to capture only the six workspace baselines. Current evidence is grouped in `artifacts/playground-workspace-qa/before`, `round1` and `after`.
 
-Limits live in `lib/csv.ts` under `csvLimits`. If they change, update `content/playground.ts` and this guide.
-
-## Replacing the demo data
-
-Edit `lib/demo-data.ts`:
-
-```ts
-export const sampleCsv = `feature_a,feature_b,label
-1.2,3.4,class_a
-...`;
-
-export const sampleFile = {
-  name: 'your-demo.csv',
-  description: '...',
-};
-```
-
-The sample must keep at least one labeled row and one unlabeled row. The default `label` header is detected automatically; if no `label` header exists, the final column becomes the initial label column.
-
-The sample is synthetic. Do not replace it with customer data, production extracts or sensitive records.
-
-## Changing the local classifier
-
-`lib/demo-model.ts` owns:
-
-- `buildDataset(csv, labelIndex)`;
-- `runLocalDemo(dataset, params)`;
-- typed predictions, confidence/agreement, distance and distribution.
-
-The current algorithm is nearest-neighbour classification. If the algorithm changes:
-
-1. Keep the `DemoResult` shape used by the result panel, or update the panel types in the same change.
-2. Keep agreement as a value from 0 to 1.
-3. Keep the model output labelled as a local demo.
-4. Add a deterministic synthetic sample that demonstrates the new behaviour.
-5. Update `content/playground.ts` labels if the user-facing explanation changes.
-
-## Replacing with a real API later
-
-The intended boundary is:
-
-```text
-CSV/file state -> dataset adapter -> API client -> result adapter -> ResultPanel
-```
-
-Recommended sequence:
-
-1. Add a client module under `lib/` with a typed request and response adapter.
-2. Keep the CSV parsing and validation in the browser.
-3. Post only the minimum necessary payload to a reviewed gateway.
-4. Add authentication outside the public static bundle. Never ship a production token.
-5. Keep the same result state machine: idle, running, error, success.
-6. Replace the `demo` labels with a real status only after the service and model rights are verified.
-7. Keep the local demo as a separate mode, not a fallback that silently calls a remote model.
-8. Do not change the docs contract until the API is verified.
-
-## Downloading results
-
-`components/playground.tsx` builds the CSV in the browser:
-
-```text
-original feature cells + demo_prediction + demo_agreement + demo_note
-```
-
-The note is `DEMO: local nearest-neighbor, not model output`. Do not remove it while the result is simulated.
-
-## Manual checks
-
-- Drag a valid CSV onto the panel.
-- Use the visible file button with a keyboard.
-- Change the label column and confirm the preview highlight moves.
-- Run with empty labels. Confirm the success state and six result rows for the sample.
-- Upload a non-numeric feature. Confirm the inline error and disabled run button.
-- Download the result and confirm the file name and demo columns.
-- Resize to 390px and check the source, config and result panels stack without horizontal overflow.
-- Test with `prefers-reduced-motion: reduce`.
+For a manual smoke test against the existing remote service, use `npm run preview -- --kumo` and the built-in synthetic sample. To check target selection, upload a CSV without a unique common target header and confirm Run Model stays disabled until a target is selected.

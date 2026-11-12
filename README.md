@@ -1,6 +1,6 @@
 # Thinkcat Labs
 
-Thinkcat Labs is a bilingual research website for numerical foundation models. The site is a static Next.js App Router export with original procedural data visualizations, a browser-only Playground demo and draft developer documentation.
+Thinkcat Labs is a bilingual research website for numerical foundation models. The site is a static Next.js App Router export with original procedural data visualizations, a Playground frontend for the existing remote Kumo inference route and draft developer documentation.
 
 V5.2 rebuilds the frontend around the numerical field, three distinct model studies, a professional Playground workspace, developer docs, five industry data studies and a compact editorial design system.
 
@@ -30,10 +30,10 @@ Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin before building. Witho
 - `app/globals.css` contains the V5.2 design tokens and localized site styles.
 - `components/pages` composes page-level views.
 - `components/visualizations` contains the original SVG data art.
-- `components/playground` separates data source, configuration and result presentation.
+- `components/playground` separates data source, run states, prediction tables and result presentation.
 - `content` contains bilingual content modules.
 - `config` contains locale, model, site and SEO configuration.
-- `lib` contains local CSV parsing and demo inference logic.
+- `lib` contains local CSV parsing, synthetic input data and the existing Kumo API client.
 
 ## Documentation
 
@@ -51,4 +51,4 @@ Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin before building. Witho
 
 ## Boundaries
 
-The repository contains no backend, FastAPI service, GPU model worker, live inference endpoint or production contact details. Every figure is synthetic and labelled. Every Playground result is a browser-local Demo. API documentation is a front-end draft, not an online service.
+The repository contains no backend, FastAPI service, GPU model worker or production contact details. The Playground calls the existing same-origin `POST /api/kumo/predict` contract, which deployment must provide; controlled browser QA uses local fixtures instead. Synthetic illustrations and the sample CSV are labelled, while prediction tables and distribution graphics map the actual inference response. API documentation is a front-end draft, not a specification of the running service.

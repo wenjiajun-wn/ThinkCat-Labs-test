@@ -1,6 +1,6 @@
 # Frontend architecture V5.4
 
-The site is a statically exported Next.js App Router application. It has no server runtime, no GPU integration and no live inference endpoint. Every dynamic interaction in this repository runs in the browser.
+The site is a statically exported Next.js App Router application. It has no server runtime, GPU worker or inference-service implementation. Interface state runs in the browser, and the Playground calls the existing same-origin inference route supplied by deployment.
 
 ## Runtime and output
 
@@ -33,7 +33,7 @@ app/
 Localized routes:
 
 ```text
-/zh/  /zh/products/  /zh/vision/  /zh/solutions/  /zh/docs/
+/zh/  /zh/products/  /zh/docs/
       /zh/playground/  /zh/research/  /zh/contact/  /zh/privacy/
 /en/  ... the same page set
 ```
@@ -48,7 +48,6 @@ Content is separate from presentation. Components receive locale and render type
 | `content/home.ts` | Home hero, premise, model system, applications, research, developer and contact copy |
 | `content/products.ts` | Product page labels, model narratives, interaction instructions and notes |
 | `content/solutions.ts` | Five industry studies, labels, questions and reading guidance |
-| `content/vision.ts` | Vision statement, principles, working beliefs and close copy |
 | `content/research.ts` | Research areas, output verification state and page copy |
 | `content/docs.ts` | Documentation navigation, section copy, parameter tables, samples and code |
 | `content/playground.ts` | Workspace labels, validation messages, states and download copy |
@@ -66,7 +65,7 @@ components/
   layout/          brand, header, mobile menu, language switch, footer
   pages/           page-level composed views
   home/            shared HomeStudy layout, model index, industry index
-  playground/      source, configuration and result panels
+  playground/      source, run states, prediction table and result distribution
   docs/            code block and code tabs
   visualizations/  field, representation map, model arts, industry studies
   developer-docs.tsx
@@ -91,27 +90,22 @@ Server components render the page shell and static content. Client islands are l
 lib/demo-data.ts    synthetic CSV sample
       |
       v
-lib/csv.ts          parse, limits, label-column detection
+lib/csv.ts          parse, limits, original line numbers
       |
       v
-components/playground.tsx     state owner (file, label, params, run status)
+components/playground.tsx     state owner (file, validation, run status and CSV export)
       |
       +--> source-panel.tsx   dropzone, file metadata, preview
-      +--> config-panel.tsx   model, label column, k, metric, normalise
       +--> result-panel.tsx   idle / loading / error / success
               |
               +--> result-chart.tsx
 ```
 
-`lib/demo-model.ts` owns `buildDataset` and the nearest-neighbour implementation. It returns typed predictions, agreement values and class distribution. The UI never calls a remote service.
+`lib/kumo-api.ts` validates the dataset and uses the existing same-origin `POST /api/kumo/predict` contract. The Playground auto-selects a unique common target header or asks for a selection, and sends features and labels only when Run Model is pressed.
 
-The downloaded CSV includes the original feature cells and three explicit demo columns:
+The downloaded CSV appends the original line number, predicted class, predicted-class probability and class probability map.
 
-- `demo_prediction`
-- `demo_agreement`
-- `demo_note`
-
-The note is repeated in every row and says the result is a local demo, not model output.
+The download note states that every prediction row is included regardless of table pagination. Prediction rows and distribution bars come from the validated model response, not generated display data.
 
 ## Documentation layer
 
@@ -148,19 +142,19 @@ node scripts/check-export.mjs
 node scripts/visual-qa.mjs
 ```
 
-`scripts/check-export.mjs` checks 18 localized exports, language attributes, navigation targets, canonical/hreflang behavior when an origin is configured, sitemap and robots. `scripts/visual-qa.mjs` captures 54 viewport combinations, full-page captures and state screenshots through the Chrome DevTools Protocol.
+`scripts/check-export.mjs` checks 14 localized exports, language attributes, navigation targets, canonical/hreflang behavior when an origin is configured, sitemap and robots. `scripts/visual-qa.mjs` covers the general site, while `scripts/playground-results-qa.mjs` verifies the four result states and recovery interactions with controlled API fixtures.
 
 ## Constraints
 
 - No backend, FastAPI, GPU worker, inference API or deployment service was added.
 - No new production dependency was added.
 - No external image, font or CDN asset is loaded.
-- All figures are synthetic and labelled.
+- Synthetic illustrations and sample input are labelled; Playground prediction graphics derive from the actual model response.
 - External model links and contact email remain pending until verified.
 
 ## Homepage structure
 
-The localized homepage in `app/[locale]/page.tsx` renders the Numerical Field hero, model research, industry applications, Vision, developer entry points, research highlights and contact. The shared footer comes from the locale layout.
+The localized homepage in `app/[locale]/page.tsx` renders the Numerical Field hero, brand marquee, developer entry points and model applications. The shared footer comes from the locale layout.
 
 `HomeStudy` renders the section heading, controls and data panel. `ModelIndex` and `FieldIndex` each own selection and localized content. They pass the original model glyph or industry miniature into the panel and expose selection with `aria-pressed`. Only their selected plots animate. Homepage layout and responsive rules live in `app/styles/home.css`.
 

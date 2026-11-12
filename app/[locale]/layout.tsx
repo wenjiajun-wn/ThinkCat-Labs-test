@@ -17,7 +17,6 @@ export const viewport: Viewport = {
 const navigation: readonly {page?: Page; key: string}[] = [
   {key: 'home'},
   {page: 'products', key: 'products'},
-  {page: 'vision', key: 'vision'},
   {page: 'docs', key: 'docs'},
   {page: 'playground', key: 'playground'},
 ];

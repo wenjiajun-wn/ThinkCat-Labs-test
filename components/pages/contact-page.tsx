@@ -9,7 +9,7 @@ export function ContactPage({locale}:{locale: Locale}) {
   const t = contactCopy[locale];
   const chrome = copy[locale];
   return <main id="main" className="subpage surface-contact">
-    <PageHead index="07" label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} tone="dark" />
+    <PageHead label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} tone="dark" />
     <section className="contact-page">
       <div className="contact-grid">
         {t.channels.map((channel, index) => <article key={channel.title} className="contact-channel">

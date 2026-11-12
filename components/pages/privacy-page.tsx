@@ -6,7 +6,7 @@ import {localized, type Locale} from '../../config/i18n';
 export function PrivacyPage({locale}:{locale: Locale}) {
   const t = privacyCopy[locale];
   return <main id="main" className="subpage surface-privacy">
-    <PageHead index="08" label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} />
+    <PageHead label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} />
     <section className="privacy-page">
       <div className="privacy-rail">
         <span className="mono-label">{t.railLabel}</span>

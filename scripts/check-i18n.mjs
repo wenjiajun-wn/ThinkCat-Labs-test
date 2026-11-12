@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
-const pages = ['', 'products/', 'vision/', 'docs/', 'playground/', 'research/', 'contact/', 'privacy/'];
+const pages = ['', 'products/', 'docs/', 'playground/', 'research/', 'contact/', 'privacy/'];
 const locales = ['zh', 'en'];
 const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 const origin = configuredOrigin ? new URL(configuredOrigin).origin : '';
@@ -35,7 +35,7 @@ for (const locale of locales) {
   }
 }
 assert.equal((sitemap.match(/<loc>/g) ?? []).length, origin ? locales.length * pages.length : 0);
-for (const route of ['solutions', 'zh/solutions', 'en/solutions']) {
+for (const route of ['solutions', 'zh/solutions', 'en/solutions', 'vision', 'zh/vision', 'en/vision']) {
   assert(!existsSync(`out/${route}/index.html`), route);
 }
 if (origin) assert(robots.includes(`Sitemap: ${origin}/sitemap.xml`));

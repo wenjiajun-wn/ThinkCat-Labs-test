@@ -8,7 +8,7 @@ const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
 const PORT = 9333;
 const ROOT = process.cwd();
 const OUT = path.resolve(ROOT, process.argv[2] ?? 'screenshots/v5.3/after');
-const BASE = 'http://127.0.0.1:3100';
+const BASE = process.env.THINKCAT_QA_ORIGIN ?? 'http://127.0.0.1:3100';
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 await mkdir(OUT, {recursive: true});
@@ -82,8 +82,8 @@ async function evaluate(expression, awaitPromise = true) {
   return result.result?.value;
 }
 
-async function waitFor(expression, message) {
-  const deadline = Date.now() + 3000;
+async function waitFor(expression, message, timeout = 3000) {
+  const deadline = Date.now() + timeout;
   while (Date.now() < deadline) {
     if (await evaluate(expression)) return;
     await sleep(75);
@@ -200,7 +200,7 @@ async function uploadCsv(fileName, source) {
     const file = new File([${JSON.stringify(source)}], ${JSON.stringify(fileName)}, {type: 'text/csv'});
     const transfer = new DataTransfer();
     transfer.items.add(file);
-    Object.defineProperty(input, 'files', {value: transfer.files});
+    input.files = transfer.files;
     input.dispatchEvent(new Event('change', {bubbles: true}));
     return true;
   })()`);
@@ -273,13 +273,12 @@ await mkdir(downloads, {recursive: true});
 await command('Browser.setDownloadBehavior', {behavior: 'allow', downloadPath: downloads, eventsEnabled: true});
 
 const checks = [];
-const pages = ['home', 'products', 'playground', 'docs', 'vision', 'research', 'contact', 'privacy'];
+const pages = ['home', 'products', 'playground', 'docs', 'research', 'contact', 'privacy'];
 const routes = {
   home: '',
   products: 'products/',
   playground: 'playground/',
   docs: 'docs/',
-  vision: 'vision/',
   research: 'research/',
   contact: 'contact/',
   privacy: 'privacy/',
@@ -308,7 +307,7 @@ for (const locale of ['zh', 'en']) {
 }
 
 for (const locale of ['zh', 'en']) {
-  for (const page of ['home', 'products', 'playground', 'docs', 'vision']) {
+  for (const page of ['home', 'products', 'playground', 'docs']) {
     await navigate(`/${locale}/${routes[page]}`, {width: 1440, height: 900});
     await screenshot(`${locale}-${page}-desktop-full`, {full: true});
   }
@@ -320,13 +319,6 @@ for (const locale of ['zh', 'en']) {
     await screenshot(`${locale}-${page}-mobile-full`, {full: true});
   }
 }
-
-// Home model preview interaction.
-await navigate('/zh/', {width: 1440, height: 900});
-await scrollToSelector('.home-models');
-await hover('.model-index-row:nth-child(2)');
-await screenshot('zh-home-models-interaction', {resetScroll: false});
-checks.push(await metrics('zh-home-models-interaction'));
 
 // Product interactions.
 await navigate('/zh/products/', {width: 1440, height: 900});
@@ -346,7 +338,7 @@ await scrollToSelector('.result-panel', 120);
 await click('.run-button');
 await screenshot('zh-playground-loading', {resetScroll: false});
 checks.push(await metrics('zh-playground-loading'));
-await sleep(950);
+await waitFor('Boolean(document.querySelector(".result-success"))', 'Playground returned predictions', 60_000);
 await screenshot('zh-playground-success', {resetScroll: false});
 checks.push(await metrics('zh-playground-success'));
 const successRows = await evaluate('document.querySelectorAll(".result-table tbody tr").length');
@@ -356,10 +348,10 @@ await click('.result-actions .button');
 await sleep(900);
 const downloadsList = await readdir(downloads).catch(() => []);
 const csvDownload = downloadsList.find(name => name.endsWith('.csv'));
-assert(csvDownload, 'Demo CSV was not downloaded');
+assert(csvDownload, 'Kumo results CSV was not downloaded');
 const csvContent = await readFile(path.join(downloads, csvDownload), 'utf8');
-assert.match(csvContent, /demo_prediction,demo_agreement,demo_note/);
-await uploadCsv('invalid.csv', 'a,label\n1,A\nnot-a-number,');
+assert.match(csvContent, /source_row,kumo_prediction,kumo_probability,kumo_probabilities/);
+await uploadCsv('invalid.csv', ['a,label', ...Array.from({length: 19}, (_, i) => (i + 1) + (i % 2 ? ',A' : ',B')), 'not-a-number,'].join('\n'));
 await scrollToSelector('.source-panel', 100);
 await screenshot('zh-playground-error', {resetScroll: false});
 checks.push(await metrics('zh-playground-error'));
@@ -411,37 +403,19 @@ await screenshot('zh-mobile-docs-parameters', {resetScroll: false});
 
 // Narrow playground success.
 await navigate('/zh/playground/', {width: 390, height: 844});
-assert(await evaluate('!document.querySelector(".preview-block").open && !document.querySelector(".advanced-params").open'));
-await click('.preview-head');
-assert(await evaluate('document.querySelector(".preview-block").open'));
-await click('.preview-head');
-await click('.source-next');
-await click('.advanced-params summary');
-await setRange('#neighbors', 5);
-await click('input[value="manhattan"]');
-await screenshot('zh-mobile-playground-config', {resetScroll: false});
+assert(await evaluate('document.querySelectorAll(".source-table tbody tr").length === 6 && !document.querySelector("details.preview-block, .config-panel")'));
 await click('.run-button');
-assert(await evaluate('document.querySelector(".result-panel").classList.contains("state-running") && document.getElementById("neighbors").matches(":disabled")'));
-await sleep(1200);
-assert(await evaluate('document.querySelector(".result-table-head").textContent.includes("5") && document.querySelector(".result-table-head").textContent.includes("曼哈顿")'));
+await waitFor('Boolean(document.querySelector(".result-success"))', 'Mobile Playground returned predictions', 60_000);
 await screenshot('zh-mobile-playground-success', {resetScroll: false});
 
-// English interaction sample.
+// Ask for a target when the header is unknown and restore the built-in sample.
 await navigate('/en/playground/', {width: 1440, height: 900});
-await evaluate(`(() => {
-  const transfer = new DataTransfer();
-  transfer.items.add(new File(['value,label\\n1,A\\n9,B\\n2,'], 'drop-sample.csv', {type: 'text/csv'}));
-  document.querySelector('.dropzone').dispatchEvent(new DragEvent('drop', {bubbles: true, dataTransfer: transfer}));
-})()`);
-await sleep(550);
-assert(await evaluate('document.querySelector(".source-meta-file").textContent.includes("drop-sample.csv")'));
+await uploadCsv('custom-target.csv', 'value,result\n1,A\n2,');
+assert(await evaluate('document.querySelector(".run-button").disabled && document.querySelector(".preview-target select").value === "" && document.querySelector(".inline-error").textContent.includes("target column")'));
+await click('.source-restore');
+assert(await evaluate('!document.querySelector(".run-button").disabled && document.querySelector(".preview-toolbar h3").textContent.includes("Synthetic Demo Data")'));
 await click('.run-button');
-await sleep(1150);
-assert.equal(await evaluate('document.querySelectorAll(".result-table tbody tr").length'), 1);
-await click('.dropzone-actions .text-link');
-assert(await evaluate('document.querySelector(".source-meta-file").textContent.includes("Synthetic sample CSV") && document.querySelector(".result-panel").classList.contains("state-idle")'));
-await click('.run-button');
-await sleep(1200);
+await waitFor('Boolean(document.querySelector(".result-success"))', 'English Playground returned predictions', 60_000);
 await screenshot('en-playground-success', {resetScroll: false});
 
 // Client navigation must continue to work from a static export.

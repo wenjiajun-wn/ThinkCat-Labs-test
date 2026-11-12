@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { site } from '../../config/site';
+import {BrandMark} from './brand';
 import { MobileNav } from '../visuals';
 
 const links = [
@@ -16,7 +17,7 @@ export function SiteHeader() {
   return <>
     <Link className="skip" href="#main">跳至正文</Link>
     <header className="site-header">
-      <Link className="brand" href="/" aria-label="Thinkcat Labs 首页">thinkcat<span>labs</span><i aria-hidden="true">⌁</i></Link>
+      <Link className="brand" href="/" aria-label="Thinkcat Labs 首页"><BrandMark /><span className="brand-word">Thinkcat<span>Labs</span></span></Link>
       <nav className="desktop-nav" aria-label="主导航">
         {links.map(link => <Link key={link.en} href={link.href} aria-current={pathname.replace(/\/$/, '') === link.href.slice(0,-1) ? 'page' : undefined}>{link.zh}</Link>)}
       </nav>

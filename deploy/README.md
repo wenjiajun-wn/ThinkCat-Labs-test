@@ -137,8 +137,8 @@ sudo chmod -R a+rX /var/www/thinkcat-labs/releases
 
 This is a static frontend only.
 
-- No backend, FastAPI, GPU worker or inference API.
-- Playground runs a local browser demo and labels results as Demo.
+- No backend, FastAPI, GPU worker or inference-service implementation is included in this package.
+- Playground calls the existing same-origin `POST /api/kumo/predict` route. Deployment must provide that route for live inference; the synthetic input sample is labelled, and prediction results come from the remote response.
 - API Docs are a front-end Draft.
 - Model links and contact details remain pending until verified.
 - The build may be `noindex` until rebuilt with the production origin.

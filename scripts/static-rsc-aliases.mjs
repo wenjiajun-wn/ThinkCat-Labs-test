@@ -6,6 +6,7 @@ import path from 'node:path';
  * (`__next.$d$locale/$d$page/__PAGE__.txt`) while its client prefetch asks for a
  * dotted filename (`__next.$d$locale.$d$page.__PAGE__.txt`). The mismatch only
  * affects prefetch requests, but it produces noisy 404s in the browser.
+ * Route groups use the same layout with a !-prefixed group segment.
  *
  * This post-build step creates aliases in `out/` so the exported site is clean
  * when served by a plain static host. It does not change source or runtime code.
@@ -33,18 +34,14 @@ async function exists(file) {
 
 let copied = 0;
 for (const directory of await directories(out)) {
-  if (!directory.endsWith('__next.$d$locale')) continue;
-  const parent = path.dirname(directory);
-  const rootPayload = path.join(directory, '__PAGE__.txt');
-  if (await exists(rootPayload)) {
-    await copyFile(rootPayload, path.join(parent, '__next.$d$locale.__PAGE__.txt'));
-    copied += 1;
-  }
-  const pagePayload = path.join(directory, '$d$page', '__PAGE__.txt');
-  if (await exists(pagePayload)) {
-    await copyFile(pagePayload, path.join(parent, '__next.$d$locale.$d$page.__PAGE__.txt'));
-    copied += 1;
-  }
+  const payload = path.join(directory, '__PAGE__.txt');
+  if (!await exists(payload)) continue;
+  const segments = path.relative(out, directory).split(path.sep);
+  const prefix = segments.findIndex(segment => segment.startsWith('__next.'));
+  if (prefix < 0) continue;
+  const alias = [...segments.slice(0, prefix), segments.slice(prefix).join('.') + '.__PAGE__.txt'];
+  await copyFile(payload, path.join(out, ...alias));
+  copied += 1;
 }
 
 console.log(`Static RSC aliases: ${copied} file(s)`);

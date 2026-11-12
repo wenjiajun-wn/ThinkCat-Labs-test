@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import {BrandMark} from './brand';
+import {Brand} from './brand';
 import {localized, type Locale, type Page} from '../../config/i18n';
 import {copy} from '../../content/i18n';
 import {site} from '../../config/site';
@@ -12,8 +12,7 @@ export function SiteFooter({locale}:{locale:Locale}) {
   return <footer className="site-footer">
     <div className="footer-primary">
       <div className="footer-brand">
-        <BrandMark />
-        <p>Thinkcat Labs</p>
+        <Brand locale={locale} />
         <span>{t.mission}</span>
       </div>
       <nav className="footer-index" aria-label={t.footer.index}>

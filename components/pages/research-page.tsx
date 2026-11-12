@@ -6,7 +6,7 @@ import {researchCopy, researchDirections, researchOutputs} from '../../content/r
 export function ResearchPage({locale}:{locale: Locale}) {
   const t = researchCopy[locale];
   return <main id="main" className="subpage surface-research">
-    <PageHead index="06" label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} tone="dark" />
+    <PageHead label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} tone="dark" />
     <section className="research-ledger">
       <header className="research-ledger-head">
         <span className="mono-label">{t.directionsLabel}</span>

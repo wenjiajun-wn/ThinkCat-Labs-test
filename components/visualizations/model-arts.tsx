@@ -59,38 +59,40 @@ export function TabularMatrix({
     <div className="matrix-x-label mono-label">{axisX} →</div>
     <div className="matrix-shell">
       <div className="matrix-y-label mono-label">{axisY} ↓</div>
-      <table className="tabular-table" onKeyDown={event => {
-        if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return;
-        event.preventDefault();
-        if (event.key === 'ArrowUp') focusCell(selected.row - 1, selected.column);
-        if (event.key === 'ArrowDown') focusCell(selected.row + 1, selected.column);
-        if (event.key === 'ArrowLeft') focusCell(selected.row, selected.column - 1);
-        if (event.key === 'ArrowRight') focusCell(selected.row, selected.column + 1);
-      }}>
-        <caption className="visually-hidden">{label}</caption>
-        <thead><tr><th scope="col" aria-label={axisY} /><>{COLUMNS.map(column => <th key={column} scope="col">{column}</th>)}</></tr></thead>
-        <tbody>{ROWS.map((row, rowIndex) => <tr key={row}>
-          <th scope="row">{row}</th>
-          {COLUMNS.map((column, columnIndex) => {
-            const value = matrixValue(rowIndex, columnIndex);
-            const isSelected = rowIndex === selected.row && columnIndex === selected.column;
-            return <td key={column}>
-              <button
-                ref={element => { refs.current[rowIndex * COLUMNS.length + columnIndex] = element; }}
-                type="button"
-                className="matrix-cell"
-                data-level={level(value)}
-                data-selected={isSelected || undefined}
-                tabIndex={isSelected ? 0 : -1}
-                aria-label={`${row} ${column} ${value.toFixed(2)}`}
-                aria-pressed={isSelected}
-                onFocus={() => setSelected({row: rowIndex, column: columnIndex})}
-                onClick={() => setSelected({row: rowIndex, column: columnIndex})}
-              ><span>{value.toFixed(2)}</span></button>
-            </td>;
-          })}
-        </tr>)}</tbody>
-      </table>
+      <div className="matrix-table-scroll" role="region" aria-label={label}>
+        <table className="tabular-table" onKeyDown={event => {
+          if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+          event.preventDefault();
+          if (event.key === 'ArrowUp') focusCell(selected.row - 1, selected.column);
+          if (event.key === 'ArrowDown') focusCell(selected.row + 1, selected.column);
+          if (event.key === 'ArrowLeft') focusCell(selected.row, selected.column - 1);
+          if (event.key === 'ArrowRight') focusCell(selected.row, selected.column + 1);
+        }}>
+          <caption className="visually-hidden">{label}</caption>
+          <thead><tr><th scope="col" aria-label={axisY} /><>{COLUMNS.map(column => <th key={column} scope="col">{column}</th>)}</></tr></thead>
+          <tbody>{ROWS.map((row, rowIndex) => <tr key={row}>
+            <th scope="row">{row}</th>
+            {COLUMNS.map((column, columnIndex) => {
+              const value = matrixValue(rowIndex, columnIndex);
+              const isSelected = rowIndex === selected.row && columnIndex === selected.column;
+              return <td key={column}>
+                <button
+                  ref={element => { refs.current[rowIndex * COLUMNS.length + columnIndex] = element; }}
+                  type="button"
+                  className="matrix-cell"
+                  data-level={level(value)}
+                  data-selected={isSelected || undefined}
+                  tabIndex={isSelected ? 0 : -1}
+                  aria-label={`${row} ${column} ${value.toFixed(2)}`}
+                  aria-pressed={isSelected}
+                  onFocus={() => setSelected({row: rowIndex, column: columnIndex})}
+                  onClick={() => setSelected({row: rowIndex, column: columnIndex})}
+                ><span>{value.toFixed(2)}</span></button>
+              </td>;
+            })}
+          </tr>)}</tbody>
+        </table>
+      </div>
     </div>
     <div className="matrix-foot">
       <div className="matrix-legend">
@@ -105,7 +107,7 @@ export function TabularMatrix({
 const series = Array.from({length: 98}, (_, index) => {
   const trend = index * .26;
   const cycle = Math.sin(index * .22) * 30 + Math.cos(index * .57) * 12 + Math.sin(index * 1.1) * 4;
-  return {index, value: 240 - trend - cycle};
+  return {index, value: Number((240 - trend - cycle).toFixed(4))};
 });
 
 export function TimeSeriesStudy({

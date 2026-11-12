@@ -11,12 +11,12 @@
 当前前端可以进入视觉验收、内容确认和部署准备阶段。
 
 - 中英文静态站点已完整导出。
-- 首页、Products、Playground、API Docs、Solutions、Vision、Research、Contact、Privacy 均已统一到 V5.2 设计系统。
+- 首页、Products、Playground、API Docs、Research、Contact、Privacy 均已统一到 V5.2 设计系统。
 - 浏览器验收覆盖 2 种语言、9 个页面、3 个视口，共 54 个页面/视口组合，无横向溢出。
 - 最终 QA 无 console 错误、页面异常或失败网络请求。
-- 所有 Playground 结果明确标注 Demo。
+- Playground 示例输入明确标注 Synthetic Demo Data；预测结果来自既有远程接口，专项浏览器验收使用受控测试夹具。
 - 所有 API 文档明确标注 Draft，不冒充已上线服务。
-- 未开发、未接入、未部署后端、FastAPI、GPU 模型或真实推理 API。
+- 未新增后端、FastAPI、GPU 模型或推理服务；前端复用既有同源 `POST /api/kumo/predict` 路由，部署环境必须提供该路由。
 
 **当前目录没有 Git 仓库。** 接手后建议第一时间初始化 Git，把当前状态作为基线提交，再进行后续修改。
 
@@ -91,8 +91,8 @@ node scripts/visual-qa.mjs
 | 字体 | 操作系统本地字体，无外部字体请求 |
 | 图标/图形 | 原创 SVG / CSS / React 代码 |
 | 生产依赖 | 仅 Next.js、React、React DOM |
-| 后端 | 无 |
-| GPU / 推理 | 无 |
+| 后端 | 仓库未包含 |
+| GPU / 推理 | 仓库未包含；Playground 调用既有同源路由 |
 
 应用入口：
 
@@ -110,8 +110,6 @@ app/icon.svg                     原创品牌图标
 ```text
 /zh/                 /en/
 /zh/products/        /en/products/
-/zh/vision/          /en/vision/
-/zh/solutions/       /en/solutions/
 /zh/docs/            /en/docs/
 /zh/playground/      /en/playground/
 /zh/research/        /en/research/
@@ -136,12 +134,12 @@ components/
   layout/               品牌、页眉、移动菜单、语言切换、页脚
   pages/                页面级组合视图
   home/                 首页模型索引、行业索引
-  playground/           Playground 的数据、配置、结果面板
+  playground/           Playground 的数据、状态、预测表格与结果分布
   docs/                 代码块、代码 Tabs
   visualizations/       所有原创数据图形
 content/                中英文内容资源
 config/                 语言、路由、模型、站点、SEO
-lib/                    CSV 解析、合成数据、本地演示模型
+lib/                    CSV 解析、合成输入、Kumo API 客户端
 scripts/                构建后处理、导出检查、视觉 QA
 screenshots/v5.2/       优化前后截图与 QA 报告
 docs/                   工程补充说明
@@ -156,7 +154,6 @@ docs/                   工程补充说明
 | Playground | `components/pages/playground-page.tsx` + `components/playground.tsx` |
 | API Docs | `components/pages/docs-page.tsx` + `components/developer-docs.tsx` |
 | Solutions | `components/pages/solutions-page.tsx` |
-| Vision | `components/pages/vision-page.tsx` |
 | Research | `components/pages/research-page.tsx` |
 | Contact | `components/pages/contact-page.tsx` |
 | Privacy | `components/pages/privacy-page.tsx` |
@@ -173,7 +170,6 @@ docs/                   工程补充说明
 | 首页所有章节 | `content/home.ts` |
 | Products 模型叙事与交互说明 | `content/products.ts` |
 | Solutions 五个行业 | `content/solutions.ts` |
-| Vision | `content/vision.ts` |
 | Research | `content/research.ts` |
 | API Docs | `content/docs.ts` |
 | Playground 标签、错误、状态 | `content/playground.ts` |
@@ -265,8 +261,9 @@ docs/                   工程补充说明
 | `ModelIndex` | 首页模型索引 | 桌面悬停/聚焦更新右侧预览 |
 | `FieldIndex` | 首页行业索引 | 选择行业并切换图形 |
 | `SourcePanel` | Playground 数据区 | 拖拽 + 可聚焦文件按钮 |
-| `ConfigPanel` | Playground 参数区 | 其他两个模型明确 disabled |
-| `ResultPanel` | Playground 结果区 | Idle / Loading / Error / Success |
+| `PredictionStatus` | Playground 非成功状态 | 紧凑 Idle / Loading / Error 与恢复操作 |
+| `PredictionTable` | Playground 真实预测表格 | 样本序号、CSV 行号、输入特征、分页与横向滚动 |
+| `ResultPanel` | Playground 结果区 | 共享标题栏并组合四种状态 |
 | `CodeBlock` | 文档代码高亮与复制 | 有复制失败 fallback |
 | `CodeTabs` | cURL / TypeScript / Python | 键盘左右切换 |
 | `DeveloperDocs` | 文档导航、TOC、内容 | 移动端 details 目录 |
@@ -277,46 +274,9 @@ docs/                   工程补充说明
 
 完整说明见 [PLAYGROUND_GUIDE.md](PLAYGROUND_GUIDE.md)。
 
-### 当前实现
+工作台按预览、运行、上传、恢复和查看结果的顺序纵向排列。输入区不再使用大框套小框，默认展示 6 行和真实 CSV 行号，表头与数据行均为 42px。桌面运行按钮按内容定宽，上传为次级按钮，恢复示例为文字操作；移动端保留全宽主按钮。自定义 CSV 只有唯一匹配常见列名时才自动预选目标列，也可在预览中手动指定。待预测行的目标列留空。内置合成数据使用预设的 `label` 列。
 
-```text
-lib/demo-data.ts        合成 CSV 示例
-lib/csv.ts              解析、大小限制、标签列识别
-lib/demo-model.ts       数据集构建、最近邻分类、结果类型
-components/playground.tsx         状态所有者
-components/playground/source-panel.tsx
-components/playground/config-panel.tsx
-components/playground/result-panel.tsx
-components/playground/result-chart.tsx
-components/playground/data-table.tsx
-```
-
-### 状态
-
-```text
-idle -> running -> success
-                -> error
-```
-
-- 运行过程约 900ms 的浏览器内演示延迟，用于呈现 loading 状态。
-- 结果自动滚动到结果面板。
-- CSV 下载由浏览器 Blob 生成。
-- 下载列包括 `demo_prediction`、`demo_agreement`、`demo_note`。
-- 每行 `demo_note` 明确写着 local nearest-neighbor，not model output。
-
-### 换演示数据
-
-编辑 `lib/demo-data.ts` 中的 `sampleCsv` 和 `sampleFile`。保持至少一行带标签、至少一行标签为空。不要把客户数据、生产导出或敏感记录放进去。
-
-### 未来接真实 API
-
-1. 新建独立 client 模块，不要改 `lib/demo-model.ts` 冒充真实推理。
-2. 保持 CSV 解析和验证在前端。
-3. 认证、密钥、限流、审计必须放在安全网关，不得进入静态前端包。
-4. 替换结果适配层，不要重写 ResultPanel 的视觉结构。
-5. 真实结果不再使用 Demo 标签前，必须完成模型授权、接口契约和安全评审。
-
-**不要把本地最近邻演示结果描述为 Thinkcat 模型输出。**
+`components/playground.tsx` 管理文件与推理状态。`lib/kumo-api.ts` 校验数据并调用现有同源 `POST /api/kumo/predict`。成功区展示真实样本序号、原始 CSV 行号、全部输入特征、预测类别、概率和类别分布；失败区可重试或返回数据，且不会清空 CSV。重复提交由活动请求锁阻止。CSV 下载包含全部预测行，不受分页影响。部署时保留现有推理路由。
 
 ---
 
@@ -369,6 +329,8 @@ idle -> running -> success
 - 测试移动菜单、复制、下载、非法 CSV、客户端路由和 reduced motion。
 - 生成 `screenshots/v5.2/after/qa-report.json`。
 
+本轮工作台专项验收使用 `scripts/playground-results-qa.mjs`，通过受控接口夹具覆盖中英文、1440 / 768 / 390px、四种状态、重试防重复、返回保留 CSV、下载、输入与结果分页、拖放上传、目标列选择、恢复示例和横向溢出。修改前、第一轮和第二轮证据分别位于 `artifacts/playground-workspace-qa/before/`、`round1/`、`after/`；最终浏览器 console 与 page error 均为空。该脚本不请求真实 GPU 服务。
+
 ---
 
 ## 11. 构建、发布与回滚
@@ -414,9 +376,10 @@ node scripts/check-export.mjs
 npm run typecheck   PASS
 npm run lint        PASS, 0 warnings
 npm run build       PASS
-postbuild           PASS, 18 RSC aliases
-check-export        PASS, 18 localized routes
-visual QA           PASS, 0 errors
+postbuild           PASS, 14 RSC aliases
+check-export        PASS, 14 localized routes
+i18n unit tests     PASS, 3 tests
+Playground QA       PASS, 0 console / page errors
 Impeccable detector PASS, 0 findings
 ```
 
@@ -463,7 +426,7 @@ Impeccable detector PASS, 0 findings
 3. 配置真实域名，重新构建并复测 SEO。
 4. 在目标 Nginx 或静态托管环境做完整部署演练。
 5. 使用真实移动设备做一次视觉和触控验收。
-6. 再决定是否接入 API；接入时把真实推理、认证与审计放在独立网关，不要混入当前离线 Demo。
+6. 对既有推理路由补齐契约、认证、限流与审计确认；前端继续通过同源网关调用，不要把服务实现混入静态站点。
 7. 在真实 API 契约通过评审后，再考虑移除 API Docs 的 Draft 标记。
 
 ---
@@ -494,8 +457,8 @@ Impeccable detector PASS, 0 findings
 - [ ] 已跑通 `npm run build`
 - [ ] 已核对 `screenshots/v5.2/after/qa-report.json`
 - [ ] 已确认当前目录未初始化 Git，并完成基线提交
-- [ ] 已知悉所有 Demo / Draft / 待确认边界
-- [ ] 已知悉本轮没有后端、GPU 或真实推理服务
+- [ ] 已知悉 Synthetic Demo Data / Draft / 待确认边界
+- [ ] 已知悉本仓库不新增后端或 GPU 服务，部署必须提供既有同源推理路由
 - [ ] 已确认正式发布前必须配置 `NEXT_PUBLIC_SITE_URL`
 
 交接人：前端交付方  

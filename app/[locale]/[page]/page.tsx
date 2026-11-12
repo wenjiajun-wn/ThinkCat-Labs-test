@@ -4,7 +4,6 @@ import {localeMetadata} from '../../../config/seo';
 import {ProductsPage} from '../../../components/pages/products-page';
 import {DocsPage} from '../../../components/pages/docs-page';
 import {PlaygroundPage} from '../../../components/pages/playground-page';
-import {VisionPage} from '../../../components/pages/vision-page';
 import {ResearchPage} from '../../../components/pages/research-page';
 import {ContactPage} from '../../../components/pages/contact-page';
 import {PrivacyPage} from '../../../components/pages/privacy-page';
@@ -28,7 +27,6 @@ export default async function LocalizedPage({params}: Props) {
   if (page === 'products') return <ProductsPage locale={locale} />;
   if (page === 'docs') return <DocsPage locale={locale} />;
   if (page === 'playground') return <PlaygroundPage locale={locale} />;
-  if (page === 'vision') return <VisionPage locale={locale} />;
   if (page === 'research') return <ResearchPage locale={locale} />;
   if (page === 'contact') return <ContactPage locale={locale} />;
   return <PrivacyPage locale={locale} />;

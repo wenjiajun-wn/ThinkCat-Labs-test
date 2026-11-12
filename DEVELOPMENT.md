@@ -4,7 +4,7 @@
 
 - Node.js 22 (the project declares `>=22 <23`).
 - npm 10.
-- No backend, database, GPU worker, FastAPI service or inference API is required.
+- No backend, database, GPU worker, FastAPI service or inference-service implementation is included. Live Playground inference requires the existing same-origin route at deployment.
 
 ```sh
 npm ci
@@ -46,7 +46,7 @@ components/docs/               code and navigation primitives
 components/visualizations/     all procedural graphics
 content/                       bilingual content
 config/                        locales, models, site, SEO
-lib/                           local CSV and demo-model logic
+lib/                           CSV parsing, synthetic input and Kumo API client
 app/globals.css                Localized stylesheet imports
 app/styles/home.css            Homepage sections, study grid, and breakpoints
 app/legacy.css                 old noindex route styles
@@ -58,12 +58,16 @@ Read `FRONTEND_ARCHITECTURE.md`, `COMPONENT_GUIDELINES.md`, `I18N_GUIDE.md` and 
 
 `node scripts/visual-qa.mjs` launches headless Edge through the Chrome DevTools Protocol and writes real browser screenshots.
 
+Start `npm run preview -- --kumo` and set `THINKCAT_QA_ORIGIN` to that preview origin for general Playground checks against the existing service.
+
+For the complete Playground workspace acceptance pass, use `npm run preview` and run `node scripts/playground-results-qa.mjs artifacts/playground-workspace-qa/after`. This separate script intercepts only the model endpoint with controlled fixtures, so it does not call the remote service. It covers both locales, four states, recovery interactions, downloads, input and result pagination, file-picker and drag-and-drop uploads, target selection, sample restoration, and 1440px / 768px / 390px layouts. Its screenshots and `qa-report.json` are the current evidence. Set `THINKCAT_QA_CAPTURE_ONLY=1` to capture only the six workspace views, and compare `artifacts/playground-workspace-qa/before`, `round1` and `after` for the two visual passes.
+
 It captures:
 
 - every localized page at 1440x900, 768x1024 and 390x844;
-- full-page desktop captures for Home, Products, Playground, Docs, Solutions and Vision in both languages;
+- full-page desktop captures for Home, Products, Playground, Docs in both languages;
 - full-page mobile captures for Home, Products, Playground and Docs in both languages;
-- interaction states for the model index, product matrix, time series, representation map, Playground loading/success/error, docs code tabs, all five industry studies and mobile navigation.
+- interaction states for the product matrix, time series, representation map, Playground, docs code tabs and mobile navigation.
 
 Outputs:
 
@@ -103,7 +107,7 @@ A production-origin build was also checked with `NEXT_PUBLIC_SITE_URL=https://th
 ## Visual QA caveats
 
 - Headless Edge was used for screenshots. A physical iOS or Android device was not part of this pass.
-- The local demo result is deterministic nearest-neighbour output. It is not a model evaluation.
+- The Playground submits CSV features and labels to the existing remote Kumo service. Use the synthetic sample for smoke tests.
 - The API docs are a front-end draft. No live endpoint, token or schema verification exists.
 - The contact email, legal entity fields, model versions and public model links remain pending.
 
@@ -137,7 +141,7 @@ Use the real HTTPS origin before the production build. Do not mix files from dif
 - New Playground workspace with real file input, label selection, parameters, loading/error/success states, charts and CSV download.
 - New developer docs with sidebar, right TOC, mobile contents, code tabs, copy, syntax highlighting, parameter tables and a visible draft boundary.
 - Five distinct industry visual studies, each with its own interaction.
-- Vision, Research, Contact and Privacy aligned to the same system.
+- Research, Contact and Privacy aligned to the same system.
 - Added favicon, RSC prefetch aliases and the visual QA script.
 - Updated all design and engineering documentation.
 
@@ -153,7 +157,7 @@ Use the real HTTPS origin before the production build. Do not mix files from dif
 
 ## V5.4 homepage redesign
 
-The homepage starts with the Numerical Field, then pairs the model research and industry studies before Vision, developer links, research highlights and contact.
+The homepage starts with the Numerical Field and brand marquee, followed by developer links and model applications.
 
 In `app/styles/home.css`, change `--home-study-columns` to tune the 45 / 55 split for both chapters, `--home-study-gap` to change their shared gap, and `--home-inset` to change the 1240px content measure. Keep both columns top-aligned and let captions determine panel height. The grid stacks at 920px. Each panel uses the same `.study-graphic` aspect ratio per breakpoint.
 

@@ -1,9 +1,8 @@
 export const copy = {
   zh: {
-    nav: ['首页', '产品', '愿景', 'API 文档', '在线体验'],
+    nav: ['首页', '模型', 'API 文档', '在线体验'],
     titles: {
       products: '数值基础模型',
-      vision: '表征，先于规模',
       solutions: '数字在现实中的形状',
       docs: 'API 文档',
       playground: '在线体验',
@@ -13,10 +12,9 @@ export const copy = {
     },
     intro: {
       products: '从表格到时间序列，探索可迁移的数值表征。',
-      vision: '表格有列的类型与含义，时序依赖顺序、趋势与周期。数值基础模型需要在上下文中学习这些关系。',
       solutions: '从交易记录到传感器读数，每种数据都有自己的结构与节奏。',
       docs: '接口契约仍在验证。以下内容为开发者文档草案，不构成已上线服务。',
-      playground: '在浏览器中运行本地演示，体验数据准备、参数设置与结果查看流程。真实推理尚未开放。',
+      playground: '上传数值 CSV，在线运行 Kumo Tabular Medium 分类并下载预测结果。',
       research: '研究表格、时间序列、异常检测与可复现的评估方法。论文信息待核实。',
       contact: '欢迎交流产业与研究合作。',
       privacy: '本网站将语言偏好保存在当前浏览器。演示 CSV 仅在当前浏览器处理，不发送到服务器。',
@@ -36,10 +34,9 @@ export const copy = {
     },
   },
   en: {
-    nav: ['Home', 'Products', 'Vision', 'API Docs', 'Playground'],
+    nav: ['Home', 'Models', 'API Docs', 'Playground'],
     titles: {
       products: 'Numerical foundation models',
-      vision: 'Representation, before scale',
       solutions: 'The shape of numbers in the field',
       docs: 'API documentation',
       playground: 'Playground',
@@ -49,10 +46,9 @@ export const copy = {
     },
     intro: {
       products: 'From tables to time series, we study numerical representations that transfer across tasks.',
-      vision: 'Tables have heterogeneous columns. Time series depend on ordering, trends and seasonality. Numerical foundation models need to learn those relationships from context.',
       solutions: 'From transaction records to sensor readings, each kind of data has its own structure and rhythm.',
       docs: 'The API contract is still under review. The material below is developer documentation in draft form, not a live service.',
-      playground: 'Run a local browser demo to explore data preparation, parameters and results. Live inference is not yet available.',
+      playground: 'Upload a numeric CSV, run Kumo Tabular Medium classification in the Playground, and download the predictions.',
       research: 'We study tables, time series, anomaly detection and reproducible evaluation. Publication details are pending verification.',
       contact: 'We welcome conversations about industry and research collaboration.',
       privacy: 'This site stores language preferences in your browser. Demo CSV files are processed in the browser and never sent to a server.',

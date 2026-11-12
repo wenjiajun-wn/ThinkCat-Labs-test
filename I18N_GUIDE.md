@@ -5,9 +5,9 @@ The site exports two complete static locales. There is no runtime language serve
 ## Route structure
 
 ```text
-/zh/  /zh/products/  /zh/vision/  /zh/solutions/  /zh/docs/
+/zh/  /zh/products/  /zh/docs/
       /zh/playground/  /zh/research/  /zh/contact/  /zh/privacy/
-/en/  /en/products/  /en/vision/  /en/solutions/  /en/docs/
+/en/  /en/products/  /en/docs/
       /en/playground/  /en/research/  /en/contact/  /en/privacy/
 ```
 
@@ -21,7 +21,6 @@ The site exports two complete static locales. There is no runtime language serve
 | Home narrative | `content/home.ts` |
 | Product studies | `content/products.ts` |
 | Industry studies | `content/solutions.ts` |
-| Vision | `content/vision.ts` |
 | Research | `content/research.ts` |
 | Docs copy and samples | `content/docs.ts` |
 | Playground labels and errors | `content/playground.ts` |

@@ -1,8 +1,9 @@
-export const csvLimits = {bytes: 64 * 1024, rows: 200, columns: 14} as const;
+export const csvLimits = {bytes: 1024 * 1024, rows: 500, columns: 31} as const;
 
 export type ParsedCsv = {
   headers: string[];
   rows: string[][];
+  rowLineNumbers: number[];
   fileName: string;
   size: number;
 };
@@ -24,14 +25,27 @@ export class CsvError extends Error {
   }
 }
 
-function parseRows(source: string): string[][] {
+function parseRows(source: string) {
   const rows: string[][] = [];
+  const lineNumbers: number[] = [];
   let row: string[] = [];
   let cell = '';
   let quoted = false;
+  let line = 1;
+  let rowStart = 1;
+
+  function appendRow() {
+    row.push(cell.trim());
+    if (row.some(value => value.length > 0)) {
+      rows.push(row);
+      lineNumbers.push(rowStart);
+    }
+  }
 
   for (let i = 0; i < source.length; i += 1) {
     const char = source[i];
+    const lineBreak = char === '\n' || char === '\r';
+    if (char === '\n' || (char === '\r' && source[i + 1] !== '\n')) line += 1;
     if (quoted) {
       if (char === '"') {
         if (source[i + 1] === '"') {
@@ -51,27 +65,29 @@ function parseRows(source: string): string[][] {
     } else if (char === ',') {
       row.push(cell.trim());
       cell = '';
-    } else if (char === '\n' || char === '\r') {
-      if (char === '\r' && source[i + 1] === '\n') i += 1;
-      row.push(cell.trim());
-      if (row.some(value => value.length > 0)) rows.push(row);
+    } else if (lineBreak) {
+      if (char === '\r' && source[i + 1] === '\n') {
+        i += 1;
+        line += 1;
+      }
+      appendRow();
       row = [];
       cell = '';
+      rowStart = line;
     } else {
       cell += char;
     }
   }
   if (quoted) throw new CsvError('parse');
-  row.push(cell.trim());
-  if (row.some(value => value.length > 0)) rows.push(row);
-  return rows;
+  appendRow();
+  return {rows, lineNumbers};
 }
 
 export function parseCsv(source: string, fileName = 'thinkcat-demo.csv'): ParsedCsv {
   if (!source.trim()) throw new CsvError('empty');
   if (new Blob([source]).size > csvLimits.bytes) throw new CsvError('too-large');
 
-  const parsed = parseRows(source);
+  const {rows: parsed, lineNumbers} = parseRows(source);
   if (parsed.length < 2) throw new CsvError('empty');
 
   const headers = parsed[0];
@@ -88,12 +104,7 @@ export function parseCsv(source: string, fileName = 'thinkcat-demo.csv'): Parsed
   if (rows.length > csvLimits.rows) throw new CsvError('too-many-rows');
   if (rows.some(row => row.length !== headers.length)) throw new CsvError('row-width');
 
-  return {headers, rows, fileName, size: new Blob([source]).size};
-}
-
-export function detectLabelColumn(headers: string[]): number {
-  const preferred = headers.findIndex(header => header.toLowerCase() === 'label');
-  return preferred >= 0 ? preferred : headers.length - 1;
+  return {headers, rows, rowLineNumbers: lineNumbers.slice(1), fileName, size: new Blob([source]).size};
 }
 
 export function formatBytes(bytes: number): string {

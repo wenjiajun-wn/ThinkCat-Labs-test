@@ -22,9 +22,16 @@ export function SiteHeader({locale, nav, menuLabel, closeLabel, languageLabel, s
   const [open, setOpen] = useState(false);
   const firstLink = useRef<HTMLAnchorElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+  const restoreFocus = useRef(false);
+
+  function closeMenu() {
+    restoreFocus.current = true;
+    setOpen(false);
+  }
 
   useEffect(() => {
     if (!open) return;
+    const menuButton = toggle.current;
     const previous = document.body.style.overflow;
     const main = document.querySelector('main');
     const footer = document.querySelector('.site-footer');
@@ -35,8 +42,9 @@ export function SiteHeader({locale, nav, menuLabel, closeLabel, languageLabel, s
     const panel = document.getElementById('mobile-navigation');
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        event.preventDefault();
+        restoreFocus.current = true;
         setOpen(false);
-        toggle.current?.focus();
         return;
       }
       if (event.key !== 'Tab' || !panel) return;
@@ -63,6 +71,10 @@ export function SiteHeader({locale, nav, menuLabel, closeLabel, languageLabel, s
       footer?.removeAttribute('inert');
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('resize', onResize);
+      if (restoreFocus.current) {
+        restoreFocus.current = false;
+        menuButton?.focus();
+      }
     };
   }, [open]);
 
@@ -71,7 +83,7 @@ export function SiteHeader({locale, nav, menuLabel, closeLabel, languageLabel, s
   return <>
     <a className="skip" href="#main">{skipLabel}</a>
     <header className={`site-header${open ? ' menu-open' : ''}`}>
-      <div className="site-header-inner">
+      <div className="site-header-inner" inert={open}>
         <Brand locale={locale} />
         <nav className="primary-nav" aria-label={menuLabel}>
           {nav.map((item, index) => <Link
@@ -99,8 +111,10 @@ export function SiteHeader({locale, nav, menuLabel, closeLabel, languageLabel, s
       </div>
       <div id="mobile-navigation" className="mobile-navigation" role="dialog" aria-modal="true" aria-label={menuLabel} hidden={!open}>
         <div className="mobile-navigation-top">
-          <span className="mono-label">{menuLabel}</span>
           <span className="mono-label">Thinkcat Labs / 2026</span>
+          <button className="mobile-menu-close" type="button" onClick={closeMenu}>
+            {closeLabel}<span aria-hidden="true">×</span>
+          </button>
         </div>
         <nav aria-label={menuLabel}>
           {nav.map((item, index) => <Link

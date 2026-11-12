@@ -65,7 +65,7 @@ export function ProductsPage({locale}:{locale: Locale}) {
   const unified = models[2];
 
   return <main id="main" className="subpage surface-products">
-    <PageHead index="01" label={p.eyebrow} title={p.title} intro={p.intro} meta={p.meta} />
+    <PageHead label={p.eyebrow} title={p.title} intro={p.intro} meta={p.meta} />
     <nav className="study-index" aria-label={p.labels.modelIndex}>
       {models.map(model => <a key={model.id} href={`#${model.id}`}>
         <span className="mono-label">{model.index}</span>

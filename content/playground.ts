@@ -1,320 +1,265 @@
+import type {KumoDatasetError, KumoRequestError} from '../lib/kumo-api';
+
 type PlaygroundCopy = {
-  eyebrow: string;
   title: string;
-  intro: string;
-  meta: string;
-  demoNotice: string;
-  model: {
-    label: string;
-    options: readonly {id: string; label: string; state: string; disabled: boolean}[];
-    note: string;
-  };
+  privacyNotice: string;
+  liveStatus: string;
+  run: string;
+  running: string;
   source: {
-    label: string;
     title: string;
     description: string;
     drop: string;
-    choose: string;
-    replace: string;
+    upload: string;
+    help: string;
+    requirements: string;
     sample: string;
     limits: string;
-    loaded: string;
     rows: string;
     columns: string;
     sampleName: string;
     reading: string;
-    next: string;
-  };
-  config: {
-    label: string;
-    title: string;
-    labelColumn: string;
-    labelHelp: string;
-    neighbor: string;
-    neighborHelp: string;
-    metric: string;
-    euclidean: string;
-    manhattan: string;
-    normalize: string;
-    normalizeHelp: string;
-    run: string;
-    rerun: string;
-    running: string;
-    demoTag: string;
-    advanced: string;
-    blocked: string;
   };
   preview: {
+    targetLabel: string;
+    targetPlaceholder: string;
     label: string;
-    caption: string;
+    rowLabel: string;
+    previous: string;
+    next: string;
+    pageLabel: string;
     query: string;
-    support: string;
     labelHeader: string;
     scroll: string;
+    explanation: string;
   };
   states: {
+    idleLabel: string;
+    runningLabel: string;
+    errorLabel: string;
+    successLabel: string;
     loadingTitle: string;
     loadingBody: string;
     emptyTitle: string;
     emptyBody: string;
     errorTitle: string;
-    errorBody: string;
+    errorRetention: string;
     successTitle: string;
     successBody: string;
-    liveUnavailable: string;
     errorAction: string;
   };
   errors: {
     empty: string;
+    chooseTarget: string;
     'too-large': string;
     'too-many-rows': string;
     'too-many-columns': string;
     'invalid-headers': string;
     'row-width': string;
     parse: string;
-    'no-features': string;
-    'non-numeric': string;
-    'no-support': string;
-    'no-queries': string;
     generic: string;
-  };
+  } & Record<KumoDatasetError, string>;
+  requestErrors: Record<KumoRequestError, string>;
   results: {
-    label: string;
     title: string;
-    caption: string;
     tableCaption: string;
     query: string;
     prediction: string;
-    confidence: string;
-    distance: string;
+    probability: string;
     classDistribution: string;
-    averageConfidence: string;
     supportRows: string;
     download: string;
     downloadName: string;
-    demoNote: string;
-    k: string;
+    downloadNote: string;
     chartLabel: string;
-    confidenceLabel: string;
     predictionCount: string;
-    rowLabel: string;
-    metricLabels: {euclidean: string; manhattan: string};
+    backToData: string;
+    previous: string;
+    next: string;
   };
 };
 
 export const playgroundCopy: {zh: PlaygroundCopy; en: PlaygroundCopy} = {
   zh: {
-    eyebrow: '开发者 / 浏览器工作台',
     title: '在线体验',
-    intro: '用合成示例或自己的 CSV 试跑分类。选择标签列后即可在浏览器中运行，并下载演示结果。',
-    meta: '本地计算 / 无网络请求 / 合成演示数据',
-    demoNotice: '所有结果均为 Demo，由浏览器中的最近邻算法生成，不代表 Thinkcat 模型输出。',
-    model: {
-      label: '模型',
-      options: [
-        {id: 'tabular', label: '表格基础模型', state: '本地演示', disabled: false},
-        {id: 'time-series', label: '时间序列基础模型', state: '等待接口', disabled: true},
-        {id: 'unified', label: '统一数值基础模型', state: '等待接口', disabled: true},
-      ],
-      note: '本轮仅开放表格形态的本地演示。另外两个模型未接入真实推理，不会被模拟为可用。',
-    },
+    liveStatus: '远程推理',
+    run: '运行模型',
+    running: '正在运行模型…',
+    privacyNotice: '运行时会将特征和标签发送到远程推理服务。请勿提交敏感数据。',
     source: {
-      label: '01 / 数据',
-      title: '准备数据',
-      description: '上传一个无敏感信息的数值 CSV。第一行是列名，标签列可以留空表示待预测行。',
-      drop: '选择或拖入 CSV',
-      choose: '选择 CSV',
-      replace: '替换文件',
-      sample: '恢复合成示例',
-      limits: '最多 64 KiB、200 行、14 列；仅支持无引号或标准双引号 CSV。',
-      loaded: '已载入',
+      title: '数据输入',
+      description: '直接使用示例数据，或上传自己的 CSV。',
+      drop: '或拖放 CSV',
+      upload: '上传 CSV',
+      help: 'CSV 格式要求',
+      requirements: 'CSV 首行为列名。待预测行的目标列留空，其余列为数值特征。',
+      sample: '恢复示例',
+      limits: 'CSV 最大 1 MiB。数据须包含 20–500 行、至少 10 行已标注数据、1–50 行待预测数据、1–30 个数值特征、2–10 个类别。',
       rows: '行',
       columns: '列',
-      sampleName: '合成示例 CSV',
+      sampleName: '示例数据（合成）',
       reading: '正在读取 CSV…',
-      next: '继续设置参数',
-    },
-    config: {
-      label: '02 / 配置',
-      title: '设置参数',
-      labelColumn: '标签列',
-      labelHelp: '选择用于分类的标签列。留空的行会被视为待预测样本。',
-      neighbor: '邻居数量',
-      neighborHelp: '本地演示最多使用指定数量的带标签样本。',
-      metric: '距离度量',
-      euclidean: '欧氏距离',
-      manhattan: '曼哈顿距离',
-      normalize: '标准化特征',
-      normalizeHelp: '将每个特征缩放到同一量级，便于比较不同单位的列。',
-      run: '运行本地演示',
-      rerun: '重新运行演示',
-      running: '正在计算',
-      demoTag: 'DEMO',
-      advanced: '高级参数',
-      blocked: '先载入有效的 CSV，再运行演示。',
     },
     preview: {
+      targetLabel: '预测目标列',
+      targetPlaceholder: '选择一列',
       label: '数据预览',
-      caption: '前 8 行 / 标签列已高亮',
+      rowLabel: '行号',
+      previous: '上一页',
+      next: '下一页',
+      pageLabel: '预览',
       query: '待预测',
-      support: '带标签',
       labelHeader: '标签列',
       scroll: '可横向滚动查看全部列',
+      explanation: '模型利用已有标签样本，预测空白标签。',
     },
     states: {
-      loadingTitle: '正在浏览器内计算',
-      loadingBody: '读取数据并比较上下文样本。没有请求离开这台设备。',
-      emptyTitle: '结果会出现在这里',
-      emptyBody: '载入数据并设置参数，然后运行本地演示。结果会明确标注 Demo。',
-      errorTitle: '演示未完成',
-      errorBody: '请检查标签列和参数，再运行一次。',
-      successTitle: '演示已完成',
-      successBody: '以下分类由浏览器中的本地算法生成。',
-      liveUnavailable: '真实推理尚未开放',
-      errorAction: '返回数据',
+      idleLabel: '等待运行',
+      runningLabel: '正在运行',
+      errorLabel: '运行失败',
+      successLabel: '已完成',
+      loadingTitle: '正在运行模型',
+      loadingBody: '远程推理服务正在处理当前数据，完成后会在此显示真实预测。',
+      emptyTitle: '数据已就绪',
+      emptyBody: '运行模型后，在这里查看逐行预测、类别分布并下载结果。',
+      errorTitle: '预测未完成',
+      errorRetention: '当前 CSV 和输入内容仍然保留，可以直接重新尝试。',
+      successTitle: '本次预测已完成',
+      successBody: '真实预测已映射到原始 CSV 行，输入特征一并保留。',
+      errorAction: '重新运行',
     },
     errors: {
+      chooseTarget: '请选择预测目标列后运行模型。',
       empty: '文件为空，或没有可读取的数据行。',
-      'too-large': '文件超过 64 KiB 限制。',
-      'too-many-rows': '数据超过 200 行限制。',
-      'too-many-columns': '列数超过 14 列限制。',
+      'too-large': 'CSV 文件超过 1 MiB。',
+      'too-many-rows': '数据超过 500 行。',
+      'too-many-columns': '数据超过 31 列（包含标签列）。',
       'invalid-headers': '列名缺失、重复或包含换行。',
       'row-width': '至少有一行的列数与表头不一致。',
       parse: 'CSV 结构无法解析，请检查引号是否成对。',
-      'no-features': '除了标签列之外，至少需要一个特征列。',
-      'non-numeric': '特征列包含无法解析为数字的值。',
-      'no-support': '至少需要一行带标签的上下文样本。',
-      'no-queries': '至少需要一行标签为空的待预测样本。',
+      'no-features': '请在目标列之外提供 1–30 个数值特征列。',
+      'non-numeric': '所有特征值必须是有限数值，且不能为空。',
+      'row-count': '数据必须包含 20–500 行。',
+      'support-count': '目标列至少需要 10 行非空标签。',
+      'query-count': '请在目标列留空 1–50 行作为待预测样本。',
+      'class-count': '已标注数据必须包含 2–10 个类别。',
       generic: '无法读取数据，请检查 CSV 结构。',
     },
+    requestErrors: {
+      'payload-too-large': '推理服务器拒绝了过大的请求。请减少行数或特征数后重试。',
+      'rate-limited': '请求过于频繁，请稍后再试。',
+      rejected: '推理服务器未接受这份数据，请检查列和标签后重试。',
+      unavailable: '暂时无法连接推理服务，请稍后重试。',
+      'invalid-response': '推理服务返回的数据格式不正确，请重试。',
+      timeout: '推理请求超时，请重试。',
+    },
     results: {
-      label: '03 / 结果',
-      title: '演示结果',
-      caption: '浏览器最近邻分类 / 非模型输出',
-      tableCaption: '本地演示分类结果',
-      query: '待预测行',
-      prediction: '演示分类',
-      confidence: '一致性',
-      distance: '平均距离',
+      title: '预测结果',
+      tableCaption: '逐行预测',
+      query: '样本 / CSV 行',
+      prediction: '预测类别',
+      probability: '预测概率',
       classDistribution: '预测类别分布',
-      averageConfidence: '平均一致性',
       supportRows: '上下文样本',
-      download: '下载结果 CSV',
-      downloadName: 'thinkcat-demo-predictions.csv',
-      demoNote: 'CSV 记录演示分类、一致性和 Demo 来源说明。',
-      k: '邻居',
-      chartLabel: '演示分类结果图表',
-      confidenceLabel: '每个待预测行的一致性',
-      predictionCount: '待预测行',
-      rowLabel: '行',
-      metricLabels: {euclidean: '欧氏距离', manhattan: '曼哈顿距离'},
+      download: '下载 CSV',
+      downloadName: 'thinkcat-kumo-predictions.csv',
+      downloadNote: '下载文件包含全部预测行，不受表格分页影响。',
+      chartLabel: '真实预测类别分布',
+      predictionCount: '预测样本',
+      backToData: '返回数据',
+      previous: '上一页',
+      next: '下一页',
     },
   },
   en: {
-    eyebrow: 'Developer / Browser workspace',
     title: 'Playground',
-    intro: 'Try classification with the synthetic sample or your own CSV. Choose a label column, run the demo in your browser, and download the results.',
-    meta: 'Local compute / No network request / Synthetic demo data',
-    demoNotice: 'Every result is a Demo produced by nearest-neighbor classification in the browser. It does not represent Thinkcat model output.',
-    model: {
-      label: 'Model',
-      options: [
-        {id: 'tabular', label: 'Tabular Foundation Model', state: 'Local demo', disabled: false},
-        {id: 'time-series', label: 'Time Series Foundation Model', state: 'Awaiting API', disabled: true},
-        {id: 'unified', label: 'Unified Numerical Foundation Model', state: 'Awaiting API', disabled: true},
-      ],
-      note: 'Only the tabular local demo is available. The other two models are not connected to live inference and are not simulated as available.',
-    },
+    liveStatus: 'Live inference',
+    run: 'Run Model',
+    running: 'Running model…',
+    privacyNotice: 'Running the model sends features and labels to the remote inference service. Omit sensitive data.',
     source: {
-      label: '01 / Data',
-      title: 'Prepare data',
-      description: 'Upload a numeric CSV without sensitive information. The first row holds column names. Leave the label cell blank for a prediction row.',
-      drop: 'Choose or drop a CSV',
-      choose: 'Choose CSV',
-      replace: 'Replace file',
-      sample: 'Restore synthetic sample',
-      limits: 'Up to 64 KiB, 200 rows and 14 columns. Unquoted or standard double-quoted CSV only.',
-      loaded: 'Loaded',
+      title: 'Data Input',
+      description: 'Use the sample data or upload your own CSV.',
+      drop: 'or drop a CSV',
+      upload: 'Upload CSV',
+      help: 'CSV requirements',
+      requirements: 'Include a header row. Leave the target column blank on rows to predict and use numbers in every feature column.',
+      sample: 'Restore sample',
+      limits: 'CSV up to 1 MiB. Use 20–500 rows, at least 10 labeled rows, 1–50 prediction rows, 1–30 numeric features, and 2–10 classes.',
       rows: 'rows',
       columns: 'columns',
-      sampleName: 'Synthetic sample CSV',
+      sampleName: 'Sample data (synthetic)',
       reading: 'Reading CSV…',
-      next: 'Continue to parameters',
-    },
-    config: {
-      label: '02 / Configure',
-      title: 'Set parameters',
-      labelColumn: 'Label column',
-      labelHelp: 'Choose the label column. Rows with an empty label are treated as prediction samples.',
-      neighbor: 'Neighbors',
-      neighborHelp: 'The local demo uses up to this many labeled samples.',
-      metric: 'Distance metric',
-      euclidean: 'Euclidean',
-      manhattan: 'Manhattan',
-      normalize: 'Normalize features',
-      normalizeHelp: 'Scale each feature to a comparable range so columns with different units can be compared.',
-      run: 'Run local demo',
-      rerun: 'Run demo again',
-      running: 'Computing',
-      demoTag: 'DEMO',
-      advanced: 'Advanced parameters',
-      blocked: 'Load a valid CSV to run the demo.',
     },
     preview: {
+      targetLabel: 'Prediction target column',
+      targetPlaceholder: 'Select a column',
       label: 'Data preview',
-      caption: 'First 8 rows / label column highlighted',
-      query: 'Prediction',
-      support: 'Labeled',
+      rowLabel: 'CSV line',
+      previous: 'Previous',
+      next: 'Next',
+      pageLabel: 'Preview',
+      query: 'To predict',
       labelHeader: 'label column',
       scroll: 'Scroll horizontally to see every column',
+      explanation: 'The model uses labeled rows to predict blank labels.',
     },
     states: {
-      loadingTitle: 'Computing in your browser',
-      loadingBody: 'Reading data and comparing context samples. No request leaves this device.',
-      emptyTitle: 'Results will appear here',
-      emptyBody: 'Load data, set parameters and run the local demo. Results are always labeled Demo.',
-      errorTitle: 'Demo did not finish',
-      errorBody: 'Check the label column and parameters, then try again.',
-      successTitle: 'Demo complete',
-      successBody: 'The classifications below were produced by a local algorithm in this browser.',
-      liveUnavailable: 'Live inference unavailable',
-      errorAction: 'Back to data',
+      idleLabel: 'Ready to run',
+      runningLabel: 'Running',
+      errorLabel: 'Run failed',
+      successLabel: 'Complete',
+      loadingTitle: 'Running the model',
+      loadingBody: 'The remote inference service is processing the current data. Real predictions will appear here when it responds.',
+      emptyTitle: 'Your data is ready',
+      emptyBody: 'Run the model to see row-level predictions, class distribution and CSV export here.',
+      errorTitle: 'Prediction did not complete',
+      errorRetention: 'Your CSV and current inputs are preserved, so you can try again.',
+      successTitle: 'Prediction complete',
+      successBody: 'Predictions are mapped to the original CSV rows with their input features.',
+      errorAction: 'Retry',
     },
     errors: {
+      chooseTarget: 'Select a prediction target column to run the model.',
       empty: 'The file is empty or has no readable data rows.',
-      'too-large': 'The file exceeds the 64 KiB limit.',
-      'too-many-rows': 'The data exceeds the 200 row limit.',
-      'too-many-columns': 'The data exceeds the 14 column limit.',
+      'too-large': 'The CSV exceeds 1 MiB.',
+      'too-many-rows': 'The data exceeds 500 rows.',
+      'too-many-columns': 'The data exceeds 31 columns, including the label.',
       'invalid-headers': 'A column name is missing, duplicated or contains a line break.',
       'row-width': 'At least one row has a different number of columns than the header.',
       parse: 'The CSV structure could not be parsed. Check that quotes are balanced.',
-      'no-features': 'At least one feature column is required besides the label column.',
-      'non-numeric': 'A feature column contains a value that is not numeric.',
-      'no-support': 'At least one labeled context row is required.',
-      'no-queries': 'At least one prediction row with an empty label is required.',
+      'no-features': 'Include 1–30 numeric feature columns in addition to the target column.',
+      'non-numeric': 'Every feature must contain a finite number.',
+      'row-count': 'The dataset must contain 20–500 rows.',
+      'support-count': 'The target column must have at least 10 non-blank labels.',
+      'query-count': 'Leave 1–50 rows blank in the target column for prediction.',
+      'class-count': 'Labeled rows must contain 2–10 distinct classes.',
       generic: 'Could not read the data. Check the CSV structure.',
     },
+    requestErrors: {
+      'payload-too-large': 'The inference server rejected the request size. Try fewer rows or features.',
+      'rate-limited': 'Too many requests. Wait a moment and try again.',
+      rejected: 'The inference server rejected the data. Check the columns and labels, then try again.',
+      unavailable: 'The inference service is temporarily unavailable. Try again shortly.',
+      'invalid-response': 'The inference service returned an unexpected result. Try again.',
+      timeout: 'The inference request timed out. Try again.',
+    },
     results: {
-      label: '03 / Results',
-      title: 'Demo results',
-      caption: 'Browser nearest-neighbor classification / Not model output',
-      tableCaption: 'Local demo classifications',
-      query: 'Query row',
-      prediction: 'Demo prediction',
-      confidence: 'Agreement',
-      distance: 'Mean distance',
+      title: 'Prediction results',
+      tableCaption: 'Row-level predictions',
+      query: 'Sample / CSV line',
+      prediction: 'Predicted class',
+      probability: 'Probability',
       classDistribution: 'Predicted class distribution',
-      averageConfidence: 'Mean agreement',
       supportRows: 'Context samples',
-      download: 'Download results CSV',
-      downloadName: 'thinkcat-demo-predictions.csv',
-      demoNote: 'The CSV includes demo predictions, agreement, and a note on how the results were generated.',
-      k: 'Neighbors',
-      chartLabel: 'Demo classification result chart',
-      confidenceLabel: 'Agreement per prediction row',
-      predictionCount: 'Prediction rows',
-      rowLabel: 'Row',
-      metricLabels: {euclidean: 'Euclidean', manhattan: 'Manhattan'},
+      download: 'Download CSV',
+      downloadName: 'thinkcat-kumo-predictions.csv',
+      downloadNote: 'The download contains every prediction row, regardless of table pagination.',
+      chartLabel: 'Distribution of actual predicted classes',
+      predictionCount: 'Predicted samples',
+      backToData: 'Back to Data',
+      previous: 'Previous',
+      next: 'Next',
     },
   },
 };

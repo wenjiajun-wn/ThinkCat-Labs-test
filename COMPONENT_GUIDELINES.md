@@ -20,12 +20,13 @@ Reuse the shared primitives before adding a new class or component. The visual s
 - Index is a section locator, not decoration.
 - Title is one H1 only.
 - Body sits under the title. Do not turn the page intro into a large type left column with a competing small right column.
-- `tone="dark"` is used for vision, solutions, research and contact.
+- `tone="dark"` is used for research and contact.
 
 ### Header and footer
 
-- `SiteHeader` is the only sticky navigation surface. It is solid paper, not a translucent glass bar.
+- `SiteHeader` is the only sticky navigation surface. It is solid paper, not a translucent glass bar. Desktop navigation uses the shared `15px` navigation token on every localized page, including the homepage.
 - The mobile menu is a dialog: body scroll is locked, main and footer become inert, focus is trapped, Escape closes, and focus returns to the toggle.
+- The homepage ecosystem list is static and wraps by breakpoint. Do not restore automatic marquee motion or duplicate brand groups.
 - `SiteFooter` contains the index, legal links and the synthetic-data note. Do not add fake emails or social accounts.
 
 ### Shared classes
@@ -52,7 +53,7 @@ One primary action per context. Buttons need a visible focus ring and 44px minim
 
 ### `RepresentationMap`
 
-- Used by the Vision page and the Unified model study.
+- Used by the Unified model study.
 - Four mapping pairs are keyboard focusable. Enter/Space toggles the active pair; Escape clears it.
 - Do not describe the arcs as discovered semantics. They are a testable correspondence hypothesis.
 
@@ -91,44 +92,45 @@ These are compact index visuals, not alternate charts. Use them in previews wher
 
 ### `components/playground.tsx`
 
-Owns state:
+Owns the parsed CSV and file name, selected target column, idle / running / error / success state, active-request guard and download handler. It does not own CSV parsing, response validation or model logic.
 
-- parsed CSV and file name;
-- selected label column;
-- parameters (`neighbors`, `metric`, `normalize`);
-- idle / running / error / success;
-- download handler.
-
-It must not own parsing or model logic.
+Retry must call the same run path with the current valid dataset. Back to Data preserves the CSV and focuses Run Model. File or target changes cancel the active run and invalidate stale reads.
 
 ### `SourcePanel`
 
 - Drag and drop is an enhancement. The visible file button controls a real file input.
-- Show file name, rows, columns and size.
-- The preview is a named scroll region.
-- Always show the final label column and its empty-value state.
+- Show the file name and row / column counts without repeating the page introduction.
+- Keep Run Model primary, Upload CSV secondary and Restore sample tertiary. Restore also resets the current preview page.
+- Keep format requirements in a lightweight disclosure and the sensitive-data notice visible.
+- Run Model is disabled while running or invalid.
 
-### `ConfigPanel`
+### `DataTable`
 
-- The model selector exposes the tabular local demo only. The other two models are disabled and labelled awaiting API.
-- Label column, neighbours, metric and normalise have visible labels and help text.
-- The run button is disabled while running or invalid.
-- The Demo badge is visible in the panel.
+- Show six preview rows with real source line numbers. Preserve the featured sample lines 2–5 and 20–21 without changing request data.
+- Use the shared 42px row token, tabular numerals, right-aligned numeric cells and restrained target-column highlighting.
+- Keep pagination compact and at the bottom right. Wide datasets use a named, keyboard-focusable horizontal scroll region.
+- Show target selection only when automatic detection is ambiguous.
 
-### `ResultPanel`
+### `ResultPanel` and `PredictionStatus`
 
-- Four explicit states: idle, running, error, success.
-- Loading uses shaped skeleton rows and a three-step explanation, not a generic spinner.
-- Error is inline and readable.
-- Success exposes prediction count, mean agreement, context samples, class distribution, per-row agreement and a results table.
-- The CSV download is generated client-side and contains `demo_note` on every row.
-- Announce the state through the hidden live region.
+- Keep a compact shared header with the current state, model and Back to Data action.
+- Idle explains the next step without decorative metrics.
+- Loading combines indeterminate native progress with shaped rows and never invents a percentage.
+- Error is inline, names the actual failure and preserves a clear Retry / Back to Data recovery path.
+- Use focus, `aria-busy`, the error alert and the success live region without duplicating announcements.
+
+### `PredictionResults` and `PredictionTable`
+
+- Success exposes only actual prediction and context-sample counts, not invented latency or model versions.
+- The table includes global sample numbers, original CSV lines, every input feature, predicted class and predicted-class probability.
+- Paginate ten rows while keeping global sample numbers stable. Export every prediction row.
+- Wide tables stay inside a named, keyboard-focusable horizontal scroll region.
 
 ### `ResultChart`
 
-- Uses class distribution bars and a per-row agreement chart.
+- Uses only the actual predicted-class distribution.
 - The data table remains the accessible source of exact values.
-- Do not call agreement "accuracy" or "confidence" without the demo boundary.
+- Do not add decorative probability plots or call predicted-class probability "accuracy".
 
 ## Docs components
 
@@ -171,7 +173,7 @@ It must not own parsing or model logic.
 ## Content truth
 
 - Every synthetic figure must say it is synthetic.
-- Playground results must say `Demo` in the UI, the state message and the downloaded CSV.
+- The synthetic input sample must be identified as synthetic. Playground predictions must come from the validated remote response; generated fixtures belong only in browser QA, never in production results.
 - The API reference must say `Draft` and `not a live service`.
 - Pending models must show `Pending verification` or the Chinese equivalent.
 - Never invent GitHub, Hugging Face, customer, benchmark or contact details.

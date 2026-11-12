@@ -23,13 +23,13 @@ export function ModelApplications({locale}: {locale: Locale}) {
         return <article className="application-card" key={model.id}>
           <figure className="application-figure">
             <IndustryMiniature id={scenario.visual} locale={locale} />
-            <figcaption className="mono-label">{industries.labels.synthetic}</figcaption>
+            <figcaption>{industries.labels.synthetic}</figcaption>
           </figure>
           <div className="application-copy">
             <h3>{scenario.title}</h3>
             <p>{scenario.body}</p>
             <Link className="text-link" href={`${localized(locale, 'products')}#${model.id}`}>
-              {modelName} <span aria-hidden="true">↗</span>
+              {modelName}
             </Link>
           </div>
         </article>;

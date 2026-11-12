@@ -2,7 +2,9 @@
  * Synthetic browser-only demo data. Values are generated to make clusters,
  * a drift class and a few review rows legible. They are not model output.
  */
-export const sampleCsv = `sensor_a,sensor_b,load_gap,label
+export const playgroundTargetColumn = 'label';
+
+export const sampleCsv = `sensor_a,sensor_b,load_gap,${playgroundTargetColumn}
 12.4,3.1,0.82,steady
 13.1,3.4,0.79,steady
 11.8,2.9,0.91,steady

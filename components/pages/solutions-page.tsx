@@ -7,7 +7,7 @@ import {IndustryStudyById} from '../visualizations/industry-studies';
 export function SolutionsPage({locale}:{locale: Locale}) {
   const t = solutionsCopy[locale];
   return <main id="main" className="subpage surface-solutions">
-    <PageHead index="03" label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} tone="dark" />
+    <PageHead label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} tone="dark" />
     <nav className="industry-index" aria-label={t.indexLabel}>
       {t.studies.map(study => <a key={study.id} href={`#${study.id}`}>
         <span className="mono-label">{study.index}</span>

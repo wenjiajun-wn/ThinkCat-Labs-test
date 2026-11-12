@@ -16,7 +16,7 @@ const brands = [
 export function BrandMarquee({locale}: {locale: Locale}) {
   const zh = locale === 'zh';
 
-  return <section className="hero-models" aria-label={zh ? '数据与 AI 生态品牌' : 'Data and AI ecosystem brands'}>
+  return <section className="hero-models" aria-label={zh ? '数据与 AI 生态参考' : 'Data and AI ecosystem references'}>
     <div className="model-marquee">
       <div className="model-marquee-track">
         {[0, 1, 2].map(group => <ul key={group} className="model-marquee-group" aria-hidden={group > 0 || undefined}>

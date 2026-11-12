@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-const roots = ['node_modules/next','node_modules/react','node_modules/react-dom','node_modules/scheduler','node_modules/styled-jsx'];
+const roots = ['node_modules/next','node_modules/react','node_modules/react-dom','node_modules/scheduler','node_modules/styled-jsx','node_modules/@fontsource-variable/geist','node_modules/@fontsource-variable/geist-mono'];
 const sections = ['Third-party notices for Thinkcat Labs static build. Conservative inventory includes Next compiled components, some of which may be build-only.'];
 function walk(folder) {
   if (!fs.existsSync(folder)) return;

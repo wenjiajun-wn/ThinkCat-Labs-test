@@ -199,7 +199,7 @@ export function RepresentationMap({
         <circle r="55" fill="none" stroke="#d9f397" strokeOpacity=".3" strokeDasharray="2 8" />
         {Array.from({length: 10}, (_, index) => {
           const angle = index * Math.PI / 5;
-          return <circle key={index} cx={Math.cos(angle) * 38} cy={Math.sin(angle) * 30} r={index % 3 === 0 ? 3.5 : 2} fill="#d9f397" opacity={.5 + index * .04} />;
+          return <circle key={index} cx={(Math.cos(angle) * 38).toFixed(4)} cy={(Math.sin(angle) * 30).toFixed(4)} r={index % 3 === 0 ? 3.5 : 2} fill="#d9f397" opacity={.5 + index * .04} />;
         })}
         <text y="3" textAnchor="middle" className="map-core-label">{sharedLabel}</text>
       </g>

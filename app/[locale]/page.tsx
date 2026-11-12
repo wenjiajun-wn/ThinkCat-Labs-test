@@ -24,9 +24,9 @@ export default async function Home({params}: Props) {
 
   return <main id="main" className="home">
     <div className="home-first-screen">
-      <section className="home-hero">
+      <section className="home-hero" aria-labelledby="home-title">
         <div className="hero-copy">
-          <h1><span>{t.hero[0]}</span>{' '}<span>{t.hero[1]}</span></h1>
+          <h1 id="home-title"><span>{t.hero[0]}</span>{' '}<span>{t.hero[1]}</span></h1>
           <p className="hero-support">{t.heroSupport}</p>
         </div>
         <figure className="hero-figure">
@@ -44,7 +44,6 @@ export default async function Home({params}: Props) {
       </div>
       <div className="developer-main">
         <div className="developer-intro">
-          <span className="status-mark">{h.developer.badge}</span>
           <h2>{h.developer.title}</h2>
           <p>{h.developer.body}</p>
         </div>
