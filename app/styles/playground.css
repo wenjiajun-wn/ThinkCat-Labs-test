@@ -77,7 +77,7 @@
 .workbench-actions .button { min-height: var(--control-height); justify-content: center; gap: 8px; padding-inline: 18px; border-radius: var(--radius-sm); font-size: 14px; }
 .workbench-actions .button svg { flex: none; }
 .upload-button:hover { background: rgb(77 93 60 / .04); }
-.run-button { min-width: 132px; font-weight: 600; }
+.workbench-actions .run-button { min-height: var(--button-height); min-width: 132px; font-weight: 600; }
 .run-button:enabled:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
 .run-button:disabled { background: var(--paper-deep); border-color: var(--line); color: var(--muted); cursor: not-allowed; transform: none; }
 .run-button[aria-busy="true"] { background: var(--accent); color: var(--ink); cursor: wait; }

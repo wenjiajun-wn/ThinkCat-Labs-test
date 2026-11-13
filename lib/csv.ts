@@ -31,6 +31,7 @@ function parseRows(source: string) {
   let row: string[] = [];
   let cell = '';
   let quoted = false;
+  let closedQuote = false;
   let line = 1;
   let rowStart = 1;
 
@@ -53,11 +54,16 @@ function parseRows(source: string) {
           i += 1;
         } else {
           quoted = false;
+          closedQuote = true;
         }
       } else {
         cell += char;
       }
       continue;
+    }
+    if (closedQuote && char !== ',' && !lineBreak) {
+      if (char === ' ' || char === '\t') continue;
+      throw new CsvError('parse');
     }
     if (char === '"') {
       if (cell.trim()) throw new CsvError('parse');
@@ -65,6 +71,7 @@ function parseRows(source: string) {
     } else if (char === ',') {
       row.push(cell.trim());
       cell = '';
+      closedQuote = false;
     } else if (lineBreak) {
       if (char === '\r' && source[i + 1] === '\n') {
         i += 1;
@@ -73,6 +80,7 @@ function parseRows(source: string) {
       appendRow();
       row = [];
       cell = '';
+      closedQuote = false;
       rowStart = line;
     } else {
       cell += char;

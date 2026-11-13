@@ -142,3 +142,7 @@ This is a static frontend only.
 - API Docs are a front-end Draft.
 - Model links and contact details remain pending until verified.
 - The build may be `noindex` until rebuilt with the production origin.
+
+## Existing inference gateway
+
+The Nginx file is a static-site example, not a replacement for an existing production vhost. Preserve the deployed `/api/kumo/predict` location and its upstream configuration. The deploy script now rejects incomplete localized exports and invalid Nginx configuration before switching releases. Post-switch HTTP/inference smoke testing and recovery still require the operator; the printed smoke-test command is not an automated health check.

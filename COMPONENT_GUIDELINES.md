@@ -8,7 +8,6 @@ Reuse the shared primitives before adding a new class or component. The visual s
 
 ```tsx
 <PageHead
-  index="03"
   label={copy.eyebrow}
   title={copy.title}
   intro={copy.intro}
@@ -17,7 +16,7 @@ Reuse the shared primitives before adding a new class or component. The visual s
 />
 ```
 
-- Index is a section locator, not decoration.
+- Page intros omit decorative numbering.
 - Title is one H1 only.
 - Body sits under the title. Do not turn the page intro into a large type left column with a competing small right column.
 - `tone="dark"` is used for research and contact.
@@ -26,7 +25,7 @@ Reuse the shared primitives before adding a new class or component. The visual s
 
 - `SiteHeader` is the only sticky navigation surface. It is solid paper, not a translucent glass bar. Desktop navigation uses the shared `15px` navigation token on every localized page, including the homepage.
 - The mobile menu is a dialog: body scroll is locked, main and footer become inert, focus is trapped, Escape closes, and focus returns to the toggle.
-- The homepage ecosystem list is static and wraps by breakpoint. Do not restore automatic marquee motion or duplicate brand groups.
+- Preserve the homepage dark hero composition and continuously scrolling brand strip. Reduced motion uses a static list; do not add hero actions or change the layout.
 - `SiteFooter` contains the index, legal links and the synthetic-data note. Do not add fake emails or social accounts.
 
 ### Shared classes

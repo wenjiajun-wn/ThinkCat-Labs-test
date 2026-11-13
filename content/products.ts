@@ -85,7 +85,7 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
       docs: 'API 文档',
       playground: '在线体验',
       docsAction: '查看接口草案',
-      playgroundAction: '打开本地浏览器演示',
+      playgroundAction: '打开在线体验',
       studyNotes: '技术说明',
       closeNotes: '收起说明',
       modelIndex: '模型索引',
@@ -119,9 +119,9 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
     },
     resources: {
       title: '从模型到开发者入口',
-      body: '接口文档仍是草案，在线体验只运行浏览器本地演示。两者都已明确标注，不会把设计草案描述为已上线服务。',
+      body: '接口文档展示待评审的契约草案。在线体验通过独立的同源接口请求远程 Kumo 推理；是否可用取决于部署环境。',
       docs: '查看接口草案',
-      playground: '打开本地演示',
+      playground: '打开在线体验',
     },
     studies: {
       tabular: {
@@ -203,7 +203,7 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
       docs: 'API Docs',
       playground: 'Playground',
       docsAction: 'Open the draft reference',
-      playgroundAction: 'Open the local browser demo',
+      playgroundAction: 'Open Playground',
       studyNotes: 'Model notes',
       closeNotes: 'Close notes',
       modelIndex: 'Model index',
@@ -237,9 +237,9 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
     },
     resources: {
       title: 'From model study to developer entry',
-      body: 'The API reference is a draft. The Playground runs a local browser demo only. Both are labeled clearly and neither is presented as a live service.',
+      body: 'The API reference describes a draft contract. Playground requests remote Kumo inference through a separate same-origin endpoint; availability depends on the deployment.',
       docs: 'Read the API draft',
-      playground: 'Open the local demo',
+      playground: 'Open Playground',
     },
     studies: {
       tabular: {

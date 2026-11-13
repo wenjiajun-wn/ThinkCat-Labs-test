@@ -54,7 +54,15 @@ process.on('unhandledRejection', async error => {
 function command(method, params = {}) {
   const id = ++sequence;
   return new Promise((resolve, reject) => {
-    pending.set(id, {resolve, reject, method});
+    const timer = setTimeout(() => {
+      pending.delete(id);
+      reject(new Error(`浏览器调试命令超时：${method}`));
+    }, 15_000);
+    pending.set(id, {
+      resolve: value => { clearTimeout(timer); resolve(value); },
+      reject: error => { clearTimeout(timer); reject(error); },
+      method,
+    });
     socket.send(JSON.stringify({id, method, params}));
   });
 }
@@ -91,6 +99,9 @@ function fulfill(requestId, request, currentScenario = scenario) {
   const status = typeof currentScenario === 'number' ? currentScenario : 200;
   const body = currentScenario === 'invalid' ? {unexpected: true}
     : status === 200 ? resultFor(request) : {error: 'controlled QA failure'};
+  if (currentScenario === 'invalid-probabilities') {
+    body.probabilities = body.predictions.map(() => Object.fromEntries(body.classes.map(label => [label, .9])));
+  }
   return command('Fetch.fulfillRequest', {
     requestId,
     responseCode: status,
@@ -116,6 +127,10 @@ socket = new WebSocket(target.webSocketDebuggerUrl);
 await new Promise((resolve, reject) => {
   socket.addEventListener('open', resolve, {once: true});
   socket.addEventListener('error', reject, {once: true});
+});
+socket.addEventListener('close', () => {
+  for (const entry of pending.values()) entry.reject(new Error(`浏览器调试连接已关闭：${entry.method}`));
+  pending.clear();
 });
 socket.addEventListener('message', event => {
   const message = JSON.parse(event.data);
@@ -233,7 +248,7 @@ if (CAPTURE_ONLY) {
     generatedAt: new Date().toISOString(),
     mode: 'capture-only',
     locales: ['zh', 'en'],
-    viewports: ['1440x1000', '768x1024', '390x844'],
+    viewports: ['1440x1000', '768x1024', '390x844', '320x844'],
     workspaceScreenshots: 6,
     consoleErrors,
     pageErrors,
@@ -369,7 +384,7 @@ await waitFor(`Boolean(document.querySelector('.state-success'))`, 'Retry did no
 assert(await evaluate(`document.querySelector('.preview-toolbar h3').textContent.includes('uploaded-sensor-data.csv')`), 'Retry changed the current CSV');
 
 const errorCases = [
-  [504, '超时'], [503, '暂时'], [422, '未接受'], [429, '频繁'], ['invalid', '格式'],
+  [504, '超时'], [503, '暂时'], [422, '未接受'], [429, '频繁'], [413, '过大'], ['invalid', '格式'], ['invalid-probabilities', '格式'],
 ];
 for (const [errorScenario, expected] of errorCases) {
   scenario = errorScenario;
@@ -417,6 +432,15 @@ scenario = 'success';
 await evaluate(`document.querySelector('#result-retry').click()`);
 await waitFor(`Boolean(document.querySelector('.state-success'))`, 'English retry failed');
 await capture('en-desktop-success');
+
+// 窄屏输入表应保持可读行高；允许表格内部滚动，禁止页面横向溢出。
+for (const locale of ['zh', 'en']) {
+  await navigate(locale, 320, 844);
+  assert(await evaluate(`document.documentElement.scrollWidth <= innerWidth + 1`), `${locale}: 320px 页面横向溢出`);
+  assert(await evaluate(`[...document.querySelectorAll('.source-table tbody tr')].every(row => row.getBoundingClientRect().height <= 60)`), `${locale}: 320px 表格行高异常`);
+  assert(await evaluate(`document.querySelector('#run-model').getBoundingClientRect().height >= 48`), `${locale}: 运行按钮触控区域不足`);
+  await capture(`${locale}-narrow-input`);
+}
 
 const responsiveLayouts = [];
 for (const [locale, label, width, height] of [
@@ -504,7 +528,7 @@ const report = {
   states: ['idle', 'loading', 'success', 'error'],
   interactions: ['download', 'retry', 'back-to-data', 'double-submit-guard', 'pagination', 'upload-validation', 'input-pagination', 'drag-upload', 'target-selection', 'restore-sample'],
   locales: ['zh', 'en'],
-  viewports: ['1440x1000', '768x1024', '390x844'],
+  viewports: ['1440x1000', '768x1024', '390x844', '320x844'],
   workspaceScreenshots: 6,
   downloaded,
   inputBaseline,

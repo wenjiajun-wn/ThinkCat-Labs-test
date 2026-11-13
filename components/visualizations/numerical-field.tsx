@@ -1,118 +1,22 @@
 'use client';
-import {useId, useState} from 'react';
+import {useEffect, useRef, useId, useState} from 'react';
 
-const COLS = 64;
-const ROWS = 32;
-
-function surfaceHeight(x: number, y: number) {
-  const ridgeA = Math.exp(-((x - 0.62 + y * 0.18) ** 2) / 0.035);
-  const ridgeB = Math.exp(-((x - 0.24 + y * 0.1) ** 2) / 0.08) * 0.42;
-  const signal = 0.72 + 0.2 * Math.cos(y * 7.2 - x * 5.4);
-  const ripple = 0.055 * Math.sin(x * 26 + y * 13) + 0.035 * Math.cos(y * 31);
-  return (ridgeA * signal + ridgeB * 0.7 + ripple + 0.08);
-}
-
-function project(x: number, y: number, height: number) {
-  const px = 156 + x * 980 + y * 236;
-  const py = 582 + y * 172 - height * 356 - x * 64;
-  return [px, py] as const;
-}
-
-const fieldRows = Array.from({length: ROWS + 1}, (_, row) => {
-  const y = row / ROWS;
-  return Array.from({length: COLS + 1}, (_, col) => {
-    const x = col / COLS;
-    const height = surfaceHeight(x, y);
-    const [px, py] = project(x, y, height);
-    return {px, py, x, y, height};
-  });
-});
-
-const fieldPolygons = fieldRows.slice(0, -1).map((row, index) => {
-  const next = fieldRows[index + 1];
-  return [...row, ...next.slice().reverse()].map(point => `${point.px.toFixed(1)},${point.py.toFixed(1)}`).join(' ');
-});
-
-const ticks = [0, 16, 32, 48, 64] as const;
-const planePoint = (x: number, y: number) => project(x, y, 0).join(',');
-
-export function NumericalField({label}:{label: string}) {
-  const rawId = useId();
-  const id = rawId.replace(/[^a-zA-Z0-9_-]/g, '');
-
-  return <div className="numerical-field-wrap">
-    <svg
-      className="numerical-field"
-      viewBox="106 145 1300 655"
-      role="img"
-      aria-label={label}
-    >
-      <defs>
-        <linearGradient id={id + 'surface'} x1="0" y1="1" x2=".84" y2="0" gradientUnits="objectBoundingBox">
-          <stop stopColor="#142219" />
-          <stop offset=".4" stopColor="#2e4930" />
-          <stop offset=".76" stopColor="#789d52" />
-          <stop offset="1" stopColor="#d7f294" />
-        </linearGradient>
-        <linearGradient id={id + 'edge'} x1="0" y1="0" x2="1" y2="0">
-          <stop stopColor="#5e7c58" stopOpacity=".08" />
-          <stop offset=".53" stopColor="#d9f397" stopOpacity=".83" />
-          <stop offset="1" stopColor="#91ad7c" stopOpacity=".29" />
-        </linearGradient>
-        <radialGradient id={id + 'glow'}>
-          <stop stopColor="#7a9d4e" stopOpacity=".38" />
-          <stop offset="1" stopColor="#101810" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      <ellipse cx="830" cy="470" rx="560" ry="340" fill={`url(#${id}glow)`} />
-      <g className="field-grid" fill="none">
-        {Array.from({length: 17}, (_, index) => {
-          const x = index / 16;
-          return <path key={index} d={`M${planePoint(x, 0)} L${planePoint(x, 1)}`} />;
-        })}
-        {Array.from({length: 9}, (_, index) => {
-          const y = index / 8;
-          return <path key={index} d={`M${planePoint(0, y)} L${planePoint(1, y)}`} />;
-        })}
-      </g>
-      <g className="field-mesh">
-        {fieldPolygons.map((points, index) => <polygon
-          key={`p-${index}`}
-          points={points}
-          fill={`url(#${id}surface)`}
-          opacity={0.20 + index * 0.016}
-        />)}
-        {fieldRows.map((row, index) => <polyline
-          key={`r-${index}`}
-          points={row.map(point => `${point.px.toFixed(1)},${point.py.toFixed(1)}`).join(' ')}
-          fill="none"
-          stroke={`url(#${id}edge)`}
-          strokeWidth={index % 4 === 0 ? 1.8 : 0.7}
-          opacity={index % 4 === 0 ? 0.92 : 0.4}
-        />)}
-        {Array.from({length: 17}, (_, index) => <polyline
-          key={`c-${index}`}
-          points={fieldRows.map(row => {
-            const point = row[index * 4];
-            return `${point.px.toFixed(1)},${point.py.toFixed(1)}`;
-          }).join(' ')}
-          fill="none"
-          stroke="#d9f397"
-          strokeWidth=".55"
-          opacity=".19"
-        />)}
-      </g>
-      <g className="field-axis" aria-hidden="true">
-        <path d={`M${planePoint(0, 1)} L${planePoint(1, 1)}`} stroke="#d9f397" strokeOpacity=".28" />
-        {ticks.map(value => {
-          const [x, y] = project(value / COLS, 1, 0);
-          return <g key={value}>
-            <path d={`M${x} ${y} v10`} stroke="#d9f397" strokeOpacity=".45" />
-            <text x={x} y={y + 34} textAnchor="middle">{String(value).padStart(2, '0')}</text>
-          </g>;
-        })}
-      </g>
-    </svg>
+export function NumericalField({label}: {label: string}) {
+  const terrain = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const host = terrain.current;
+    if (!host) return;
+    let cancelled = false;
+    let dispose: (() => void) | undefined;
+    void import('./terrain-renderer').then(({mountTerrain}) => {
+      if (!cancelled) dispose = mountTerrain(host);
+    }).catch(() => {if (!cancelled) host.dataset.terrainState = 'fallback';});
+    return () => {cancelled = true; dispose?.();};
+  }, []);
+  return <div className="numerical-field-wrap reference-artwork" role="img" aria-label={label}>
+    <div className="reference-artwork-still" aria-hidden="true" />
+    <div className="reference-artwork-text-mask" aria-hidden="true" />
+    <div className="terrain-3d" ref={terrain} aria-hidden="true" />
   </div>;
 }
 
@@ -143,7 +47,8 @@ export function RepresentationMap({
   const id = rawId.replace(/[^a-zA-Z0-9_-]/g, '');
   return <div className="representation-outer">
     <p className="mono-label representation-instruction">{instruction}</p>
-    <svg className="representation-map" viewBox="0 0 1100 580" role="img" aria-label={label}>
+    <div className="representation-scroll" tabIndex={0} role="region" aria-label={label}>
+    <svg className="representation-map" viewBox="0 0 1100 580" role="group" aria-label={label}>
       <defs>
         <linearGradient id={id + 'left'} x1="0" y1="0" x2="1" y2="1">
           <stop stopColor="#d9f397" stopOpacity=".2" />
@@ -246,6 +151,6 @@ export function RepresentationMap({
         </g>;
       })}
       <text x="550" y="550" textAnchor="middle" className="map-caption">{caption}</text>
-    </svg>
+    </svg></div>
   </div>;
 }

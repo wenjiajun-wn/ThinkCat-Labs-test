@@ -14,4 +14,4 @@ The numerical field and representation map became the hero subject. Products rec
 
 ## V5.2
 
-V5.2 replaces the visual layer, not the product truth. It introduces the named design tokens, interactive field probe, three distinct product studies, Playground workspace, developer docs, five industry studies and the browser QA pipeline. See [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), [FRONTEND_ARCHITECTURE.md](FRONTEND_ARCHITECTURE.md) and [V5.2_ACCEPTANCE.md](V5.2_ACCEPTANCE.md).
+V5.2 replaces the visual layer, not the product truth. It introduces the named design tokens, interactive field probe, three distinct product studies, Playground workspace, developer docs, five industry studies and the browser QA pipeline. See [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), [FRONTEND_ARCHITECTURE.md](FRONTEND_ARCHITECTURE.md) and [V5.2_ACCEPTANCE.md](DEVELOPMENT.md).

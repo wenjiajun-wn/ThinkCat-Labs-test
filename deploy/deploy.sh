@@ -27,6 +27,21 @@ run() {
   fi
 }
 
+# Validate the complete static export before changing the active release.
+for required in zh/index.html en/index.html zh/playground/index.html en/playground/index.html; do
+  if [ ! -f "${SOURCE_DIR}/${required}" ]; then
+    echo "ERROR: incomplete export: ${required}" >&2
+    exit 1
+  fi
+done
+if [ ! -d "${SOURCE_DIR}/_next/static" ]; then
+  echo "ERROR: static assets missing" >&2
+  exit 1
+fi
+if command -v nginx >/dev/null 2>&1; then
+  run nginx -t
+fi
+
 echo "Deploying Thinkcat Labs"
 echo "  source:  ${SOURCE_DIR}"
 echo "  release: ${RELEASE_DIR}"

@@ -101,6 +101,8 @@ function decodeResult(body: unknown, dataset: Dataset): KumoResult {
       }
       rowProbabilities[category] = score;
     }
+    const total = Object.values(rowProbabilities).reduce((sum, score) => sum + score, 0);
+    if (Math.abs(total - 1) > 0.01) invalidResponse();
     counts.set(label, (counts.get(label) ?? 0) + 1);
     return {
       index,

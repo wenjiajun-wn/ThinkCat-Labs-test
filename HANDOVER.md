@@ -18,7 +18,7 @@
 - 所有 API 文档明确标注 Draft，不冒充已上线服务。
 - 未新增后端、FastAPI、GPU 模型或推理服务；前端复用既有同源 `POST /api/kumo/predict` 路由，部署环境必须提供该路由。
 
-**当前目录没有 Git 仓库。** 接手后建议第一时间初始化 Git，把当前状态作为基线提交，再进行后续修改。
+**当前目录已纳入 Git，并配置远程仓库。** 接手前先检查分支与工作区；下方初始化示例为历史记录，不应再次执行。
 
 ```bash
 git init
@@ -318,7 +318,7 @@ docs/                   工程补充说明
 - [优化前](screenshots/v5.2/before)
 - [优化后](screenshots/v5.2/after)
 - [QA 报告](screenshots/v5.2/after/qa-report.json)
-- [V5.2 验收报告](V5.2_ACCEPTANCE.md)
+- [V5.2 验收报告](DEVELOPMENT.md)
 
 ### 验收脚本说明
 
@@ -440,7 +440,7 @@ Impeccable detector PASS, 0 findings
 - [中英文规范](I18N_GUIDE.md)
 - [Playground 指南](PLAYGROUND_GUIDE.md)
 - [开发与 QA](DEVELOPMENT.md)
-- [V5.2 验收报告](V5.2_ACCEPTANCE.md)
+- [V5.2 验收报告](DEVELOPMENT.md)
 - [截图索引](screenshots/v5.2/README.md)
 - [中国大陆部署](DEPLOY_CN.md)
 - [内容待办](CONTENT_TODO.md)

@@ -171,10 +171,10 @@
   .product-resource-band { padding-inline: 20px; }
   .preview-toolbar, .preview-pagination { padding-inline: 0; }
   .preview-block .source-table { min-width: 460px; }
-  .preview-block .source-table-sample { min-width: 0; }
+  .preview-block .source-table-sample { min-width: 320px; }
   .preview-block .source-table-sample :is(th, td) { padding-inline: 5px; }
   .preview-block .source-table-sample .source-row-number { width: auto; }
-  .preview-block .source-table-sample :is(th, td)[data-label] { width: auto; }
+  .preview-block .source-table-sample :is(th, td)[data-label] { width: 70px; min-width: 70px; }
   .demo-scroll { max-height: none; }
   .workbench { gap: 28px; padding-block: 20px 48px; }
   .workbench-topbar { align-items: flex-start; flex-direction: column; gap: 6px; padding-bottom: 10px; }
@@ -248,4 +248,9 @@
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .button, .text-link > span { transform: none !important; }
+}
+
+@media (max-width: 620px) {
+  .representation-scroll { overflow-x: auto; max-width: 100%; }
+  .representation-map { min-width: 480px; }
 }

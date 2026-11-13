@@ -114,7 +114,7 @@ A production-origin build was also checked with `NEXT_PUBLIC_SITE_URL=https://th
 ## Assets and licensing
 
 - No font files, images, videos, icon packs, analytics scripts or CDN assets were added.
-- Typography uses local operating-system fonts.
+- Typography uses locally hosted Geist / Geist Mono (OFL), with operating-system Chinese fallbacks.
 - The brand mark, favicon and all charts are original SVG/CSS/code generated in this repository.
 - The favicon is generated from the same original mark. No third-party icon is used.
 - No production dependency was added in V5.2.
@@ -145,7 +145,7 @@ Use the real HTTPS origin before the production build. Do not mix files from dif
 - Added favicon, RSC prefetch aliases and the visual QA script.
 - Updated all design and engineering documentation.
 
-## V5.3 frontend polish
+## V5.3 frontend polish (historical; not current implementation)
 
 - `app/globals.css` loads tokens, layout, shared components, page styles and responsive overrides in cascade order. Edit the relevant file in `app/styles/`. Use `tokens.css` for shared sizes and colors. Legacy routes still load their own stylesheet.
 - The homepage retains its title scale and split composition. Its SVG mesh, floor grid and tick marks use the same projection. Keep the bilingual figure legend in HTML.
@@ -153,9 +153,9 @@ Use the real HTTPS origin before the production build. Do not mix files from dif
 - API Docs retains the Draft banner. The mobile contents stay within reach while scrolling, tables have named keyboard-scrollable regions, and mobile code wraps visually while copying the original text.
 - Run `npm run typecheck`, `npm run lint`, `npm run build`, and `node scripts/check-export.mjs`. Run `node --experimental-strip-types --test scripts/i18n.test.mjs` for language preference tests.
 - Serve `out/` on port 3100 as described above, then run `node scripts/visual-qa.mjs screenshots/v5.3/after`. The optional argument selects the evidence directory. Browser profiles and downloaded CSV files are temporary. The QA report records the download check and screenshot results.
-- See [V5.3 acceptance](V5.3_ACCEPTANCE.md) and the [baseline](screenshots/v5.3/before) and [final](screenshots/v5.3/after) screenshots.
+- See [V5.3 acceptance](DEVELOPMENT.md) and the [baseline](screenshots/v5.3/before) and [final](screenshots/v5.3/after) screenshots.
 
-## V5.4 homepage redesign
+## V5.4 homepage redesign (historical; current homepage layout is locked)
 
 The homepage starts with the Numerical Field and brand marquee, followed by developer links and model applications.
 
@@ -170,3 +170,15 @@ Run `npm run typecheck`, `npm run lint`, `npm run build`, and `node scripts/chec
 - Pointer hover and touch selected all three models and all five industries in both languages. Keyboard Tab updated both selectors. The browser also verified model detail link targets, the locale switch, saved language preference, automatic Chinese locale detection, successful demo inference and rejection of invalid CSV.
 - See the [browser report](screenshots/v5.4/after/qa-report.json) for measurements and error logs.
 
+
+## Current audit follow-up — 2026-11-12
+
+Current behavior is defined by source and PLAYGROUND_GUIDE.md. CSV parsing is local; Run Model sends features and labels to the existing remote Kumo route. Preview is always visible. There are 14 localized routes. Preserve the dark homepage hero and scrolling brand strip. Historical acceptance counts and local-demo descriptions above are not current guarantees.
+
+Run `node --test scripts/data-contract.test.mjs` for CSV and response boundary tests. Probability sums use a 0.01 rounding tolerance; class decisions are not changed. Server retention and availability require separate confirmation.
+
+### Follow-up verification
+
+CSV/response boundary tests: 4 passed; i18n tests: 3 passed. Narrow English preview at 320px: all six rows now 42px (previously 118–171px), primary control 48px. Browser checks: 40 combinations across Products, Playground, Docs and Privacy in both languages at 1440/1024/768/390/320px, no document overflow. 上述浏览器连接阻断已于 2026-11-13 复核解决：沙箱外 Edge 受控回归已通过，包含上传、下载、成功状态及错误恢复，详见 docs/修复验收记录-2026-11-13.md。 Live inference and Linux deployment were not exercised.
+
+A next/dynamic experiment increased rather than reduced referenced scripts and was reverted. Shared-route bundle separation remains deferred pending a measurable solution; no new dependency or route structure was introduced.

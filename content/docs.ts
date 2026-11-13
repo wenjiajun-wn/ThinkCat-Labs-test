@@ -146,7 +146,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
   zh: {
     eyebrow: '开发者 / 接口契约草案',
     title: 'API 文档',
-    intro: '这是面向开发者的接口文档草案，用于讨论请求形状、参数语义与错误边界。没有可用的线上服务，字段与鉴权仍可能变化。',
+    intro: '这是面向开发者的接口文档草案，用于讨论请求形状、参数语义与错误边界。此草案并非在线体验当前使用的 Kumo 接口规范，字段与鉴权仍可能变化。',
     draftBadge: '草案 v0.1',
     draftTitle: '这不是已上线服务。',
     draftBody: '以下端点、参数与错误结构只用于前端文档设计。请不要将其视为稳定契约，也不要向示例主机发送真实数据。',
@@ -167,7 +167,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
       example: '示例',
       status: '状态',
       next: '继续',
-      openPlayground: '打开本地演示',
+      openPlayground: '打开在线体验',
       openModels: '查看模型研究',
       tableHint: '左右滑动查看完整表格',
     },
@@ -269,7 +269,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
     },
     next: {
       title: '接入前检查',
-      body: '在真实 API 可用之前，前端可以先把本地演示的边界做好。以下检查也适用于未来的接口联调。',
+      body: '以下清单用于草案接口的后续评审；在线体验使用独立的远程推理接口，其可用性由部署环境决定。',
       items: [
         '所有演示结果都带 Demo 标记，不与真实推理混淆。',
         '数据来源、状态管理与展示组件保持分离。',
@@ -281,7 +281,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
   en: {
     eyebrow: 'Developer / API contract draft',
     title: 'API documentation',
-    intro: 'This is a developer documentation draft for discussing request shape, parameter semantics and error boundaries. No live service is available, and fields and authentication may change.',
+    intro: 'This is a developer documentation draft for discussing request shape, parameter semantics and error boundaries. This draft is distinct from the Kumo endpoint used by Playground; fields and authentication may change.',
     draftBadge: 'Draft v0.1',
     draftTitle: 'This is not a live service.',
     draftBody: 'The endpoint, parameters and error envelope below exist for frontend documentation design. Do not treat them as a stable contract or send real data to the example host.',
@@ -302,7 +302,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
       example: 'Example',
       status: 'Status',
       next: 'Continue',
-      openPlayground: 'Open the local demo',
+      openPlayground: 'Open Playground',
       openModels: 'Explore model studies',
       tableHint: 'Scroll horizontally to see the full table',
     },
@@ -404,7 +404,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
     },
     next: {
       title: 'Integration checklist',
-      body: 'Before a real API is available, the frontend can define the local demo boundaries. These checks also apply to a future integration.',
+      body: 'These checks apply to future review of this draft contract. Playground uses a separate remote inference endpoint whose availability depends on deployment.',
       items: [
         'Every demo result carries a Demo label and is never presented as real inference.',
         'Data sources, state management and presentation components remain separate.',

@@ -43,7 +43,7 @@ Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin before building. Witho
 - [Internationalization](I18N_GUIDE.md)
 - [Playground guide](PLAYGROUND_GUIDE.md)
 - [Development and visual QA](DEVELOPMENT.md)
-- [V5.2 acceptance](V5.2_ACCEPTANCE.md)
+- [V5.2 acceptance](DEVELOPMENT.md)
 - [Project handover](HANDOVER.md)
 - [Deployment in mainland China](DEPLOY_CN.md)
 - [Termius / Linux deploy scripts](deploy/README.md)

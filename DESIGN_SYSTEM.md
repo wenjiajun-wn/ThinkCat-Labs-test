@@ -1,6 +1,6 @@
 # Thinkcat Labs V5.4 design system
 
-V5.4 applies the Numerical Terrain identity to a redesigned homepage. Runway informs the pacing between media and reading sections. The homepage combines the headline, actions and numerical terrain in one dark hero. The original numerical field, matrices, temporal plots, representation maps and industry studies carry the visual weight.
+V5.4 applies the Numerical Terrain identity to a redesigned homepage. Runway informs the pacing between media and reading sections. The homepage combines the headline and numerical terrain in one dark hero. The original numerical field, matrices, temporal plots, representation maps and industry studies carry the visual weight.
 
 ## Design read
 
@@ -20,8 +20,8 @@ The shared palette and type scale live in `app/styles/tokens.css`. Both the loca
 | `--paper-deep` | `#dfe3d3` | Reserved for deeper light contrast |
 | `--ink` | `#181d17` | Primary text, dark buttons and dark surfaces |
 | `--ink-soft` | `#3f4a3c` | Secondary text on light surfaces |
-| `--muted` | `#5e695a` | Metadata and helper text |
-| `--line` | `#d3d8c6` | Default hairline |
+| `--muted` | `#54604f` | Metadata and helper text |
+| `--line` | `rgb(77 93 60 / .19)` | Default hairline |
 | `--line-strong` | `#b7c0aa` | Definition-list and section rules |
 | `--accent` | `#d9f58f` | Signal lime, primary actions, highlighted data |
 | `--accent-strong` | `#c9ed71` | Focus signal and small active marks |
@@ -29,7 +29,7 @@ The shared palette and type scale live in `app/styles/tokens.css`. Both the loca
 | `--atlas-2` | `#18231a` | Chart field |
 | `--atlas-3` | `#223025` | Dark skeleton and raised dark data |
 | `--dark-line` | `rgba(217,245,143,.16)` | Hairline on dark surfaces |
-| `--dark-muted` | `#b7c4ad` | Secondary text on dark surfaces |
+| `--dark-muted` | `#c2cfb8` | Secondary text on dark surfaces |
 | `--error` | `#a13b2e` | Validation errors only |
 | `--warning` | `#8b641f` | Draft and unavailable states only |
 

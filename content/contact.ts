@@ -37,8 +37,8 @@ export const privacyCopy = {
     meta: '最后更新 / 2026-11',
     sections: [
       {title: '语言偏好', body: '当前浏览器会保存你选择的界面语言，用于下次访问时恢复。这个值存储在 localStorage，不会发送到服务器。'},
-      {title: '演示数据', body: '在线体验中的 CSV 文件只在当前浏览器内读取和计算。文件不上传，结果不会离开设备。演示结果不代表真实模型推理。'},
-      {title: '第三方资源', body: '当前前端不加载第三方字体、分析或广告脚本。若未来引入新的外部资源，我们会在此更新说明。'},
+      {title: '演示数据', body: 'CSV 在浏览器内解析。点击运行模型后，特征和标签会发送至远程推理服务器，预测结果返回当前页面。请勿提交敏感数据；服务端数据保留政策尚待确认。'},
+      {title: '第三方资源', body: '字体由本站本地托管，当前前端不加载外部字体服务、分析或广告脚本。若未来引入新的外部资源，我们会在此更新说明。'},
       {title: '联系', body: '与隐私相关的问题可通过正式联系渠道提出。在联系邮箱配置前，本站不展示虚构邮箱。'},
     ],
     back: '返回首页',
@@ -51,8 +51,8 @@ export const privacyCopy = {
     meta: 'Last updated / 2026-11',
     sections: [
       {title: 'Language preference', body: 'Your browser stores the interface language you select so it can be restored on the next visit. The value lives in localStorage and is not sent to a server.'},
-      {title: 'Demo data', body: 'CSV files in the Playground are read and computed entirely in the current browser. Files are not uploaded, and results do not leave the device. Demo results are not real model inference.'},
-      {title: 'Third-party resources', body: 'The current frontend loads no third-party fonts, analytics or advertising scripts. If external resources are added, this notice will be updated.'},
+      {title: 'Demo data', body: 'CSV files are parsed in your browser. Running the model sends features and labels to a remote inference server and returns predictions to this page. Do not submit sensitive data; server-side retention policies are pending confirmation.'},
+      {title: 'Third-party resources', body: 'Fonts are hosted locally by this site. The frontend loads no external font services, analytics or advertising scripts. If external resources are added, this notice will be updated.'},
       {title: 'Contact', body: 'Privacy questions can be raised through the official contact channel. Until a contact email is configured, no fictional address is shown.'},
     ],
     back: 'Back to home',
