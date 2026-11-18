@@ -41,3 +41,8 @@
 - 实际移动设备、弱网和 CDN 回源测试。
 
 这些字段保持待确认状态，不使用虚构占位链接。
+
+# Kumo 服务连接
+
+上游配置、生产网关定位和更新重启步骤见 [KUMO_CONNECTION.md](docs/KUMO_CONNECTION.md)。启用本地预览代理前需要设置服务端 KUMO_INFERENCE_URL。生产 API 网关配置由实际部署环境提供。
+

@@ -87,49 +87,44 @@ Do not collapse these into one reusable card with a different accent. They are s
 
 These are compact index visuals, not alternate charts. Use them in previews where a full study would overwhelm the hierarchy.
 
-## Playground components
+## Playground 组件（2026-11-16）
+
+保留当前单表布局、原始数据、配色和交互，不恢复旧版独立结果表或分页结构。
 
 ### `components/playground.tsx`
 
-Owns the parsed CSV and file name, selected target column, idle / running / error / success state, active-request guard and download handler. It does not own CSV parsing, response validation or model logic.
+集中管理 CSV、目标列、`exampleId`、请求身份及 idle / running / error / success。上传后的 `exampleId` 必须为 null，不能通过文件名、内容或已有上下文标签启用评估。成功状态包含本次来源、预测及可选评估，不使用独立全局 accuracy 状态。
 
-Retry must call the same run path with the current valid dataset. Back to Data preserves the CSV and focuses Run Model. File or target changes cancel the active run and invalidate stale reads.
+请求开始固定输入和评估版本快照；继续保留 AbortController、文件读取版本、60 秒超时及重复提交保护。上传、切换示例／目标、URL 更换示例、卸载使旧响应失效。重新运行或失败清除旧评估。
 
-### `SourcePanel`
+### `SourcePanel` / `DataTable` / `ScrollTable`
 
-- Drag and drop is an enhancement. The visible file button controls a real file input.
-- Show the file name and row / column counts without repeating the page introduction.
-- Keep Run Model primary, Upload CSV secondary and Restore sample tertiary. Restore also resets the current preview page.
-- Keep format requirements in a lightweight disclosure and the sensitive-data notice visible.
-- Run Model is disabled while running or invalid.
+- 保留真实文件输入及拖放、切换示例、下载与仅看 query 筛选；运行模型是唯一主操作。
+- 所有原始记录在受限滚动容器展示。数字与表头对齐；原始记录号不随筛选变化。
+- 表格只在渲染层按原始零基 index 覆盖 query 的预测和概率，不能改变 `csv.rows`。
+- 内置评估成功后仅在 query 单元格展示真实标签与正确／错误文字。不能只用颜色表示正误，概率名称必须明确。
+- 上传模式不展示任何真实标签、正误状态或准确率。
+- 鼠标拖动单元格空白处滚动；文字仍可选择复制；支持键盘和触屏。仅表格可以横向滚动。
+- 目标选择器仅在自动检测不明确时展示，不恢复独立参数面板。
 
-### `DataTable`
+### `ResultPanel` / `ResultChart`
 
-- Show six preview rows with real source line numbers. Preserve the featured sample lines 2–5 and 20–21 without changing request data.
-- Use the shared 42px row token, tabular numerals, right-aligned numeric cells and restrained target-column highlighting.
-- Keep pagination compact and at the bottom right. Wide datasets use a named, keyboard-focusable horizontal scroll region.
-- Show target selection only when automatic detection is ambiguous.
+- 无结果时不渲染空卡片。运行中只显示真实等待状态，不编造进度。
+- 请求错误显示原有错误类型和重试。有效预测对应的评估元数据出错时保留预测，单独说明评估不可用。
+- 内置评估成功时使用紧凑摘要显示 `correctCount / totalCount` 与一位小数准确率，并说明它只是当前示例留出集的结果，不是完整 TabArena 基准。
+- 上传模式完全不渲染评估区域，不留 N/A、0% 或空白占位。
+- `ResultChart` 只显示真实响应的预测类别数量分布，不是混淆矩阵或准确率分布。
+- 本次未添加或恢复 `PredictionResults` / `PredictionTable` / `PredictionStatus` 旧组件。
 
-### `ResultPanel` and `PredictionStatus`
+### 评估与导出边界
 
-- Keep a compact shared header with the current state, model and Back to Data action.
-- Idle explains the next step without decorative metrics.
-- Loading combines indeterminate native progress with shaped rows and never invents a percentage.
-- Error is inline, names the actual failure and preserves a clear Retry / Back to Data recovery path.
-- Use focus, `aria-busy`, the error alert and the success live region without duplicating announcements.
+`lib/evaluation.ts` 是独立纯函数。完整验证数据集、版本、目标、query 集合、原始记录号、标签类别和一一对应关系后，才输出准确率和逐行对照。不能用 `averageProbability` 代替准确率，不能丢弃异常行后缩小分母。
 
-### `PredictionResults` and `PredictionTable`
+`lib/playground-evaluation.ts` 用输入快照计算版本，并在预测完成后载入独立答案。`content/datasets/evaluation.json` 不进入请求构造器或 CSV 输入。
 
-- Success exposes only actual prediction and context-sample counts, not invented latency or model versions.
-- The table includes global sample numbers, original CSV lines, every input feature, predicted class and predicted-class probability.
-- Paginate ten rows while keeping global sample numbers stable. Export every prediction row.
-- Wide tables stay inside a named, keyboard-focusable horizontal scroll region.
+下载保留当前 `source_row` / `prediction` / `probability` / `probabilities` 字段、列名冲突处理与公式注入防护。只有有效内置评估才追加 `actual_label` / `is_correct`；上传下载不含这些字段。导出原目标仍为空，不将答案塞回原输入。
 
-### `ResultChart`
-
-- Uses only the actual predicted-class distribution.
-- The data table remains the accessible source of exact values.
-- Do not add decorative probability plots or call predicted-class probability "accuracy".
+静态资源中的 Ground Truth 对浏览器可见，不构成标签保密；本轮保障的是答案不进入模型推理请求。数据来源与许可说明见 `/DATASET_NOTICES.txt`。
 
 ## Docs components
 

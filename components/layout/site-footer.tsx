@@ -30,8 +30,6 @@ export function SiteFooter({locale}:{locale:Locale}) {
       {site.legalName && <span>{site.legalName}</span>}
       {site.icp && <a href="https://beian.miit.gov.cn/">{site.icp}</a>}
       {site.policeRecord && <span>{site.policeRecord}</span>}
-      <span className="footer-note">{t.footer.note}</span>
-      <a className="footer-top" href="#main">{locale === 'zh' ? '回到顶部 ↑' : 'Back to top ↑'}</a>
     </div>
   </footer>;
 }

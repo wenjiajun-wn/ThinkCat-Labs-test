@@ -6,7 +6,6 @@ export function mountTerrain(host: HTMLDivElement) {
   if (!hero) throw new Error('Missing Hero');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const small = matchMedia('(max-width: 700px)');
-  const english = document.documentElement.lang.startsWith('en');
   const renderer = new WebGLRenderer({alpha: true, antialias: false, powerPreference: 'low-power'});
   renderer.setPixelRatio(Math.min(devicePixelRatio, small.matches ? 1 : 1.5));
   renderer.domElement.setAttribute('aria-hidden', 'true');
@@ -16,12 +15,12 @@ export function mountTerrain(host: HTMLDivElement) {
   const texture = new TextureLoader().load('/images/hero-reference.png', () => {loaded = true; resize(); sync();}, undefined, () => fallback());
   texture.colorSpace = SRGBColorSpace;
   texture.generateMipmaps = false; texture.minFilter = LinearFilter;
-  const uniforms = {uImage: {value: texture}, uTime: {value: 0}, uMotion: {value: reduced.matches ? 0 : 1}, uReplaceText: {value: english || small.matches ? 1 : 0}, uMobile: {value: small.matches ? 1 : 0}};
+  const uniforms = {uImage: {value: texture}, uTime: {value: 0}, uMotion: {value: reduced.matches ? 0 : 1}, uMobile: {value: small.matches ? 1 : 0}};
   const geometry = new PlaneGeometry(2, 2);
   const material = new ShaderMaterial({uniforms,
     vertexShader: `varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`,
     fragmentShader: `
-      uniform sampler2D uImage;uniform float uTime,uMotion,uReplaceText,uMobile;varying vec2 vUv;
+      uniform sampler2D uImage;uniform float uTime,uMotion,uMobile;varying vec2 vUv;
       vec4 artwork(vec2 uv){return texture2D(uImage,vec2(.012+uv.x*.976,.025+uv.y*.950));}
       void main(){
         vec2 uv=vUv;
@@ -41,10 +40,10 @@ export function mountTerrain(host: HTMLDivElement) {
         float head=fract(uTime*.055+.30);
         float pulse=exp(-pow((uv.x-head)/.035,2.))*signal;
         color+=uMotion*color*vec3(.16,.21,.08)*pulse;
-        // English/mobile use accessible live text; replace only baked Chinese text.
+        // All locales use live HTML text so wider artwork cannot distort the typography.
         float textMask=(1.-smoothstep(.385,.425,uv.x))*smoothstep(.595,.625,uv.y)*(1.-smoothstep(.925,.965,uv.y));
         vec3 background=artwork(vec2(.025,uv.y)).rgb;
-        color=mix(color,background,textMask*uReplaceText);
+        color=mix(color,background,textMask);
         float mobileShade=max(smoothstep(.57,.64,vUv.y),1.-smoothstep(0.,.05,uv.y))*uMobile;
         color=mix(color,vec3(.003,.006,.004),mobileShade);
         gl_FragColor=vec4(color,1.);
@@ -63,7 +62,6 @@ export function mountTerrain(host: HTMLDivElement) {
   const resize = () => {
     if (!alive || failed) return;
     renderer.setSize(host.clientWidth, host.clientHeight, false);
-    uniforms.uReplaceText.value = english || small.matches ? 1 : 0;
     uniforms.uMobile.value = small.matches ? 1 : 0;
     draw();
   };

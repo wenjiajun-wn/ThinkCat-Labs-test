@@ -350,7 +350,7 @@ const downloadsList = await readdir(downloads).catch(() => []);
 const csvDownload = downloadsList.find(name => name.endsWith('.csv'));
 assert(csvDownload, 'Kumo results CSV was not downloaded');
 const csvContent = await readFile(path.join(downloads, csvDownload), 'utf8');
-assert.match(csvContent, /source_row,kumo_prediction,kumo_probability,kumo_probabilities/);
+assert.match(csvContent, /source_row,prediction,probability,probabilities/);
 await uploadCsv('invalid.csv', ['a,label', ...Array.from({length: 19}, (_, i) => (i + 1) + (i % 2 ? ',A' : ',B')), 'not-a-number,'].join('\n'));
 await scrollToSelector('.source-panel', 100);
 await screenshot('zh-playground-error', {resetScroll: false});

@@ -202,7 +202,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
       title: '接口状态',
       body: '文档在描述一种可能的接口形状，而不是一个可以调用的服务。真实契约需要经过模型授权、安全评审与联调后才能发布。',
       facts: [
-        {label: '契约版本', value: 'Draft 0.1', tone: 'warning'},
+        {label: '契约版本', value: '草案 0.1', tone: 'warning'},
         {label: '服务状态', value: '未开放', tone: 'warning'},
         {label: '鉴权方式', value: '待定', tone: 'neutral'},
         {label: '基础地址', value: '{API_HOST}', tone: 'neutral'},
@@ -217,7 +217,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
     },
     auth: {
       title: '鉴权',
-      body: '草案假设使用 Bearer Token，但令牌签发、作用域与轮换策略尚未确认。示例只展示请求头的位置，不包含真实凭证。',
+      body: '草案假设使用访问令牌（Bearer Token），但令牌签发、作用域与轮换策略尚未确认。示例只展示请求头的位置，不包含真实凭证。',
       note: '不要把生产密钥放进前端代码或公开仓库。',
     },
     request: {
@@ -271,7 +271,7 @@ export const docsCopy: {zh: DocsCopy; en: DocsCopy} = {
       title: '接入前检查',
       body: '以下清单用于草案接口的后续评审；在线体验使用独立的远程推理接口，其可用性由部署环境决定。',
       items: [
-        '所有演示结果都带 Demo 标记，不与真实推理混淆。',
+        '所有演示结果均带有演示标记，与真实推理结果区分。',
         '数据来源、状态管理与展示组件保持分离。',
         '错误状态可读，加载状态不阻塞键盘操作。',
         '不在客户端存放生产密钥，也不伪造外部链接。',

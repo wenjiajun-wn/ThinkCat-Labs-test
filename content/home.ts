@@ -58,7 +58,7 @@ export const homeCopy = {
       title: '迈向生产环境的第一步',
       body: 'API 文档展示正在审阅的接口规范。在线体验可用示例数据或自有 CSV 提交表格分类任务，运行时将调用远程推理服务。',
       docs: 'API 规范预览',
-      docsDetail: '接口路由、参数 Schema、响应结构与异常定义',
+      docsDetail: '接口路由、参数结构、响应格式与异常定义',
       playground: '在线体验',
       playgroundDetail: '上传 CSV、运行表格分类并下载预测结果',
       terminalLabel: '终端 / 接口规范',

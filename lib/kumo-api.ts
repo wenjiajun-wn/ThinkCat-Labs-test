@@ -36,7 +36,7 @@ export class KumoError extends Error {
 
 export function buildKumoDataset(csv: ParsedCsv, labelIndex: number):
   {ok: true; data: Dataset} | {ok: false; code: KumoDatasetError} {
-  if (csv.rows.length < 20 || csv.rows.length > 500) return {ok: false, code: 'row-count'};
+  if (csv.rows.length < 20 || csv.rows.length > 10000) return {ok: false, code: 'row-count'};
   const target = csv.headers[labelIndex];
   const features = csv.headers.filter((_, index) => index !== labelIndex);
   if (!target || features.length < 1 || features.length > 30) return {ok: false, code: 'no-features'};

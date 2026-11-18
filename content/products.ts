@@ -5,11 +5,9 @@ type ModelStudy = {
   name: string;
   short: string;
   summary: string;
+  pageSummary?: string;
   focus: string;
   tasks: readonly string[];
-  figure: string;
-  note: string;
-  interaction: string;
   details: readonly {title: string; body: string}[];
   params?: readonly {label: string; value: string}[];
 };
@@ -18,7 +16,6 @@ type ProductsPageCopy = {
   eyebrow: string;
   title: string;
   intro: string;
-  meta: string;
   labels: {
     status: string;
     version: string;
@@ -40,22 +37,6 @@ type ProductsPageCopy = {
     github: string;
     huggingFace: string;
   };
-  tabular: {
-    axisX: string;
-    axisY: string;
-    legend: string;
-    selected: string;
-    reading: string;
-    instruction: string;
-  };
-  time: {
-    observed: string;
-    forecast: string;
-    interval: string;
-    origin: string;
-    scrub: string;
-    horizon: string;
-  };
   unified: {
     tableSide: string;
     seriesSide: string;
@@ -64,15 +45,14 @@ type ProductsPageCopy = {
     pair: string;
   };
   resources: {title: string; body: string; docs: string; playground: string};
-  studies: Record<ModelId, ModelStudy>;
+  studies: Record<ModelId, ModelStudy> & {unified: ModelStudy & {figure: string; note: string; interaction: string}};
 };
 
 export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
   zh: {
-    eyebrow: '模型 / 研究进行中',
+    eyebrow: '模型',
     title: '数值基础模型',
     intro: '从表格到时间序列，再到统一表征。三个研究模型共享同一个问题：模型如何从上下文中读取数值结构。',
-    meta: '三项模型研究 / 全部处于研究阶段 / 合成数据示意',
     labels: {
       status: '状态',
       version: '版本',
@@ -94,22 +74,6 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
       github: 'GitHub',
       huggingFace: 'Hugging Face',
     },
-    tabular: {
-      axisX: '特征列',
-      axisY: '样本行',
-      legend: '关联强度',
-      selected: '选中单元',
-      reading: '该矩阵用于说明列之间的关系如何在不同行中变化。数值为合成示意。',
-      instruction: '使用方向键或指针选择一个单元。',
-    },
-    time: {
-      observed: '已观察',
-      forecast: '预测区间',
-      interval: '不确定性',
-      origin: '预测起点',
-      scrub: '拖动改变预测起点',
-      horizon: '预测视野',
-    },
     unified: {
       tableSide: '表格结构',
       seriesSide: '时间动态',
@@ -129,19 +93,17 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
         name: '表格基础模型',
         short: '从行与列中学习上下文。',
         summary: '研究如何利用当前表格中的标注样本，理解不同类型列之间的关系，并迁移到分类、回归与小样本推断。',
+        pageSummary: '探索跨表格预训练与上下文学习，从少量标注样本中理解特征关系，适应不同数据集的预测任务。',
         focus: '上下文学习 / 异构特征 / 小样本推断',
         tasks: ['分类', '回归', '小样本推断'],
-        figure: '表格特征关联矩阵',
-        note: '合成特征矩阵。悬停或使用键盘选择一个单元以查看局部读数。',
-        interaction: '交互式矩阵',
         details: [
           {title: '研究关注', body: '每一张表都可以被看作自己的上下文。模型需要在不更新参数的前提下，从列名、数值分布和少量标注样本中读取关系。'},
-          {title: '边界', body: '矩阵展示的是合成数据中的局部模式，不代表模型已经学会因果关系。版本、公开权重和服务接口仍待确认。'},
+          {title: '边界', body: '版本、公开权重和服务接口仍待确认。'},
         ],
         params: [
           {label: '输入', value: '带标注与未标注行的数值表格'},
           {label: '读取方式', value: '在当前上下文中比较样本'},
-          {label: '当前阶段', value: '研究 / 合成演示'},
+          {label: '当前阶段', value: '研究'},
         ],
       },
       'time-series': {
@@ -149,19 +111,16 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
         name: '时间序列基础模型',
         short: '在变化中保留不确定性。',
         summary: '研究序列中的周期、趋势与异常变化，并让预测结果以区间而不是单一数字表达。',
+        pageSummary: '探索跨领域时间序列预训练，学习趋势、周期与长期依赖，预测未来变化并刻画不确定性。',
         focus: '长程依赖 / 预测区间 / 异常偏移',
         tasks: ['时序预测', '异常检测'],
-        figure: '时间序列与预测区间示意',
-        note: '合成序列。拖动预测起点，观察历史窗口、预测路径与区间如何一起移动。',
-        interaction: '可拖动预测起点',
         details: [
           {title: '研究关注', body: '时序模型需要同时处理短期波动与更长周期的结构。预测区间是表达不确定性的必要部分，而不是装饰。'},
-          {title: '边界', body: '曲线是合成的教学示意。它不来自真实模型输出，也不构成对任何真实序列的预测。'},
         ],
         params: [
           {label: '输入', value: '有序数值序列与时间上下文'},
           {label: '输出', value: '预测路径与不确定区间'},
-          {label: '当前阶段', value: '研究 / 合成演示'},
+          {label: '当前阶段', value: '研究'},
         ],
       },
       unified: {
@@ -187,10 +146,9 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
     },
   },
   en: {
-    eyebrow: 'Models / Research in progress',
+    eyebrow: 'Models',
     title: 'Numerical foundation models',
     intro: 'From tables to time series, and toward a unified representation. Three studies share one question: how a model reads numerical structure from context.',
-    meta: 'Three model studies / All at research stage / Synthetic data illustrations',
     labels: {
       status: 'Status',
       version: 'Version',
@@ -212,22 +170,6 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
       github: 'GitHub',
       huggingFace: 'Hugging Face',
     },
-    tabular: {
-      axisX: 'Feature column',
-      axisY: 'Sample row',
-      legend: 'Association strength',
-      selected: 'Selected cell',
-      reading: 'This matrix illustrates how relationships between columns can change across rows. Values are synthetic.',
-      instruction: 'Use the arrow keys or a pointer to select a cell.',
-    },
-    time: {
-      observed: 'Observed',
-      forecast: 'Forecast',
-      interval: 'Uncertainty',
-      origin: 'Forecast origin',
-      scrub: 'Drag to move the forecast origin',
-      horizon: 'Forecast horizon',
-    },
     unified: {
       tableSide: 'Table structure',
       seriesSide: 'Temporal dynamics',
@@ -247,19 +189,17 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
         name: 'Tabular Foundation Model',
         short: 'Learn context from rows and columns.',
         summary: 'Studies how labeled examples in the current table can reveal relationships across heterogeneous columns, and transfer to classification, regression and few-shot inference.',
+        pageSummary: 'Exploring cross-table pretraining and in-context learning to understand feature relationships from a small set of labeled examples and adapt to prediction tasks across datasets.',
         focus: 'In-context learning / Heterogeneous features / Few-shot inference',
         tasks: ['Classification', 'Regression', 'Few-shot inference'],
-        figure: 'Tabular feature relationship matrix',
-        note: 'Synthetic feature matrix. Hover or use the keyboard to select a cell and inspect a local reading.',
-        interaction: 'Interactive matrix',
         details: [
           {title: 'Research focus', body: 'Every table can be treated as its own context. The model needs to read relationships from column names, value distributions and a small set of labeled examples without updating its parameters.'},
-          {title: 'Boundaries', body: 'The matrix shows local patterns in synthetic data. It does not show that the model has learned causal structure. Version, public weights and serving access are pending verification.'},
+          {title: 'Boundaries', body: 'Version, public weights and serving access are pending verification.'},
         ],
         params: [
           {label: 'Input', value: 'Numeric table with labeled and unlabeled rows'},
           {label: 'Reading', value: 'Compare samples within the current context'},
-          {label: 'Stage', value: 'Research / synthetic demo'},
+          {label: 'Stage', value: 'Research'},
         ],
       },
       'time-series': {
@@ -267,19 +207,16 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
         name: 'Time Series Foundation Model',
         short: 'Hold uncertainty while things change.',
         summary: 'Studies cycles, trends and anomalous shifts in sequences, and expresses a forecast as an interval rather than a single number.',
+        pageSummary: 'Exploring cross-domain time series pretraining to learn trends, cycles and long-range dependencies, forecast future changes and characterize uncertainty.',
         focus: 'Long-range dependence / Forecast intervals / Anomalous shifts',
         tasks: ['Time series forecasting', 'Anomaly detection'],
-        figure: 'Illustrative time series and forecast interval',
-        note: 'Synthetic sequence. Drag the forecast origin to see how the history window, path and interval move together.',
-        interaction: 'Draggable forecast origin',
         details: [
           {title: 'Research focus', body: 'A temporal model must handle short-term variation together with longer cycles. The forecast interval is a necessary expression of uncertainty, not decoration.'},
-          {title: 'Boundaries', body: 'The curve is a synthetic teaching illustration. It is not model output and does not forecast any real series.'},
         ],
         params: [
           {label: 'Input', value: 'Ordered numeric sequence and temporal context'},
           {label: 'Output', value: 'Forecast path and uncertainty interval'},
-          {label: 'Stage', value: 'Research / synthetic demo'},
+          {label: 'Stage', value: 'Research'},
         ],
       },
       unified: {

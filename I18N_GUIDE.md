@@ -105,3 +105,12 @@ The following must remain visibly pending until verified:
 - any benchmark or client result.
 
 Empty values must not be replaced with plausible-looking placeholders.
+# Playground 字段本地化（2026-11-17）
+
+- 内置示例的中文字段名统一维护在 `lib/column-display.ts`，按数据集 ID 隔离；完整映射与来源见 `docs/中文界面本地化.md`。
+- 数据表与目标列选项统一调用 `getDisplayColumnNames`。英文、未知字段和上传模式返回原始名称；同名显示通过原字段区分，表头 `title` 可核对原名。
+- 这些显示函数不得用于 CSV 解析、模型请求、标签编码、评估或下载；CSV 下载继续使用原有机器可读列名。
+- 语言切换保留查询参数，并通过一次性内存交接保留 Playground 输入及已完成结果。交接有效期 30 秒，不写入 localStorage/sessionStorage；刷新不恢复结果。进行中的请求沿用卸载取消逻辑。
+- 新增示例时同步更新字段映射和来源；无法确认的字段保留原名并记录例外，不能猜测单位或业务含义。
+- 回归测试：`node --test scripts/column-display.test.mjs scripts/data-contract.test.mjs scripts/evaluation.test.mjs scripts/i18n.test.mjs`。
+

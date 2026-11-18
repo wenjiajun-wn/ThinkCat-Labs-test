@@ -1,0 +1,50 @@
+/* Align non-Hero content to the frozen Hero frame in home.css.
+   Mirror its width and 920px breakpoint without changing Hero's own tokens. */
+:root {
+  --site-wide-max: 1560px;
+  --site-gutter: clamp(20px, 4.3vw, 72px);
+  --site-wide-width: min(var(--site-wide-max), 77vw, calc(100% - 2 * var(--site-gutter)));
+  --site-wide-inset: calc((100% - var(--site-wide-width)) / 2);
+}
+
+@media (max-width: 920px) {
+  :root { --site-wide-width: calc(100% - 2 * var(--site-gutter)); }
+}
+
+.site-header-inner { width: var(--site-wide-width); }
+.mobile-navigation { padding-inline: var(--site-gutter); }
+.site-footer { padding-inline: var(--site-wide-inset); }
+
+/* Scope inherited spacing to interior pages; Home and its Hero cannot inherit it. */
+.subpage {
+  --gutter: var(--site-gutter);
+  --content-inset: var(--site-wide-inset);
+}
+
+/* Override legacy mobile padding on outer sections only; retain internal spacing. */
+.subpage :is(.page-head, .study-index, .study, .product-resource-band,
+  .docs-shell, .research-ledger, .research-outputs, .research-close,
+  .contact-page, .contact-close, .privacy-page) {
+  padding-inline: var(--site-wide-inset);
+}
+
+.home-developer { padding-inline: var(--site-wide-inset); }
+.home-applications { width: var(--site-wide-width); }
+
+/* Tables and charts get space; existing form controls and prose keep their measures. */
+.surface-playground .workbench {
+  width: var(--site-wide-width);
+}
+
+/* Expand code/table surfaces without stretching paragraphs or the privacy reading column. */
+.surface-docs .docs-article { max-width: none; }
+.surface-docs :is(.docs-callout, .docs-overview-note) p { max-width: var(--reading-measure); }
+
+/* Keep model-index rules inside the same frame as the model content. */
+.surface-products .page-head { border-bottom: 0; }
+.surface-products .study-index {
+  width: var(--site-wide-width);
+  margin-inline: auto;
+  padding-inline: 0;
+  border-top: 1px solid var(--line);
+}

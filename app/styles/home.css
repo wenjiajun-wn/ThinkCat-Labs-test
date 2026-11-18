@@ -8,6 +8,7 @@
 
 /* Numerical Field */
 .home-first-screen {
+  --hero-frame-width: min(1560px, 77vw, calc(100% - 2 * var(--container-gutter)));
   min-height: calc(100svh - var(--header-height));
   padding-top: clamp(16px, 2.4vw, 32px);
   padding-bottom: clamp(20px, 3vw, 40px);
@@ -17,9 +18,9 @@
   isolation: isolate;
   display: grid;
   align-content: start;
-  width: var(--container-width);
+  width: var(--hero-frame-width);
   aspect-ratio: 2.33;
-  min-height: clamp(500px, 68svh, 680px);
+  min-height: 480px;
   margin: 0 auto;
   padding: clamp(48px, 6vw, 88px) clamp(24px, 4.7vw, 64px) clamp(32px, 4vw, 56px);
   color: var(--paper);
@@ -67,7 +68,7 @@ html[lang="zh-CN"] .hero-copy h1 { line-height: 1.16; letter-spacing: -.025em; }
 .field-axis text { fill: var(--dark-muted); font-family: var(--font-mono); font-size: 26px; }
 .hero-models {
   --marquee-gap: clamp(36px, 5.3vw, 76px);
-  width: var(--container-width);
+  width: var(--hero-frame-width);
   margin: 0 auto;
   padding: 28px 0;
   border-bottom: 1px solid var(--line);
@@ -115,10 +116,9 @@ html[lang="zh-CN"] .hero-copy h1 { line-height: 1.16; letter-spacing: -.025em; }
   padding-block: var(--home-section-space);
   border-bottom: 1px solid var(--line);
 }
-.applications-heading { margin-bottom: clamp(24px, 3vw, 36px); }
+.applications-heading { margin-bottom: var(--space-6); }
 .applications-heading h2, .developer-intro h2 { font-weight: 540; line-height: 1.2; }
-.applications-heading h2 { margin-bottom: 14px; }
-.applications-heading p { max-width: 64ch; margin-bottom: 0; color: var(--ink-soft); line-height: 1.65; }
+.applications-heading h2 { margin-bottom: 0; }
 .applications-grid { display: grid; gap: var(--space-8); }
 .application-card {
   display: grid;
@@ -128,9 +128,15 @@ html[lang="zh-CN"] .hero-copy h1 { line-height: 1.16; letter-spacing: -.025em; }
   padding-top: var(--space-8);
   border-top: 1px solid var(--line);
 }
-.application-card:nth-child(even) .application-figure { order: 1; }
 .application-figure { margin: 0; background: var(--atlas); border-radius: var(--radius-md); overflow: hidden; }
 .application-figure svg { display: block; width: 100%; height: auto; max-height: 300px; }
+.application-figure-reference { position: relative; width: 100%; }
+.application-figure-reference::before { content: ''; display: block; aspect-ratio: 680 / 430; max-height: 300px; }
+.application-figure .application-reference-image { position: absolute; top: 50%; left: 50%; display: block; width: 106%; max-width: none; height: auto; transform: translate(-50%, -50%); clip-path: inset(2.5%); }
+.application-figure-steel { width: 100%; }
+.application-figure-steel .application-reference-image { max-width: 630px; }
+.application-figure-mine { width: 100%; }
+.application-figure-mine .application-reference-image { width: 100%; max-width: calc(300px * 1672 / 941); clip-path: none; }
 .application-figure figcaption {
   padding: var(--space-2) var(--space-4);
   border-top: 1px solid var(--dark-line);
@@ -138,14 +144,35 @@ html[lang="zh-CN"] .hero-copy h1 { line-height: 1.16; letter-spacing: -.025em; }
   font-size: var(--annotation-size);
 }
 .application-copy { max-width: var(--reading-measure); }
-.application-copy h3 { font-size: var(--section-size); margin-bottom: var(--space-3); }
+.application-copy h3, .application-copy h4 { font-size: var(--section-size); margin: 0 0 var(--space-3); font-weight: 540; line-height: 1.25; letter-spacing: -.02em; }
 .application-copy p { margin-bottom: var(--space-2); color: var(--ink-soft); }
 .application-copy .text-link { font-size: var(--body-size); }
+
+/* A bounded gallery keeps all seven examples within one browsing area. */
+.applications-viewport {
+  max-height: min(720px, 72svh);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--muted) var(--paper-raised);
+  padding: 0 20px 20px 0;
+  border-block: 1px solid var(--line);
+}
+.applications-viewport:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 5px; }
+.applications-viewport > .applications-grid > .application-card:first-child { padding-top: var(--space-6); border-top: 0; }
+.application-generated-figure img { display: block; width: 100%; height: auto; }
+.home-applications .application-copy .application-description { margin-bottom: var(--space-5); line-height: var(--body-leading); text-wrap: pretty; }
+.home-applications .button { justify-content: center; padding-inline: var(--space-5); }
+.home-applications .application-domain { display: block; margin-bottom: var(--space-3); color: var(--muted); font-size: var(--helper-size); font-weight: var(--weight-medium); line-height: 1.5; }
+@media (max-width: 700px) {
+  .applications-heading { margin-bottom: var(--space-5); }
+  .applications-viewport > .applications-grid > .application-card:first-child { padding-top: var(--space-4); }
+  .applications-viewport { max-height: 72svh; padding-right: 12px; }
+}
 
 @media (max-width: 700px) {
   .applications-grid { gap: var(--space-6); }
   .application-card { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); padding-top: var(--space-6); }
-  .application-card:nth-child(even) .application-figure { order: 0; }
 }
 
 /* Model research and industry applications */
@@ -306,6 +333,7 @@ html[lang="zh-CN"] .hero-copy h1 { line-height: 1.16; letter-spacing: -.025em; }
 }
 
 @media (max-width: 920px) {
+  .home-first-screen { --hero-frame-width: calc(100% - 2 * var(--container-gutter)); }
   .hero-copy { max-width: 560px; }
   .hero-figure .numerical-field { inset: 38% 0 0 12%; width: 88%; height: 62%; }
   .home-study-inner { grid-template-columns: minmax(0, 1fr); gap: 24px; }
@@ -347,16 +375,11 @@ html[lang="zh-CN"] .hero-copy h1 { line-height: 1.16; letter-spacing: -.025em; }
   position: absolute; inset: 0;
   background: url('/images/hero-reference.png') center / 102.2% 104.9% no-repeat;
 }
-.reference-artwork-text-mask { display: none; }
-html[lang="en"] .reference-artwork-text-mask {
+.reference-artwork-text-mask {
   display: block; position: absolute; left: 0; top: 3.5%; width: 43%; height: 37%;
   background: #080f0a; box-shadow: 0 0 18px 12px #080f0a;
 }
-@media (min-width: 701px) {
-  html[lang="zh-CN"] .home-hero:has(.reference-artwork) .hero-copy { opacity: 0; }
-}
 @media (max-width: 700px) {
   .home-hero:has(.reference-artwork)::before { background: linear-gradient(#080f0a 0%, #080f0a 37%, transparent 47%); }
-  .reference-artwork-text-mask { display: block; position: absolute; inset: 0 0 59%; background: #080f0a; }
-  html[lang="en"] .reference-artwork-text-mask { inset: 0 0 59%; width: auto; height: auto; box-shadow: none; }
+  .reference-artwork-text-mask { inset: 0 0 59%; width: auto; height: auto; box-shadow: none; }
 }

@@ -1,3 +1,4 @@
+import {CodeSurface} from '../../components/ui/primitives';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {ModelApplications} from '../../components/home/model-applications';
@@ -47,10 +48,10 @@ export default async function Home({params}: Props) {
           <h2>{h.developer.title}</h2>
           <p>{h.developer.body}</p>
         </div>
-        <div className="developer-code" aria-label={h.developer.terminalLabel}>
+        <CodeSurface className="developer-code" aria-label={h.developer.terminalLabel}>
           <div className="code-top"><span className="mono-label">{h.developer.terminalLabel}</span><span className="mono-label">{h.developer.draftLabel}</span></div>
           <pre><code>{h.developer.code}</code></pre>
-        </div>
+        </CodeSurface>
         <div className="developer-entries">
           <Link href={localized(locale, 'docs')}>
             <span className="mono-label">{h.developer.docs}</span>

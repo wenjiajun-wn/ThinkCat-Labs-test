@@ -2,11 +2,14 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import {kumoEndpoint, connectionFailure, logKumoFailure} from './kumo-connection.mjs';
 const root = path.resolve('out');
 const host = '127.0.0.1';
 const port = Number(process.env.THINKCAT_PREVIEW_PORT ?? 3000);
 const kumoEnabled = process.argv.includes('--kumo');
-const kumoEndpoint = 'https://thinkcat-labs.ai-calendar.xyz/api/kumo/predict';
+const upstreamEndpoint = kumoEnabled
+  ? kumoEndpoint(process.env.KUMO_INFERENCE_URL, `http://${host}:${port}`)
+  : undefined;
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.xml': 'application/xml', '.txt': 'text/plain', '.json': 'application/json', '.ico': 'image/x-icon' };
 
 async function forwardKumo(req, res) {
@@ -19,7 +22,8 @@ async function forwardKumo(req, res) {
     return res.writeHead(415).end();
   }
 
-  const timeout = AbortSignal.timeout(55_000);
+  const timeout = AbortSignal.timeout(125_000);
+  const started = Date.now();
   try {
     const chunks = [];
     let bytes = 0;
@@ -31,7 +35,7 @@ async function forwardKumo(req, res) {
       }
       chunks.push(chunk);
     }
-    const upstream = await fetch(kumoEndpoint, {
+    const upstream = await fetch(upstreamEndpoint, {
       method: 'POST',
       headers: {'Content-Type': 'application/json', Accept: 'application/json'},
       body: Buffer.concat(chunks),
@@ -39,13 +43,18 @@ async function forwardKumo(req, res) {
       signal: timeout,
     });
     const body = Buffer.from(await upstream.arrayBuffer());
+    if (!upstream.ok) {
+      logKumoFailure({kind: 'upstream_http_error', status: upstream.status, durationMs: Date.now() - started});
+    }
     res.writeHead(upstream.status, {
       'Content-Type': upstream.headers.get('content-type') ?? 'application/json',
       'Cache-Control': 'no-store',
       'X-Content-Type-Options': 'nosniff',
     }).end(body);
-  } catch {
-    res.writeHead(timeout.aborted ? 504 : 502).end();
+  } catch (error) {
+    const failure = connectionFailure(error, timeout.aborted);
+    logKumoFailure({...failure, durationMs: Date.now() - started});
+    res.writeHead(failure.kind === 'timeout' ? 504 : 502).end();
   }
 }
 

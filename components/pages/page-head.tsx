@@ -2,7 +2,7 @@ type Props = {
   label: string;
   title: string;
   intro: string;
-  meta: string;
+  meta?: string;
   tone?: 'paper' | 'dark';
 };
 
@@ -15,7 +15,7 @@ export function PageHead({label, title, intro, meta, tone = 'paper'}: Props) {
       <h1>{title}</h1>
       <div className="page-head-foot">
         <p>{intro}</p>
-        <p className="mono-label page-head-meta">{meta}</p>
+        {meta && <p className="mono-label page-head-meta">{meta}</p>}
       </div>
     </div>
   </header>;

@@ -58,7 +58,7 @@ export function TabularMatrix({
     </div>
     <div className="matrix-x-label mono-label">{axisX} →</div>
     <div className="matrix-shell">
-      <div className="matrix-y-label mono-label">{axisY} ↓</div>
+      <div className="matrix-y-label mono-label">{axisY} <span className="matrix-y-arrow" aria-hidden="true">→</span></div>
       <div className="matrix-table-scroll" role="region" aria-label={label}>
         <table className="tabular-table" onKeyDown={event => {
           if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return;
@@ -143,6 +143,7 @@ export function TimeSeriesStudy({
       <span><i data-kind="forecast" />{forecastLabel}</span>
       <span><i data-kind="band" />{intervalLabel}</span>
     </div>
+    <div className="time-plot-scroll" role="region" aria-label={label} tabIndex={0}>
     <svg className="time-plot" viewBox="0 0 1050 390" role="img" aria-label={label}>
       <defs>
         <linearGradient id={id + 'band'} x1="0" y1="0" x2="0" y2="1">
@@ -166,14 +167,14 @@ export function TimeSeriesStudy({
       <line x1={originX} x2={originX} y1="38" y2="330" stroke="#d9f397" strokeOpacity=".6" strokeDasharray="2 6" />
       <g className="time-origin" style={{transform: `translateX(${originX}px)`}}>
         <circle cx="0" cy="330" r="4" fill="#d9f397" />
-        <rect x="-52" y="344" width="104" height="26" rx="2" fill="#d9f397" />
+        <rect x="-74" y="344" width="148" height="26" rx="2" fill="#d9f397" />
         <text x="0" y="361" textAnchor="middle">{originLabel} {String(origin).padStart(2, '0')}</text>
       </g>
       <g className="time-axis">
         {Array.from({length: 7}, (_, index) => <text key={index} x={22 + index * 168} y="382">{String(index * 16).padStart(2, '0')}</text>)}
       </g>
       {[52, 116, 180, 244, 308].map(y => <text key={y} x="1036" y={y + 4} textAnchor="end">{Math.round((330 - y) / 2.4)}</text>)}
-    </svg>
+    </svg></div>
     <div className="time-controls">
       <label>
         <span className="mono-label">{scrubLabel}</span>

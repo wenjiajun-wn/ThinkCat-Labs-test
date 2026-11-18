@@ -30,7 +30,6 @@ export const copy = {
     footer: {
       index: '站点索引',
       legal: '法律',
-      note: '所有图形均为原创合成示意，不代表模型输出或客户数据。',
     },
   },
   en: {
@@ -64,7 +63,6 @@ export const copy = {
     footer: {
       index: 'Index',
       legal: 'Legal',
-      note: 'All graphics are original synthetic illustrations. They do not represent model output or client data.',
     },
   },
 } as const;

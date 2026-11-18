@@ -1,8 +1,5 @@
 /* Responsive */
 @media (max-width: 1180px) {
-  .study-tabular { column-gap: 28px; }
-  .study-tabular-intro { grid-column: 1 / 6; }
-  .study-tabular-figure { grid-column: 6 / 13; }
   .study-bottom { grid-template-columns: 1fr 1fr; }
   .study-bottom .study-actions { grid-column: 1 / -1; flex-direction: row; gap: 0 24px; }
   .study-bottom .study-action { flex: 1; }
@@ -26,15 +23,7 @@
   .mobile-arrow { font-family: var(--font-mono); font-size: var(--annotation-size); color: var(--muted); }
   .mobile-navigation-foot { margin-top: auto; padding-top: 24px; border-top: 1px solid var(--line); max-width: 720px; width: 100%; }
   .mobile-navigation-foot .mono-label { max-width: 160px; font-size: var(--annotation-size); }
-  .study-tabular { display: block; }
-  .study-tabular-intro { margin-bottom: 30px; }
-  .study-tabular-figure { margin-top: 0; }
   .study-bottom { margin-top: 30px; }
-  .study-time-head { grid-template-columns: 1fr 1fr; }
-  .study-time-head > div:first-child { grid-column: 1; }
-  .study-time-head > .study-lede { grid-column: 2; }
-  .study-time-meta { grid-column: 1 / -1; flex-direction: row; align-items: center; }
-  .study-time-foot { grid-template-columns: 1fr 1fr; }
   .study-unified-head { grid-template-columns: 1fr 1fr; }
   .study-unified-head > div:first-child { grid-column: 1; }
   .study-unified-head > .study-lede { grid-column: 2; }
@@ -47,13 +36,8 @@
   .page-head-foot { grid-template-columns: 1fr; gap: 16px; }
   .page-head-meta { margin-left: 0; text-align: left; }
   .study-index { display: flex; overflow-x: auto; padding-inline: var(--gutter); }
-  .study-index a { flex: 0 0 auto; min-width: 180px; padding-inline: 16px; }
-  .study-index a:first-child { padding-left: 0; }
-  .study-time-head { display: block; }
-  .study-time-head > .study-lede { margin: 14px 0 18px; }
-  .study-time-meta { justify-content: space-between; margin-top: 18px; }
-  .study-time-foot { display: block; }
-  .study-time-foot .model-details { margin-top: 24px; }
+  .study-index button { flex: 0 0 auto; min-width: 180px; padding-inline: 16px; }
+  .study-index button:first-child { padding-left: 0; }
   .study-unified-head { display: block; }
   .study-unified-head > .study-lede { margin: 14px 0 20px; }
   .study-unified-head > .model-facts { display: block; margin-top: 20px; }
@@ -121,7 +105,6 @@
   .privacy-rail nav { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; }
   .footer-primary { grid-template-columns: 1fr 1fr; }
   .footer-brand { grid-column: 1 / -1; }
-  .footer-note { text-align: left; margin-left: 0; }
 }
 @media (max-width: 620px) {
   .brand { font-size: 20px; }
@@ -136,12 +119,11 @@
   .page-head-main h1 { max-width: 100%; }
   .page-head-foot { padding-top: 18px; }
   .study-index { padding-inline: 20px; }
-  .study-index a { min-width: 0; flex: 1 1 0; padding: 0 8px; gap: 5px; font-size: var(--annotation-size); justify-content: flex-start; }
-  .study-index a:first-child { padding-left: 0; }
-  .study-index a .mono-label:first-child { font-size: var(--annotation-size); }
-  .study-index a .mono-label:last-child { display: none; }
+  .study-index button { min-width: 0; flex: 1 1 0; padding: 0 8px; gap: 5px; font-size: var(--annotation-size); justify-content: flex-start; }
+  .study-index button:first-child { padding-left: 0; }
+  .study-index button .mono-label:first-child { font-size: var(--annotation-size); }
   .study { padding-inline: 20px; }
-  .study-tabular-intro h2, .study-time-head h2, .study-unified-head h2 { font-size: 30px; }
+  .study-unified-head h2 { font-size: 30px; }
   .matrix-readout strong { font-size: 16px; }
   .tabular-matrix-head { display: block; }
   .matrix-readout { text-align: left; margin-top: 12px; }
@@ -153,7 +135,6 @@
   .matrix-foot { grid-template-columns: 1fr; gap: 12px; }
   .matrix-legend > div { gap: 1px; }
   .matrix-legend i { width: 24px; }
-  .study-time-head { display: block; }
   .time-study { padding: 12px; }
   .time-controls { grid-template-columns: 1fr; gap: 14px; }
   .time-meta { justify-content: space-between; }
@@ -169,7 +150,7 @@
   .representation-map .map-caption { display: none; }
   .representation-map .map-link-label { font-size: 20px; }
   .product-resource-band { padding-inline: 20px; }
-  .preview-toolbar, .preview-pagination { padding-inline: 0; }
+  .preview-toolbar { padding-inline: 0; }
   .preview-block .source-table { min-width: 460px; }
   .preview-block .source-table-sample { min-width: 320px; }
   .preview-block .source-table-sample :is(th, td) { padding-inline: 5px; }
@@ -177,18 +158,13 @@
   .preview-block .source-table-sample :is(th, td)[data-label] { width: 70px; min-width: 70px; }
   .demo-scroll { max-height: none; }
   .workbench { gap: 28px; padding-block: 20px 48px; }
-  .workbench-topbar { align-items: flex-start; flex-direction: column; gap: 6px; padding-bottom: 10px; }
   .workbench-model { justify-content: flex-start; text-align: left; }
   .workbench-actions { align-items: stretch; flex-direction: column; }
   .workbench-actions :is(.run-button, .upload-button) { width: 100%; }
-  .source-restore { align-self: flex-start; }
-  .preview-pagination-actions { width: 100%; justify-content: flex-end; }
-  .preview-pagination button, .result-pagination button { min-height: 44px; }
   .result-header { align-items: center; gap: 12px; margin-bottom: 16px; }
   .result-header .result-back { width: auto; }
   .result-panel h2 { font-size: 20px; }
   .result-summary { align-items: flex-start; flex-direction: column; }
-  .result-panel .result-table { min-width: 680px; }
   .result-error { padding: 14px; }
   .result-error-actions { grid-column: 1 / -1; flex-direction: column; }
   .result-error-actions .button { width: 100%; }
@@ -229,19 +205,15 @@
   .footer-primary { grid-template-columns: 1fr; gap: 28px; }
   .footer-brand { grid-column: 1; }
   .footer-legal { flex-direction: column; align-items: flex-start; }
-  .footer-note { flex-basis: auto; }
 }
 @media (pointer: coarse) {
   .text-link, .study-action, .product-resource-links a, .docs-next-links a,
-  .source-help summary, .preview-pagination button, .result-pagination button,
   .docs-sidebar a, .docs-toc a, .docs-mobile-nav nav a, .privacy-rail a,
   .chart-slider input, .retail-controls input, .time-controls input {
     min-height: 44px;
   }
   .site-footer a { display: inline-flex; align-items: center; min-height: 44px; }
   .matrix-cell { min-height: 44px; }
-  .preview-pagination-actions, .result-pagination-actions { gap: 8px; }
-  .preview-pagination button, .result-pagination button { min-width: 44px; }
   .model-marquee-group li > span { min-height: 36px; }
 }
 @media (prefers-reduced-motion: reduce) {

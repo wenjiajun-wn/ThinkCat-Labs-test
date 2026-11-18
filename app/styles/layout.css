@@ -273,8 +273,6 @@ main { display: block; }
   font-size: var(--annotation-size);
   color: var(--muted);
 }
-.footer-note { flex: 1 1 300px; margin-left: auto; text-align: right; font-family: var(--font-mono); font-size: var(--annotation-size); letter-spacing: .04em; }
-.footer-top { color: var(--ink-soft); white-space: nowrap; }
 
 /* Shared page intro */
 .page-head {

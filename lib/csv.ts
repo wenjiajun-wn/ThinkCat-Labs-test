@@ -1,4 +1,16 @@
-export const csvLimits = {bytes: 1024 * 1024, rows: 500, columns: 31} as const;
+export const csvLimits = {bytes: 1024 * 1024, rows: 10000, columns: 31} as const;
+
+/** Presentation/export names only; preserve the original headers used for inference. */
+export function displayCsvHeaders(headers: readonly string[]): string[] {
+  const used = new Set<string>();
+  return headers.map(header => {
+    const name = header.replace(/^kumo_(prediction|probability|probabilities)(?=_\d+$|$)/, '$1');
+    let unique = name;
+    for (let suffix = 2; used.has(unique); suffix += 1) unique = `${name}_${suffix}`;
+    used.add(unique);
+    return unique;
+  });
+}
 
 export type ParsedCsv = {
   headers: string[];

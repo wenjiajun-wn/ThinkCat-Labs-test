@@ -17,7 +17,10 @@ for (const locale of locales) {
       assert.match(visible, /在线体验/, route);
       assert.doesNotMatch(visible, /\bPlayground\b/, route);
     }
-    for (const [,href] of html.matchAll(/href="(\/(?:zh|en)\/[^"#]*)"/g)) assert(existsSync('out'+href+'index.html'), href);
+    for (const [,href] of html.matchAll(/href="(\/(?:zh|en)\/[^"#]*)"/g)) {
+      const pathname = new URL(href, 'http://localhost').pathname;
+      assert(existsSync('out'+pathname+'index.html'), href);
+    }
     if (origin) {
       assert(html.includes('rel="canonical" href="'+origin+route+'"'), route);
       for (const [language, target] of Object.entries({

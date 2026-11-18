@@ -37,7 +37,7 @@ export default async function LocaleLayout({children,params}:{children:React.Rea
         nav={nav}
         menuLabel={t.menu}
         closeLabel={t.close}
-        languageLabel={locale === 'zh' ? 'Switch to English' : '切换到简体中文'}
+        languageLabel={locale === 'zh' ? '切换到英文' : 'Switch to Simplified Chinese'}
         skipLabel={t.skip}
       />
       {children}

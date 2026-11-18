@@ -1,0 +1,170 @@
+Thinkcat Labs Playground dataset notices
+Subsets of the user-provided TabArena package. Source fields preserved; target labels withheld for evaluation.
+
+OpenML 46906: anneal
+Source: https://www.openml.org/d/46906
+License: CC BY 4.0
+Citation: 'Annealing.' UCI Machine Learning Repository,  https://doi.org/10.24432/C5RW2F.
+Original source: https://doi.org/10.24432/C5RW2F
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 35; last records per class withheld, 10 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46910: bank-marketing
+Source: https://www.openml.org/d/46910
+License: CC BY 4.0
+Citation: Moro, Sergio, Paulo Cortez, and Paulo Rita. 'A data-driven approach to predict the success of bank telemarketing.' Decision Support Systems 62 (2014): 22-31. https://doi.org/10.1016/j.dss.2014.03.001
+Original source: https://doi.org/10.24432/C5K306
+Changes: First 10000 complete native numeric records in source order; last 50 eligible labels withheld, preserving at least two support rows per class. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No encoding or imputation.
+
+OpenML 46913: blood-transfusion-service-center
+Source: https://www.openml.org/d/46913
+License: CC BY 4.0
+Citation: Yeh, I-Cheng, King-Jang Yang, and Tao-Ming Ting. 'Knowledge discovery on RFM model using Bernoulli sequence.' Expert Systems with applications 36.3 (2009): 5866-5871. https://doi.org/10.1016/j.eswa.2008.07.018
+Original source: https://doi.org/10.24432/C5GS39
+Changes: First 20 finite numeric-feature records per class in source order; first 16 labeled, last 4 target values withheld. No feature values changed.
+Feature selection: 
+
+OpenML 46915: churn
+Source: https://www.openml.org/d/46915
+License: MIT License
+Citation: Marcoulides, George A. 'Discovering Knowledge in Data: an Introduction to Data Mining.' (2005): 1465-1465. https://www.tandfonline.com/doi/abs/10.1198/jasa.2005.s61
+Original source: See Description
+Changes: First 5000 complete native numeric records in source order; last 50 eligible labels withheld, preserving at least two support rows per class. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No encoding or imputation.
+
+OpenML 46918: credit-g
+Source: https://www.openml.org/d/46918
+License: CC BY 4.0
+Citation: Hofmann, H. (1994). Statlog (German Credit Data) [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5NC77.
+Original source: https://doi.org/10.24432/C5NC77
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 120; last records per class withheld, 12 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46919: credit_card_clients_default
+Source: https://www.openml.org/d/46919
+License: CC BY 4.0
+Citation: Yeh, I-Cheng, and Che-hui Lien. 'The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients.' Expert systems with applications 36.2 (2009): 2473-2480. https://doi.org/10.1016/j.eswa.2007.12.020
+Original source: https://doi.org/10.24432/C55S3H
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 260; last records per class withheld, 26 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46920: customer_satisfaction_in_airline
+Source: https://www.openml.org/d/46920
+License: CC0: Public Domain
+Citation: Kaggle User Yakhyojon. 'Customer Satisfaction in Airline.' Kaggle, 2023, https://www.kaggle.com/datasets/yakhyojon/customer-satisfaction-in-airline.
+Original source: https://www.kaggle.com/datasets/yakhyojon/customer-satisfaction-in-airline
+Changes: First 4000 complete native numeric records in source order; last 50 eligible labels withheld, preserving at least two support rows per class. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No encoding or imputation.
+
+OpenML 46921: diabetes
+Source: https://www.openml.org/d/46921
+License: CC0: Public Domain
+Citation: Smith, Jack W., et al. 'Using the ADAP learning algorithm to forecast the onset of diabetes mellitus.' Proceedings of the annual symposium on computer application in medical care. 1988. https://pmc.ncbi.nlm.nih.gov/articles/PMC2245318/
+Original source: See Description
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 150; last records per class withheld, 15 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46924: E-CommereShippingData
+Source: https://www.openml.org/d/46924
+License: Public Domain
+Citation: Prachi Gopalani. 'E-Commerce Shipping Data.' Kaggle, 2021, https://www.kaggle.com/datasets/prachi13/customer-analytics.
+Original source: https://www.kaggle.com/datasets/prachi13/customer-analytics
+Changes: First 8000 complete native numeric records in source order; last 50 eligible labels withheld, preserving at least two support rows per class. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No encoding or imputation.
+
+OpenML 46927: Fitness_Club
+Source: https://www.openml.org/d/46927
+License: Public Domain
+Citation: Kaggle User Ddosad. 'Fitness Club Dataset for ML Classification.' Kaggle, 2023, https://www.kaggle.com/datasets/ddosad/datacamps-data-science-associate-certification.
+Original source: https://www.kaggle.com/datasets/ddosad/datacamps-data-science-associate-certification
+Changes: First 1480 complete native numeric records in source order; last 50 eligible labels withheld, preserving at least two support rows per class. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No encoding or imputation.
+
+OpenML 46930: hazelnut-spread-contaminant-detection
+Source: https://www.openml.org/d/46930
+License: CC BY-SA
+Citation: Ricci, Marco, et al. 'Machine-learning-based microwave sensing: A case study for the food industry.' IEEE Journal on Emerging and Selected Topics in Circuits and Systems 11.3 (2021): 503-514. https://doi.org/10.1109/JETCAS.2021.3097699; Urbinati, Luca, et al. 'A machine-learning based microwave sensing approach to food contaminant detection.' 2020 IEEE International Symposium on Circuits and Systems (ISCAS). IEEE, 2020. https://doi.org/10.1109/ISCAS45731.2020.9181293
+Original source: https://www.openml.org/search?type=data&status=active&id=45538
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 480; last records per class withheld, 48 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46932: heloc
+Source: https://www.openml.org/d/46932
+License: Public
+Citation: Kaggle User Averkiyoliabev. 'Home Equity Line of Credit (HELOC).' Kaggle, 2021, https://www.kaggle.com/datasets/averkiyoliabev/home-equity-line-of-creditheloc.
+Original source: https://www.kaggle.com/datasets/averkiyoliabev/home-equity-line-of-creditheloc
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 400; last records per class withheld, 40 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46935: HR_Analytics_Job_Change_of_Data_Scientists
+Source: https://www.openml.org/d/46935
+License: CC0: Public Domain
+Citation: Kaggle User Arashnic. 'HR Analytics: Job Change of Data Scientists.' Kaggle, 2021, https://www.kaggle.com/datasets/arashnic/hr-analytics-job-change-of-data-scientists.
+Original source: https://www.kaggle.com/datasets/arashnic/hr-analytics-job-change-of-data-scientists
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 30; last records per class withheld, 4 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46938: Is-this-a-good-customer
+Source: https://www.openml.org/d/46938
+License: CC0: Public Domain
+Citation: Kaggle User Podsyp. 'Is This a Good Customer?' Kaggle, 2020, https://www.kaggle.com/datasets/podsyp/is-this-a-good-customer.
+Original source: https://www.kaggle.com/datasets/podsyp/is-this-a-good-customer
+Changes: First 1723 complete native numeric records in source order; last 50 eligible labels withheld, preserving at least two support rows per class. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No encoding or imputation.
+
+OpenML 46940: Marketing_Campaign
+Source: https://www.openml.org/d/46940
+License: Public
+Citation: Saldanha, Rodolfo. 'Marketing Campaign.' Kaggle, 2020, https://www.kaggle.com/datasets/rodsaldanha/arketing-campaign.
+Original source: https://www.kaggle.com/datasets/rodsaldanha/arketing-campaign
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 240; last records per class withheld, 24 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46941: maternal_health_risk
+Source: https://www.openml.org/d/46941
+License: CC BY 4.0
+Citation: Ahmed, Marzia, et al. 'Review and analysis of risk factor of maternal health in remote area using the Internet of Things (IoT).' InECCE2019: Proceedings of the 5th International Conference on Electrical, Control & Computer Engineering, Kuantan, Pahang, Malaysia, 29th July 2019. Springer Singapore, 2020. https://doi.org/10.1007/978-981-15-2317-5_30
+Original source: https://doi.org/10.24432/C5DP5D
+Changes: First 20 finite numeric-feature records per class in source order; first 16 labeled, last 4 target values withheld. No feature values changed.
+Feature selection: 
+
+OpenML 46947: online_shoppers_intention
+Source: https://www.openml.org/d/46947
+License: CC BY 4.0
+Citation: Sakar, C. Okan, et al. 'Real-time prediction of online shoppers purchasing intention using multilayer perceptron and LSTM recurrent neural networks.' Neural Computing and Applications 31.10 (2019): 6893-6908.  https://doi.org/10.1007/s00521-018-3523-0
+Original source: https://doi.org/10.24432/C5F88Q
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 180; last records per class withheld, 18 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46956: seismic-bumps
+Source: https://www.openml.org/d/46956
+License: CC BY 4.0
+Citation: Sikora, Marek, and ukasz Wrobel. 'Application of rule induction algorithms for analysis of data collected by seismic hazard monitoring systems in coal mines.' Archives of Mining Sciences 55.1 (2010): 91-114. http://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-article-BPZ5-0008-0008
+Original source: https://doi.org/10.24432/C5W902
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 210; last records per class withheld, 21 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46960: students_dropout_and_academic_success
+Source: https://www.openml.org/d/46960
+License: CC BY 4.0
+Citation: Martins, Monica V., et al. 'Early prediction of students performance in higher education: A case study.' Trends and Applications in Information Systems and Technologies: Volume 1 9. Springer International Publishing, 2021.  https://doi.org/10.1007/978-3-030-72657-7_16
+Original source: https://doi.org/10.24432/C5MC89
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 300; last records per class withheld, 30 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.
+
+OpenML 46964: wine_quality
+Source: https://www.openml.org/d/46964
+License: CC BY 4.0
+Citation: Cortez, Paulo, et al. 'Modeling wine preferences by data mining from physicochemical properties.' Decision support systems 47.4 (2009): 547-553. https://doi.org/10.1016/j.dss.2009.05.016
+Original source: https://doi.org/10.24432/C56S3T
+Changes: First 6497 complete native numeric records in source order; last 50 eligible labels withheld, preserving at least two support rows per class. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No encoding or imputation.
+
+OpenML 46979: jm1
+Source: https://www.openml.org/d/46979
+License: Public Domain
+Citation: How Good is Your Blind Spot Sampling Policy?; 2003; Tim Menzies and Justin S. Di Stefano; 2004 IEEE Conference on High Assurance Software Engineering (http://menzies.us/pdf/03blind.pdf).
+Original source: https://www.openml.org/d/1053
+Changes: First complete numeric-feature records per class in source order, balanced quotas totaling 80; last records per class withheld, 8 queries total. No feature values changed.
+Feature selection: All native numeric non-boolean features retained; non-numeric features omitted. No categorical encoding or imputation.

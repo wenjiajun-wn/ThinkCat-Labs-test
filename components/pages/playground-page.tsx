@@ -1,8 +1,11 @@
-import {Playground} from '../playground';
+import {Suspense} from 'react';
+import {Playground, PlaygroundEntry} from '../playground';
 import type {Locale} from '../../config/i18n';
 
 export function PlaygroundPage({locale}:{locale: Locale}) {
   return <main id="main" className="subpage surface-playground">
-    <Playground locale={locale} />
+    <Suspense fallback={<Playground locale={locale} />}>
+      <PlaygroundEntry locale={locale} />
+    </Suspense>
   </main>;
 }
