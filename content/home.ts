@@ -56,19 +56,19 @@ export const homeCopy = {
       index: '05',
       label: '开发者',
       title: '迈向生产环境的第一步',
-      body: 'API 文档展示正在审阅的接口规范。在线体验可用示例数据或自有 CSV 提交表格分类任务，运行时将调用远程推理服务。',
-      docs: 'API 规范预览',
+      body: 'API 文档展示自有模型服务上线前的接口示意。使用示例数据或自有 CSV 提交表格分类任务，运行时将调用远程推理服务。',
+      docs: 'API 文档',
       docsDetail: '接口路由、参数结构、响应格式与异常定义',
       playground: '在线体验',
       playgroundDetail: '上传 CSV、运行表格分类并下载预测结果',
       terminalLabel: '终端 / 接口规范',
-      draftLabel: '预览版 0.1',
-      code: `POST /v1/predict
-model: tabular
-context: labeled rows
-query: unlabeled rows
+      draftLabel: '接口示意 · 待上线',
+      code: `POST /api/model/predict
+Content-Type: application/json
+rows: 已知标签与待预测记录
+target_column: 目标字段名
 
-status: contract under review`,
+待预测目标值: null`,
     },
   },
   en: {
@@ -128,19 +128,19 @@ status: contract under review`,
       index: '05',
       label: 'Developer',
       title: 'Built for the next step.',
-      body: 'The API documentation describes a draft contract. In the Playground, run tabular classification on sample data or your own CSV using the remote inference service.',
-      docs: 'API draft',
+      body: 'The API documentation illustrates the planned model service before launch. Run tabular classification on sample data or your own CSV using the remote inference service.',
+      docs: 'API documentation',
       docsDetail: 'Endpoints, parameters, responses and errors',
       playground: 'Playground',
       playgroundDetail: 'Upload a CSV, run tabular classification and download predictions',
       terminalLabel: 'Terminal / Contract',
-      draftLabel: 'Draft 0.1',
-      code: `POST /v1/predict
-model: tabular
-context: labeled rows
-query: unlabeled rows
+      draftLabel: 'Placeholder / not live',
+      code: `POST /api/model/predict
+Content-Type: application/json
+rows: labeled and query records
+target_column: target field name
 
-status: contract under review`,
+Unlabeled target value: null`,
     },
   },
 } as const;

@@ -1,4 +1,21 @@
 /* Docs */
+.surface-docs .docs-article { min-width: 0; overflow-wrap: anywhere; }
+.surface-docs .docs-sidebar, .surface-docs .docs-toc { max-height: calc(100dvh - var(--header-height) - 48px); overflow-y: auto; }
+.surface-docs .docs-article section { scroll-margin-top: calc(var(--header-height) + 24px); }
+.surface-docs .docs-article h3 { margin-top: 28px; font-size: 18px; line-height: 1.4; }
+.surface-docs .docs-download { display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 5px; text-decoration: underline; }
+.surface-docs .docs-request-details { margin-top: 20px; border-block: 1px solid var(--line); }
+.surface-docs .docs-request-details summary { padding: 14px 0; cursor: pointer; }
+.surface-docs .code-block pre { max-height: 520px; white-space: pre; overflow-wrap: normal; }
+.surface-docs .code-block figcaption button { min-height: 44px; }
+.surface-docs .endpoint-bar { flex-wrap: wrap; }
+.surface-docs .endpoint-bar code { overflow-wrap: anywhere; }
+.surface-docs .draft-banner { background: var(--paper-raised); border-color: var(--line); color: var(--ink-soft); }
+.surface-docs .draft-badge { background: var(--ink); color: var(--accent); }
+@media (max-width: 620px) {
+  .surface-docs .draft-banner { flex-direction: column; gap: 10px; }
+  .surface-docs .endpoint-bar .mono-label { margin-left: 0; }
+}
 .surface-docs .page-head { border-bottom: 0; }
 .docs-shell { padding: 0 var(--content-inset) var(--section-space); }
 .draft-banner {

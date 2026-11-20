@@ -1,0 +1,25 @@
+{
+  "rows": [
+    {"x1": 1, "x2": 0.1, "label": "group_a"},
+    {"x1": 2, "x2": 0.2, "label": "group_a"},
+    {"x1": 3, "x2": 0.3, "label": "group_a"},
+    {"x1": 4, "x2": 0.4, "label": "group_a"},
+    {"x1": 5, "x2": 0.5, "label": "group_a"},
+    {"x1": 6, "x2": 0.6, "label": "group_a"},
+    {"x1": 7, "x2": 0.7, "label": "group_a"},
+    {"x1": 8, "x2": 0.8, "label": "group_a"},
+    {"x1": 9, "x2": 0.9, "label": "group_a"},
+    {"x1": 10, "x2": 1.0, "label": "group_b"},
+    {"x1": 11, "x2": 1.1, "label": "group_b"},
+    {"x1": 12, "x2": 1.2, "label": "group_b"},
+    {"x1": 13, "x2": 1.3, "label": "group_b"},
+    {"x1": 14, "x2": 1.4, "label": "group_b"},
+    {"x1": 15, "x2": 1.5, "label": "group_b"},
+    {"x1": 16, "x2": 1.6, "label": "group_b"},
+    {"x1": 17, "x2": 1.7, "label": "group_b"},
+    {"x1": 18, "x2": 1.8, "label": "group_b"},
+    {"x1": 4.5, "x2": 0.45, "label": null},
+    {"x1": 14.5, "x2": 1.45, "label": null}
+  ],
+  "target_column": "label"
+}

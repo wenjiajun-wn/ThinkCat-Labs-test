@@ -64,7 +64,7 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
       synthetic: '合成数据示意',
       docs: 'API 文档',
       playground: '在线体验',
-      docsAction: '查看接口草案',
+      docsAction: '查看接口文档',
       playgroundAction: '打开在线体验',
       studyNotes: '技术说明',
       closeNotes: '收起说明',
@@ -83,8 +83,8 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
     },
     resources: {
       title: '从模型到开发者入口',
-      body: '接口文档展示待评审的契约草案。在线体验通过独立的同源接口请求远程 Kumo 推理；是否可用取决于部署环境。',
-      docs: '查看接口草案',
+      body: 'API 文档展示待上线的模型接口示意；正式地址、认证及支持能力将随服务上线公布。现有在线体验保持独立运行。',
+      docs: '查看接口文档',
       playground: '打开在线体验',
     },
     studies: {
@@ -160,7 +160,7 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
       synthetic: 'Synthetic data illustration',
       docs: 'API Docs',
       playground: 'Playground',
-      docsAction: 'Open the draft reference',
+      docsAction: 'Open the API reference',
       playgroundAction: 'Open Playground',
       studyNotes: 'Model notes',
       closeNotes: 'Close notes',
@@ -179,8 +179,8 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
     },
     resources: {
       title: 'From model study to developer entry',
-      body: 'The API reference describes a draft contract. Playground requests remote Kumo inference through a separate same-origin endpoint; availability depends on the deployment.',
-      docs: 'Read the API draft',
+      body: 'The API reference illustrates a model service that is not live yet. The final URL, authentication and capabilities will be published at launch. The existing Playground remains separate.',
+      docs: 'Read the API reference',
       playground: 'Open Playground',
     },
     studies: {

@@ -1,0 +1,10 @@
+{
+  "model": "Model",
+  "row_indices": [18, 19],
+  "predictions": ["group_a", "group_b"],
+  "probabilities": [
+    {"group_a": 0.85, "group_b": 0.15},
+    {"group_a": 0.2, "group_b": 0.8}
+  ],
+  "classes": ["group_a", "group_b"]
+}

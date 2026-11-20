@@ -39,12 +39,12 @@ export function DeveloperDocs({locale}:{locale: Locale}) {
     };
   }, []);
 
-  const allItems = t.groups.flatMap(group => group.items);
+  const allItems = t.groups.flatMap<{id: string; label: string}>(group => group.items);
   const activeItem = allItems.find(item => item.id === active);
   const copyLabels = {copyLabel: t.labels.copy, copiedLabel: t.labels.copied, failedLabel: t.labels.failed};
   const tabs = [
     {id: 'curl', label: t.request.tabs.curl, language: 'cURL', code: docsCode.tabs.curl},
-    {id: 'typescript', label: t.request.tabs.typescript, language: 'TypeScript', code: docsCode.tabs.typescript},
+    {id: 'javascript', label: t.request.tabs.javascript, language: 'JavaScript', code: docsCode.tabs.javascript},
     {id: 'python', label: t.request.tabs.python, language: 'Python', code: docsCode.tabs.python},
   ];
 
@@ -102,26 +102,30 @@ export function DeveloperDocs({locale}:{locale: Locale}) {
           </dl>
         </section>
 
+        <section id="request">
+          <h2 tabIndex={-1}>{t.request.title}</h2>
+          <p>{t.request.body}</p>
+          <p className="docs-note">{t.request.environment}</p><p className="docs-note">{t.request.local}</p>
+          <a className="docs-download" href="/api-examples/request.json" download="request.json">{locale === 'zh' ? '下载完整请求' : 'Download complete request'} · request.json</a>
+          <div className="endpoint-bar">
+            <span className="endpoint-method">POST</span>
+            <code>/api/model/predict</code>
+            <span className="mono-label">{t.labels.endpoint}</span>
+          </div>
+          <CodeTabs tabs={tabs} label={t.labels.request} {...copyLabels} />
+          <p className="docs-note">{t.request.sample}</p>
+          <details className="docs-request-details"><summary>{t.labels.example} · JSON</summary><CodeBlock code={docsCode.requestJson} language="JSON" label={t.labels.example} {...copyLabels} /></details>
+        </section>
+
         <section id="authentication">
           <h2 tabIndex={-1}>{t.auth.title}</h2>
           <p>{t.auth.body}</p>
           <div className="docs-callout docs-callout-warning"><span className="mono-label">!</span><p>{t.auth.note}</p></div>
         </section>
 
-        <section id="request">
-          <h2 tabIndex={-1}>{t.request.title}</h2>
-          <p>{t.request.body}</p>
-          <div className="endpoint-bar">
-            <span className="endpoint-method">POST</span>
-            <code>/v1/predict</code>
-            <span className="mono-label">{t.labels.endpoint}</span>
-          </div>
-          <CodeTabs tabs={tabs} label={t.labels.request} {...copyLabels} />
-        </section>
-
         <section id="parameters">
           <h2 tabIndex={-1}>{t.params.title}</h2>
-          <p>{t.params.body}</p>
+          <p>{t.params.body}</p><CodeBlock code={docsCode.headers} language="HTTP" label={locale === 'zh' ? '请求头' : 'Request headers'} {...copyLabels} />
           <p className="doc-table-hint" id="params-table-hint">{t.labels.tableHint}</p>
           <div className="doc-table-wrap" tabIndex={0} role="region" aria-label={t.params.title} aria-describedby="params-table-hint">
             <table className="doc-table">
@@ -135,13 +139,21 @@ export function DeveloperDocs({locale}:{locale: Locale}) {
               </tr>)}</tbody>
             </table>
           </div>
+          <h3>{t.params.limitsTitle}</h3><p>{t.params.limitsNote}</p>
+          <ul className="docs-checklist">{t.params.limits.map(item => <li key={item}><span aria-hidden="true">·</span>{item}</li>)}</ul>
         </section>
 
         <section id="response">
           <h2 tabIndex={-1}>{t.response.title}</h2>
           <p>{t.response.body}</p>
-          <CodeBlock code={docsCode.responseJson} language="JSON" label={t.labels.response} {...copyLabels} />
+          <CodeBlock code={locale === 'zh' ? docsCode.responseJson.replace('"Model"', '"模型"') : docsCode.responseJson} language="JSON" label={t.labels.response} {...copyLabels} />
           <p className="docs-note">{t.response.note}</p>
+          <div className="doc-table-wrap" tabIndex={0} role="region" aria-label={t.response.title}>
+            <table className="doc-table"><caption className="visually-hidden">{t.response.title}</caption>
+              <thead><tr>{t.params.columns.map(column => <th key={column} scope="col">{column}</th>)}</tr></thead>
+              <tbody>{t.response.rows.map(row => <tr key={row.name}>
+                <th scope="row"><code>{row.name}</code></th><td><code>{row.type}</code></td><td>{row.required}</td><td>{row.description}</td>
+              </tr>)}</tbody></table></div>
         </section>
 
         <section id="errors">
@@ -159,31 +171,20 @@ export function DeveloperDocs({locale}:{locale: Locale}) {
               </tr>)}</tbody>
             </table>
           </div>
-          <CodeBlock code={docsCode.errorJson} language="JSON" label={t.labels.example} {...copyLabels} />
+          <p>{t.errors.timeout}</p><p>{t.errors.retry}</p>
         </section>
 
-        <section id="models">
-          <h2 tabIndex={-1}>{t.models.title}</h2>
-          <p>{t.models.body}</p>
-          <p className="doc-table-hint" id="models-table-hint">{t.labels.tableHint}</p>
-          <div className="doc-table-wrap" tabIndex={0} role="region" aria-label={t.models.title} aria-describedby="models-table-hint">
-            <table className="doc-table doc-table-compact">
-              <caption className="visually-hidden">{t.models.title}</caption>
-              <thead><tr>{t.models.columns.map(column => <th key={column} scope="col">{column}</th>)}</tr></thead>
-              <tbody>{t.models.rows.map(row => <tr key={row.name}>
-                <td><code>{row.name}</code></td>
-                <td>{row.type}</td>
-                <td><span className="status-mark">{row.required}</span></td>
-              </tr>)}</tbody>
-            </table>
-          </div>
+        <section id="csv">
+          <h2 tabIndex={-1}>{t.csv.title}</h2><p>{t.csv.body}</p><p className="docs-note">{t.csv.note}</p>
+          <a className="docs-download" href="/api-examples/input.csv" download="input.csv">{locale === 'zh' ? '下载教学 CSV' : 'Download teaching CSV'} · input.csv</a>
+          <CodeBlock code={docsCode.csv} language="CSV" label={t.csv.title} {...copyLabels} />
         </section>
 
         <section id="next">
           <h2 tabIndex={-1}>{t.next.title}</h2>
           <p>{t.next.body}</p>
           <ul className="docs-checklist">
-            {t.next.items.map(item => <li key={item}><span aria-hidden="true">✓</span>{item}</li>)}
+            {t.next.items.map(item => <li key={item}><span aria-hidden="true">·</span>{item}</li>)}
           </ul>
           <div className="docs-next-links">
             <Link href={localized(locale, 'playground')}>{t.labels.openPlayground}<span aria-hidden="true">↗</span></Link>

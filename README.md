@@ -1,6 +1,6 @@
 # Thinkcat Labs
 
-Thinkcat Labs is a bilingual research website for numerical foundation models. The site is a static Next.js App Router export with original procedural data visualizations, a Playground frontend for the existing remote Kumo inference route and draft developer documentation.
+Thinkcat Labs is a bilingual research website for numerical foundation models. The site is a static Next.js App Router export with original procedural data visualizations, a Playground frontend for the existing remote inference route and draft developer documentation.
 
 V5.2 rebuilds the frontend around the numerical field, three distinct model studies, a professional Playground workspace, developer docs, five industry data studies and a compact editorial design system.
 
@@ -33,10 +33,11 @@ Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin before building. Witho
 - `components/playground` separates data source, run states, prediction tables and result presentation.
 - `content` contains bilingual content modules.
 - `config` contains locale, model, site and SEO configuration.
-- `lib` contains local CSV parsing, synthetic input data and the existing Kumo API client.
+- `lib` contains local CSV parsing, synthetic input data and the existing inference API client.
 
 ## Documentation
 
+- [API integration documentation — first draft (中文)](docs/api/README.md)
 - [Design system](DESIGN_SYSTEM.md)
 - [Frontend architecture](FRONTEND_ARCHITECTURE.md)
 - [Component guidelines](COMPONENT_GUIDELINES.md)
@@ -51,4 +52,4 @@ Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin before building. Witho
 
 ## Boundaries
 
-The repository contains no backend, FastAPI service, GPU model worker or production contact details. The Playground calls the existing same-origin `POST /api/kumo/predict` contract, which deployment must provide; controlled browser QA uses local fixtures instead. Synthetic illustrations and the sample CSV are labelled, while prediction tables and distribution graphics map the actual inference response. API documentation is a front-end draft, not a specification of the running service.
+The repository contains no backend, FastAPI service, GPU model worker or production contact details. The Playground calls the existing same-origin inference contract, which deployment must provide; controlled browser QA uses local fixtures instead. Synthetic illustrations and the sample CSV are labelled, while prediction tables and distribution graphics map the actual inference response. Public API documentation is now a placeholder draft for the upcoming model service. Its example endpoint and model name are not the existing Playground contract; authentication and final schemas will be confirmed at launch.

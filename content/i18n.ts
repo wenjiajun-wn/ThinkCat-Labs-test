@@ -13,8 +13,8 @@ export const copy = {
     intro: {
       products: '从表格到时间序列，探索可迁移的数值表征。',
       solutions: '从交易记录到传感器读数，每种数据都有自己的结构与节奏。',
-      docs: '接口契约仍在验证。以下内容为开发者文档草案，不构成已上线服务。',
-      playground: '上传数值 CSV，在线运行 Kumo Tabular Medium 分类并下载预测结果。',
+      docs: '待上线模型服务的接口示意：请求格式、响应字段与接入准备。',
+      playground: '上传数值 CSV，在线运行模型分类并下载预测结果。',
       research: '研究表格、时间序列、异常检测与可复现的评估方法。论文信息待核实。',
       contact: '欢迎交流产业与研究合作。',
       privacy: '本网站将语言偏好保存在当前浏览器。演示 CSV 仅在当前浏览器处理，不发送到服务器。',
@@ -46,8 +46,8 @@ export const copy = {
     intro: {
       products: 'From tables to time series, we study numerical representations that transfer across tasks.',
       solutions: 'From transaction records to sensor readings, each kind of data has its own structure and rhythm.',
-      docs: 'The API contract is still under review. The material below is developer documentation in draft form, not a live service.',
-      playground: 'Upload a numeric CSV, run Kumo Tabular Medium classification in the Playground, and download the predictions.',
+      docs: 'Illustrative API documentation for the upcoming model service: request formats, response fields and integration preparation.',
+      playground: 'Upload a numeric CSV, run model classification in the Playground, and download the predictions.',
       research: 'We study tables, time series, anomaly detection and reproducible evaluation. Publication details are pending verification.',
       contact: 'We welcome conversations about industry and research collaboration.',
       privacy: 'This site stores language preferences in your browser. Demo CSV files are processed in the browser and never sent to a server.',
