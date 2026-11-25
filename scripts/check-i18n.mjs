@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
-const pages = ['', 'products/', 'docs/', 'playground/', 'research/', 'contact/', 'privacy/'];
+const pages = ['', 'products/', 'docs/', 'docs/quickstart/', 'docs/data/', 'docs/python-sdk/', 'docs/http-api/', 'docs/errors/', 'playground/', 'research/', 'contact/', 'privacy/'];
 const locales = ['zh', 'en'];
 const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 const origin = configuredOrigin ? new URL(configuredOrigin).origin : '';

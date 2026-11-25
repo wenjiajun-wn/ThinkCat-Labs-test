@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 const timeoutMs = 120_000;
 
 function apiOrigin() {
-  const value = process.env.THINKCAT_API_ORIGIN?.trim();
+  const value = process.env.THINKCAT_API_ORIGIN?.trim() || 'https://thinkcatlabs.ai';
   if (!value) throw new Error('请先将 THINKCAT_API_ORIGIN 设置为已确认可访问的站点 origin。');
   const url = new URL(value);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password ||
@@ -52,7 +52,7 @@ async function main() {
   let response;
   let raw;
   try {
-    response = await fetch(`${origin}/api/model/predict`, {
+    response = await fetch(`${origin}/api/predict`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json', Accept: 'application/json'},
       body: JSON.stringify(payload),

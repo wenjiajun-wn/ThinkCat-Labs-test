@@ -1,10 +1,5 @@
-# 模型 API 文档（待上线）
+# 开发者接入
 
-> 自有模型服务尚未上线。本文地址及模型名称为占位示意，不是现有在线体验的调用协议；正式版本以上线公告为准。
+[Python SDK 快速开始](quickstart.md) · [HTTP 请求与响应](predict.md) · [错误处理](errors.md) · [本地验证](maintainers.md)
 
-- [快速开始](quickstart.md)
-- [接口结构](predict.md)
-- [错误处理](errors.md)
-- [维护说明](maintainers.md)
-
-教学数据包含 20 行、2 个数值特征、18 行上下文和 2 行待预测。示意响应为人工编写，不是真实模型结果。
+主预测入口为 POST /api/predict。在线体验中单独选择的 XGBoost 对照服务使用独立的基线处理器。预录结果仅用于在线体验内置数据集，SDK 调用返回实时结果或错误。

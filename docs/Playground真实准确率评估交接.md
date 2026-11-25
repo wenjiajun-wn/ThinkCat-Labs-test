@@ -78,7 +78,7 @@ ZIP 内含 manifest.json、suite.json 和 45 份 Parquet；本次只为现有 15
 - TypeScript：通过。ESLint：`npm run lint` 通过。
 - Production Build：`npm run build -- --webpack` 通过。首次沙箱构建因 Next.js 静态目录写入 EPERM 失败，获正常本地权限后成功，未更改构建配置。
 - Static Export：14个本地化路由及语言、链接、Metadata、sitemap检查通过；共25个静态页面，postbuild RSC别名生成成功。
-- 真实网络调用：既有 https://thinkcat-labs.ai-calendar.xyz/api/kumo/predict 返回5份有效HTTP 200，已计算上表实际准确率，没有Mock。后续信用卡请求HTTP429后停止；另外10份未完成真实模型验证。原始日志：`artifacts/evaluation-live-smoke.json`。
+- 真实网络调用：既有 原预览站点的 /api/kumo/predict 返回5份有效HTTP 200，已计算上表实际准确率，没有Mock。后续信用卡请求HTTP429后停止；另外10份未完成真实模型验证。原始日志：`artifacts/evaluation-live-smoke.json`。
 - 真实 Edge 浏览器（受控 Mock，不是正式模型分数）：67次拦截请求，全部15示例、双语1440/1024/768/375/320px验收通过；控制台错误0，页面异常0，整页无横向溢出。覆盖同名同内容上传、导出、过滤不改分母、重新运行隔离、错序及非法响应、数据/目标/URL切换竞态、读取失败、超时、元数据损坏与独立评估资源超时降级。报告：`artifacts/evaluation-qa/after/qa-report.json`。
 
 截图：`artifacts/evaluation-qa/before/` 保存中英文1440/390px的输入和原成功态；`artifacts/evaluation-qa/after/` 保存各示例和全部测试视口。主要对照：`zh-1440-inline-results.png`、`zh-375-inline-results.png`、`en-320-inline-results.png`。这些截图使用确定性测试响应，不作为真实模型性能证据。

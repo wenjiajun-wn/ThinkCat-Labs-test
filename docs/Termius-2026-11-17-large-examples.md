@@ -21,12 +21,12 @@ tar -xzf "$ARCHIVE" -C "$WORK"
 cd "$WORK/$NAME"
 sha256sum -c SHA256SUMS > /dev/null
 bash -n update-existing.sh
-DOMAIN=thinkcat-labs.ai-calendar.xyz bash update-existing.sh
+DOMAIN=thinkcatlabs.ai bash update-existing.sh
 echo "部署完成，解压目录：$WORK/$NAME"
 THINKCAT_DEPLOY
 ```
 
-该操作通过共享的 current 目录同时更新两个 Thinkcat 域名。验证使用已确认可用的 ai-calendar 域名。
+通过正式域名验证 current 目录中的发布内容。
 静态发布无需重启 Nginx/GPU。浏览器 Ctrl+F5 刷新；有CDN时清理HTML和同名资源缓存。
 上线后在 /zh/playground/?dataset=46910 点击运行模型验证一万行，切换英文再检查一次。
 服务器脚本只自动核验静态页面和图片，不自动发送推理请求。

@@ -11,7 +11,7 @@ export default function Research() {
   const t = researchCopy.zh;
   return <main id="main" className="subpage research-page">
     <section className="page-intro">
-      <p className="eyebrow">Thinkcat Labs</p>
+      
       <h1>数值智能研究</h1>
       <div className="page-intro-bottom"><p>研究数值数据如何被理解。让观点经得起实验与复现。</p></div>
     </section>
@@ -36,7 +36,7 @@ export default function Research() {
       )}</div>
     </section>
     <section className="section next-step">
-      <h2>让研究进入对话。</h2><Link className="button" href="/contact/">研究合作 ↗</Link>
+      <Link className="button" href="/contact/">研究合作 ↗</Link>
     </section>
   </main>;
 }

@@ -7,7 +7,7 @@
 - scripts/preview.mjs 的 forwardKumo 是本地预览转发器，仅在 --kumo 模式启用。
 - deploy/nginx-thinkcat.conf 没有该 API 的 proxy_pass。生产网关配置尚未提供。
 - 用户确认 GPU 公网 IP 为 49.232.246.48，使用 SSH 密钥登录。HTTP 服务的协议、端口和预测路径待确认。SSH 登录端口不能作为 HTTP 推理端口使用。
-- 2026-11-13 查询到原预览目标域名 thinkcat-labs.ai-calendar.xyz 的 A 记录为 101.200.189.110。该域名可能是前端或网关，不能据此认定为旧 GPU IP。
+- 2026-11-13 查询到原预览目标域名 的 A 记录为 101.200.189.110。该域名可能是前端或网关，不能据此认定为旧 GPU IP。
 
 本次修复本地转发器配置与日志。线上 502 的根因和恢复状态尚未确认。
 

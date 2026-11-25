@@ -1,4 +1,6 @@
-import {CodeSurface} from '../../components/ui/primitives';
+import {donationPayload} from '../../content/developer-examples';
+import {DeveloperCard} from '../../components/home/developer-card';
+import styles from '../../components/home/developer.module.css';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {ModelApplications} from '../../components/home/model-applications';
@@ -23,12 +25,12 @@ export default async function Home({params}: Props) {
   const t = copy[locale];
   const h = homeCopy[locale];
 
+  const sample = donationPayload.rows.slice(-4);
   return <main id="main" className="home">
     <div className="home-first-screen">
       <section className="home-hero" aria-labelledby="home-title">
         <div className="hero-copy">
           <h1 id="home-title"><span>{t.hero[0]}</span>{' '}<span>{t.hero[1]}</span></h1>
-          <p className="hero-support">{t.heroSupport}</p>
         </div>
         <figure className="hero-figure">
           <NumericalField label={h.hero.fieldLabel} />
@@ -38,33 +40,22 @@ export default async function Home({params}: Props) {
       <BrandMarquee locale={locale} />
     </div>
 
-    <section className="home-developer">
-      <div className="home-section-rail">
-        <span className="rail-line" aria-hidden="true" />
-        <span className="mono-label">{h.developer.label}</span>
-      </div>
-      <div className="developer-main">
-        <div className="developer-intro">
-          <h2>{h.developer.title}</h2>
-          <p>{h.developer.body}</p>
+    <section className={styles.section} aria-labelledby="developer-title">
+      <div>
+        <h2 id="developer-title">{h.developer.title}</h2>
+        <div className={styles.links}>
+          <Link href={localized(locale, 'docs')}>{h.developer.docs}<span aria-hidden="true">→</span></Link>
+          <Link href={localized(locale, 'playground')}>{h.developer.playground}<span aria-hidden="true">→</span></Link>
         </div>
-        <CodeSurface className="developer-code" aria-label={h.developer.terminalLabel}>
-          <div className="code-top"><span className="mono-label">{h.developer.terminalLabel}</span><span className="mono-label">{h.developer.draftLabel}</span></div>
-          <pre><code>{h.developer.code}</code></pre>
-        </CodeSurface>
-        <div className="developer-entries">
-          <Link href={localized(locale, 'docs')}>
-            <span className="mono-label">{h.developer.docs}</span>
-            <strong>{h.developer.docsDetail}</strong>
-            <span className="entry-arrow" aria-hidden="true">↗</span>
-          </Link>
-          <Link href={localized(locale, 'playground')}>
-            <span className="mono-label">{h.developer.playground}</span>
-            <strong>{h.developer.playgroundDetail}</strong>
-            <span className="entry-arrow" aria-hidden="true">↗</span>
-          </Link>
+        <div className={styles.preview}>
+          <div className={styles.previewTitle}><h3>{h.developer.preview}</h3><span>{sample.length} / {donationPayload.rows.length} {h.developer.total}</span></div>
+          <table aria-label={h.developer.preview}>
+            <thead><tr>{h.developer.columns.map(label => <th scope="col" key={label}>{label}</th>)}</tr></thead>
+            <tbody>{sample.map((row, i) => <tr key={i}><td>{row.months}</td><td>{row.donations}</td><td>{row.returned ?? <em>{h.developer.pending}</em>}</td></tr>)}</tbody>
+          </table>
         </div>
       </div>
+      <DeveloperCard locale={locale} />
     </section>
 
     <ModelApplications locale={locale} />

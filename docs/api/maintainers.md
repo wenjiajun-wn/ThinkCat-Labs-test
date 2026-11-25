@@ -1,16 +1,27 @@
-# 模型文档维护说明
+# SDK 本地验收
 
-> 自有模型服务尚未上线。本文地址及模型名称为占位示意，不是现有在线体验的调用协议；正式版本以上线公告为准。
+从仓库根目录构建 wheel（构建环境需要 setuptools 和 wheel）。
 
-本轮按用户要求将公开展示名称统一为“模型 / Model”。网页及示例使用 /api/model/predict 占位；本次没有实现这一接口，也没有修改现有 Playground 请求、响应校验、后端、Nginx 或部署配置。
+~~~bash
+python -m pip wheel --no-build-isolation --no-deps sdk/python -w public/sdk
+~~~
 
-## 内容来源
+安装方法和预测代码见 quickstart.md。包内 donation.json 与 public/api-examples/donation-request.json 必须一致。
 
-- content/docs.ts：中英文文案及示例。
-- components/developer-docs.tsx：现有文档页。
-- docs/api/examples/：教学数据和调用方式示意。
-- public/api-examples/：网页下载文件。
+## 用 CPU 服务验证完整 HTTP 调用
 
-## 上线前
+使用安装了 numpy、xgboost 的环境运行以下命令。
 
-确认正式地址、认证、请求响应、错误格式、服务端限制后再替换占位符，并移除待上线标识。不要用模拟测试证明真实模型可用。历史交接记录描述当时状态，不作为当前公开接口承诺。
+~~~bash
+python scripts/xgboost_service.py
+~~~
+
+另开一个终端启动本地网关。以下为 Bash 命令。
+
+~~~bash
+KUMO_INFERENCE_URL=http://127.0.0.1:8765/api/xgboost/predict THINKCAT_PREVIEW_PORT=3024 node scripts/preview.mjs --kumo
+~~~
+
+客户端配置为 Client(base_url="http://127.0.0.1:3024")。使用系统 HTTP 代理时将 localhost、127.0.0.1 加入 NO_PROXY。用 load_example() 发起请求，检查 model 为 XGBoost、row_indices 为 [19]。正式 GPU 服务使用其实际推理地址作为网关上游。默认本地预览只允许内置献血示例访问远程服务。
+
+发布静态文件时包含 public/sdk 对应的 wheel。生产 Nginx 的 /api/predict 应转发到已配置的真实主服务。

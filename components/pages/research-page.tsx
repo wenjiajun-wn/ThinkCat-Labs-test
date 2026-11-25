@@ -6,12 +6,10 @@ import {researchCopy, researchDirections, researchOutputs} from '../../content/r
 export function ResearchPage({locale}:{locale: Locale}) {
   const t = researchCopy[locale];
   return <main id="main" className="subpage surface-research">
-    <PageHead label={t.eyebrow} title={t.title} intro={t.intro} meta={t.meta} tone="dark" />
+    <PageHead title={t.title} intro={t.intro} tone="dark" />
     <section className="research-ledger">
       <header className="research-ledger-head">
-        <span className="mono-label">{t.directionsLabel}</span>
         <h2>{t.directions}</h2>
-        <p>{t.aside}</p>
       </header>
       <ol>
         {researchDirections.map((direction, index) => <li key={direction.title.en}>
@@ -23,7 +21,6 @@ export function ResearchPage({locale}:{locale: Locale}) {
     </section>
     <section className="research-outputs">
       <div className="research-outputs-head">
-        <span className="mono-label">{t.outputsLabel}</span>
         <h2>{t.outputs}</h2>
         <p>{t.note}</p>
       </div>
@@ -36,10 +33,7 @@ export function ResearchPage({locale}:{locale: Locale}) {
             : <span className="output-status">{t.status[output.status]}</span>}
         </div>)}
       </div>
-      <p className="research-outputs-note">{t.outputsEmpty}</p>
-    </section>
-    <section className="research-close">
-      <div><span className="mono-label">{t.directions}</span><h2>{t.closeTitle}</h2></div>
+
       <Link className="button button-ink" href={localized(locale, 'products')}>{t.back}<span className="button-icon" aria-hidden="true">↗</span></Link>
     </section>
   </main>;

@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/playground-server.mjs dev",
+    "build": "next build --webpack",
     "postbuild": "node scripts/static-rsc-aliases.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
-    "preview": "node scripts/preview.mjs",
+    "preview": "node scripts/playground-server.mjs preview",
     "audit:licenses": "node scripts/license-audit.mjs"
   },
   "dependencies": {

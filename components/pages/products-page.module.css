@@ -1,0 +1,11 @@
+.catalog { width: var(--container-width); margin-inline: auto; padding-block: var(--section-intro-space) var(--section-space); }
+.catalog h1 { font-size: var(--page-title-size); line-height: 1.15; font-weight: var(--weight-medium); margin: 0 0 var(--space-8); }
+.scroll { overflow-x: auto; container-type: inline-size; }
+.scroll:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.scroll table { width: 100%; min-width: 680px; border-collapse: collapse; color: var(--ink); }
+.scroll th, .scroll td { padding: var(--space-4); text-align: start; border-bottom: 1px solid var(--line); }
+.scroll thead th { background: var(--paper-raised); color: var(--ink-soft); font-size: var(--helper-size); font-weight: var(--weight-medium); }
+.scroll .empty { padding: var(--space-12) 0; }
+.empty div { position: sticky; left: 0; width: 100%; max-width: 100cqi; text-align: center; }
+.empty strong { font-weight: var(--weight-medium); }
+.empty p { margin: var(--space-2) var(--space-4) 0; color: var(--muted); font-size: var(--helper-size); }

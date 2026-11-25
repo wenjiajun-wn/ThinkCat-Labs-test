@@ -4,9 +4,10 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import {exampleSource, nextExample, playgroundExamples} from '../lib/playground-datasets';
 import {CsvError, csvLimits, displayCsvHeaders, parseCsv, type ParsedCsv} from '../lib/csv';
-import {buildKumoDataset, KumoError, predictWithKumo} from '../lib/kumo-api';
+import {buildKumoDataset, KumoError, liveApiEnabled, runPlaygroundPrediction} from '../lib/kumo-api';
 import {evaluateExample, snapshotExampleEvaluation} from '../lib/playground-evaluation';
-import {playgroundCopy} from '../content/playground';
+import {comparisonCopy, playgroundCopy} from '../content/playground';
+import {RunComparison} from './playground/run-comparison';
 import type {Locale} from '../config/i18n';
 import {SourcePanel} from './playground/source-panel';
 import {ResultPanel} from './playground/result-panel';
@@ -41,14 +42,22 @@ export function Playground({locale, initialExampleId}:{locale: Locale; initialEx
   const example = playgroundExamples.find(item => item.id === exampleId);
   const [reading, setReading] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
-  const [runState, setRunState] = useState<PlaygroundRunState>(restored?.runState ?? {status: 'idle'});
+  const [primary, setPrimary] = useState<PlaygroundRunState>(restored?.runState ?? {status: 'idle'});
   const [fileError, setFileError] = useState<string | null>(null);
+  const [baseline, setBaseline] = useState<PlaygroundRunState>(restored?.baseline ?? {status: 'idle'});
+  const [selected, setSelected] = useState<'primary' | 'baseline'>(restored?.selected ?? 'primary');
+  const runState = selected === 'primary' ? primary : baseline;
+  const comparison = comparisonCopy[locale];
+  const selectedName = selected === 'baseline' ? 'XGBoost'
+    : primary.status === 'success' && primary.result.timing === 'recordedNeighbors' ? comparison.neighbors : comparison.model;
+  const staticUpload = !!csv && !example && !liveApiEnabled;
   const activeRequest = useRef<AbortController | null>(null);
   const fileRevision = useRef(0);
 
   const dataset = useMemo(() => csv && labelIndex >= 0 ? buildKumoDataset(csv, labelIndex) : null, [csv, labelIndex]);
   const datasetError = csv && labelIndex < 0 ? t.errors.chooseTarget : dataset && !dataset.ok ? t.errors[dataset.code] : null;
-  const running = runState.status === 'running';
+  const running = primary.status === 'running';
+  const xRunning = baseline.status === 'running';
 
   useEffect(() => {
     clearPlaygroundLanguageState(window.location.pathname + window.location.search);
@@ -58,12 +67,13 @@ export function Playground({locale, initialExampleId}:{locale: Locale; initialEx
       // Completed results retain their original rows, source and evaluation.
       savePlaygroundLanguageState(destination, {
         source: {csv, labelIndex, exampleId},
-        runState: runState.status === 'running' ? {status: 'idle'} : runState,
+        selected, runState: primary.status === 'running' ? {status: 'idle'} : primary,
+        baseline: baseline.status === 'running' ? {status: 'idle'} : baseline,
       });
     };
     window.addEventListener(playgroundLanguageEvent, preserve);
     return () => window.removeEventListener(playgroundLanguageEvent, preserve);
-  }, [csv, labelIndex, exampleId, runState]);
+  }, [csv, labelIndex, exampleId, primary, baseline, selected]);
 
   useEffect(() => () => {
     activeRequest.current?.abort();
@@ -74,7 +84,9 @@ export function Playground({locale, initialExampleId}:{locale: Locale; initialEx
   function cancelRun() {
     activeRequest.current?.abort();
     activeRequest.current = null;
-    setRunState({status: 'idle'});
+    setPrimary({status: 'idle'});
+    setBaseline({status: 'idle'});
+    setSelected('primary');
   }
 
   async function loadFile(file: File) {
@@ -122,37 +134,36 @@ export function Playground({locale, initialExampleId}:{locale: Locale; initialEx
     setSource({csv, labelIndex: index, exampleId});
   }
 
-  async function run() {
-    if (!dataset?.ok || activeRequest.current) return;
+  async function run(model: 'primary' | 'baseline' = 'primary') {
+    if ((model === 'primary' && staticUpload) || !dataset?.ok || activeRequest.current) return;
     // This invocation keeps its own immutable input/source identity across all
     // awaits. Source changes cancel it; no later render supplies its answers.
     const input = dataset.data;
     const source: RunSource = example ? {kind: 'builtin', exampleId: example.id} : {kind: 'upload'};
     const controller = new AbortController();
     activeRequest.current = controller;
-    setRunState({status: 'running'});
-    const timeout = setTimeout(() => controller.abort(), 120_000);
+    const setState = model === 'primary' ? setPrimary : setBaseline;
+    setSelected(model);
+    setState({status: 'running'});
     try {
       const evaluationSnapshot = example
         ? await snapshotExampleEvaluation(example, input.csv, labelIndex, input.queryIndices).catch(() => null)
         : null;
       if (activeRequest.current !== controller) return;
-      const result = await predictWithKumo(input, controller.signal);
+      const result = await runPlaygroundPrediction(input, controller.signal, model, exampleId, evaluationSnapshot?.datasetVersion);
       if (activeRequest.current !== controller) return;
-      clearTimeout(timeout);
       const evaluation = source.kind === 'builtin' ? await evaluateExample(evaluationSnapshot, result) : null;
       if (activeRequest.current === controller) {
-        setRunState(controller.signal.aborted
+        setState(controller.signal.aborted
           ? {status: 'error', code: 'timeout', message: t.requestErrors.timeout}
           : {status: 'success', result, source, evaluation});
       }
     } catch (error) {
       if (activeRequest.current === controller) {
         const code = controller.signal.aborted ? 'timeout' : error instanceof KumoError ? error.code : 'unavailable';
-        setRunState({status: 'error', code, message: t.requestErrors[code]});
+        setState({status: 'error', code, message: t.requestErrors[code]});
       }
     } finally {
-      clearTimeout(timeout);
       if (activeRequest.current === controller) activeRequest.current = null;
     }
   }
@@ -207,31 +218,41 @@ export function Playground({locale, initialExampleId}:{locale: Locale; initialEx
       exampleCount={playgroundExamples.length}
       fileError={fileError}
       datasetError={datasetError}
-      sourceName={example?.name[locale] ?? csv?.fileName ?? ''}
+      sourceName={[example?.name[locale] ?? csv?.fileName, runState.status === 'success'
+        ? selectedName : null].filter(Boolean).join(' · ')}
       onFile={loadFile}
       showTargetSelector={csv !== null && !example && detectTargetColumn(csv.headers) < 0}
       onTargetChange={selectTarget}
       onSample={switchExample}
       state={runState}
       onDownload={download}
+      comparison={<>
+        {staticUpload && <p className="dataset-source" role="status">{comparison.uploadMaintenance}</p>}
+        <RunComparison locale={locale} primary={primary} baseline={baseline} />
+      </>}
     >
       <Button
         id="run-model"
         className="button button-accent run-button"
         type="button"
-        onClick={run}
-        disabled={running || !dataset?.ok}
+        onClick={() => run()}
+        disabled={staticUpload || running || xRunning || !dataset?.ok}
         aria-busy={running}
         aria-describedby={datasetError || fileError ? 'workbench-error' : undefined}
       >
         {running ? <span className="run-spinner" aria-hidden="true" /> : <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 14.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13ZM6.75 5.5l3.75 2.5-3.75 2.5Z" /></svg>}
         {running ? t.running : t.run}
       </Button>
+      <Button id="run-xgboost" className="button button-outline" type="button"
+        onClick={() => run('baseline')} disabled={running || xRunning || !dataset?.ok} aria-busy={xRunning}>
+        {xRunning && <span className="run-spinner" aria-hidden="true" />}
+        {comparisonCopy[locale][xRunning ? 'running' : 'run']}
+      </Button>
     </SourcePanel>
     <ResultPanel
       locale={locale}
       state={runState}
-      onRetry={run}
+      onRetry={() => run(selected)}
     />
   </section>;
 }

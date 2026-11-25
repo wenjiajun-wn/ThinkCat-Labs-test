@@ -1,7 +1,7 @@
 export const contactCopy = {
   zh: {
     eyebrow: '联系 / 合作',
-    title: '从一个具体的数据问题开始。',
+    title: '联系我们',
     intro: '产业合作、研究交流或数据形态讨论，都欢迎。请尽量描述问题、数据结构和你关心的边界。',
     meta: '合作交流 / 研究讨论',
     channels: [
@@ -9,13 +9,13 @@ export const contactCopy = {
       {label: '研究', title: '研究交流', body: '关于表征、迁移、不确定性或评估方法的讨论，也欢迎联系。'},
     ],
     emailLabel: '联系邮箱',
-    emailPending: '联系邮箱待配置。在正式地址确认前，本站不会展示虚构的联系方式。',
+    emailPending: '联系邮箱暂未公布。',
     note: '我们不会通过未配置的邮箱、电话或社交账号建立联系。',
     closeTitle: '先描述数据，再讨论合作。',
   },
   en: {
     eyebrow: 'Contact / Collaboration',
-    title: 'Start with a concrete data question.',
+    title: 'Contact',
     intro: 'We welcome industry collaboration, research exchange and conversations about data shape. Describe the problem, the structure of the data and the limits you care about.',
     meta: 'Collaboration / Research exchange',
     channels: [
@@ -23,7 +23,7 @@ export const contactCopy = {
       {label: 'Research', title: 'Research exchange', body: 'We also welcome discussion of representation, transfer, uncertainty and evaluation methods.'},
     ],
     emailLabel: 'Contact email',
-    emailPending: 'The contact email is pending configuration. No fictional contact channel is shown before a real address is confirmed.',
+    emailPending: 'Contact email is not yet available.',
     note: 'We do not establish contact through unconfigured email, phone or social accounts.',
     closeTitle: 'Describe the data before the partnership.',
   },

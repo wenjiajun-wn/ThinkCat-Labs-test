@@ -1,204 +1,103 @@
 'use client';
+
 import Link from 'next/link';
-import {useEffect, useRef, useState} from 'react';
-import {docsCode, docsCopy} from '../content/docs';
-import {localized, type Locale} from '../config/i18n';
+import {useEffect, useId, useState, type ReactNode} from 'react';
+import type {Locale} from '../config/i18n';
+import {docGroups, docPath, type DocId} from '../content/docs-navigation';
+import {docLabels, documents, pending} from '../content/sdk-docs';
 import {CodeBlock} from './docs/code-block';
-import {CodeTabs} from './docs/code-tabs';
+import styles from './docs/sdk-guide.module.css';
 
-export function DeveloperDocs({locale}:{locale: Locale}) {
-  const t = docsCopy[locale];
-  const [active, setActive] = useState('overview');
-  const mobileNav = useRef<HTMLDetailsElement>(null);
-  const article = useRef<HTMLElement>(null);
+const oldAnchors: Record<string, [DocId, string?]> = {
+  overview: ['quickstart'], classification: ['quickstart', 'classification'], 'own-data': ['data'],
+  params: ['http-api', 'parameters'], 'python-sdk': ['python-sdk'], 'client-config': ['python-sdk', 'client-config'],
+  request: ['http-api'], errors: ['errors'],
+};
 
+function Disclosure({label, initialOpen = false, headingId, children}: {label: ReactNode; headingId?: string; initialOpen?: boolean; children: ReactNode}) {
+  const [open, setOpen] = useState(initialOpen);
+  const id = useId();
+  const trigger = <button type="button" className={styles.toggle} aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
+      {label}<span aria-hidden="true" className={styles.chevron}/>
+    </button>;
+  return <div>
+    {headingId ? <h2 id={headingId}>{trigger}</h2> : trigger}
+    <div id={id} className={styles.panel} data-open={open} inert={!open}>
+      <div className={styles.clip}>{children}</div>
+    </div>
+  </div>;
+}
+
+export function DeveloperDocs({locale, topic}: {locale: Locale; topic: DocId}) {
+  const page = documents[topic];
+  const labels = docLabels[locale];
+  const [current, setCurrent] = useState(page.sections[0].id);
   useEffect(() => {
-    const sections = Array.from(article.current?.querySelectorAll('section[id]') ?? []);
-    if (!sections.length || !('IntersectionObserver' in window)) return;
-    let observer: IntersectionObserver;
-    function observe() {
-      observer?.disconnect();
-      const top = Math.min(150, Math.round(window.innerHeight * .22));
-      const bottom = Math.max(0, window.innerHeight - top - 24);
-      const visible = new Set<Element>();
-      observer = new IntersectionObserver(entries => {
-        for (const {target, isIntersecting} of entries) {
-          if (isIntersecting) visible.add(target);
-          else visible.delete(target);
+    const headings = page.sections.map(s => document.getElementById(s.id)).filter(el => el !== null);
+    const update = () => {
+      const hash = location.hash.slice(1);
+      if (topic === 'overview' && Object.hasOwn(oldAnchors, hash)) {
+        const [id, section] = oldAnchors[hash];
+        location.replace(docPath(locale, id) + location.search + (section ? '#' + section : ''));
+        return;
+      }
+      const offset = (document.querySelector('.site-header')?.getBoundingClientRect().height ?? 68) + 24;
+      let active = headings[0];
+      for (const el of headings) {
+        const top = el.getBoundingClientRect().top;
+        if (el.id === hash && top >= offset - 20 && top < window.innerHeight) {
+          active = el;
+          break;
         }
-        const current = sections.find(section => visible.has(section));
-        if (current) setActive(current.id);
-      }, {rootMargin: `-${top}px 0px -${bottom}px 0px`});
-      sections.forEach(section => observer.observe(section));
-    }
-    observe();
-    window.addEventListener('resize', observe);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', observe);
+        if (top <= offset) active = el;
+      }
+      if (active) setCurrent(active.id);
     };
-  }, []);
+    update();
+    window.addEventListener('scroll', update, {passive:true});
+    window.addEventListener('resize', update);
+    window.addEventListener('hashchange', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+      window.removeEventListener('hashchange', update);
+    };
+  }, [page, locale, topic]);
 
-  const allItems = t.groups.flatMap<{id: string; label: string}>(group => group.items);
-  const activeItem = allItems.find(item => item.id === active);
-  const copyLabels = {copyLabel: t.labels.copy, copiedLabel: t.labels.copied, failedLabel: t.labels.failed};
-  const tabs = [
-    {id: 'curl', label: t.request.tabs.curl, language: 'cURL', code: docsCode.tabs.curl},
-    {id: 'javascript', label: t.request.tabs.javascript, language: 'JavaScript', code: docsCode.tabs.javascript},
-    {id: 'python', label: t.request.tabs.python, language: 'Python', code: docsCode.tabs.python},
-  ];
+  const name = (id: DocId) => id === 'overview' ? labels.overview : documents[id].title[locale];
+  const pageLinks = (ids: DocId[]) => <ul className={styles.links}>{ids.map(id =>
+    <li key={id}><Link href={docPath(locale,id)}>{name(id)} <span aria-hidden="true">→</span></Link></li>)}</ul>;
+  const menu = <nav aria-label={labels.nav}>{docGroups.map(group =>
+    <div className={styles.group} key={group.en}>
+      <Disclosure label={group[locale]} initialOpen={group.pages.includes(topic)}>
+      {group.pages.map(id => <Link key={id} href={docPath(locale,id)} aria-current={id === topic ? 'page' : undefined}>{name(id)}</Link>)}
+      </Disclosure>
+    </div>)}</nav>;
 
-  return <div className="docs-shell">
-    <div className="draft-banner" role="note">
-      <span className="draft-badge">{t.draftBadge}</span>
-      <div><strong>{t.draftTitle}</strong><p>{t.draftBody}</p></div>
-    </div>
-
-    <details className="docs-mobile-nav" ref={mobileNav}>
-      <summary><span>{t.mobileNav}</span><span className="docs-mobile-current">{activeItem?.label}</span></summary>
-      <nav aria-label={t.sidebarLabel}>
-        {t.groups.map(group => <div key={group.title}>
-          <span className="mono-label">{group.title}</span>
-          {group.items.map(item => <a key={item.id} href={`#${item.id}`} aria-current={active === item.id ? 'location' : undefined} onClick={() => {
-            setActive(item.id);
-            if (mobileNav.current) mobileNav.current.open = false;
-            requestAnimationFrame(() => {
-              article.current?.querySelector<HTMLElement>(`#${item.id} h2`)?.focus({preventScroll: true});
-            });
-          }}>{item.label}</a>)}
-        </div>)}
-      </nav>
-    </details>
-
-    <div className="docs-layout">
-      <aside className="docs-sidebar">
-        <span className="mono-label">{t.sidebarLabel}</span>
-        <nav aria-label={t.sidebarLabel}>
-          {t.groups.map(group => <div key={group.title} className="docs-nav-group">
-            <span className="mono-label">{group.title}</span>
-            {group.items.map(item => <a key={item.id} href={`#${item.id}`} aria-current={active === item.id ? 'true' : undefined}>{item.label}</a>)}
-          </div>)}
-        </nav>
-      </aside>
-
-      <article className="docs-article" ref={article}>
-        <section id="overview">
-          <h2 tabIndex={-1}>{t.overview.title}</h2>
-          <p className="docs-lede">{t.overview.body}</p>
-          <div className="docs-overview-note">
-            <span className="mono-label">{t.labels.next}</span>
-            <p>{t.overview.note}</p>
-          </div>
-        </section>
-
-        <section id="status">
-          <h2 tabIndex={-1}>{t.status.title}</h2>
-          <p>{t.status.body}</p>
-          <dl className="status-facts">
-            {t.status.facts.map(fact => <div key={fact.label} data-tone={fact.tone}>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </div>)}
-          </dl>
-        </section>
-
-        <section id="request">
-          <h2 tabIndex={-1}>{t.request.title}</h2>
-          <p>{t.request.body}</p>
-          <p className="docs-note">{t.request.environment}</p><p className="docs-note">{t.request.local}</p>
-          <a className="docs-download" href="/api-examples/request.json" download="request.json">{locale === 'zh' ? '下载完整请求' : 'Download complete request'} · request.json</a>
-          <div className="endpoint-bar">
-            <span className="endpoint-method">POST</span>
-            <code>/api/model/predict</code>
-            <span className="mono-label">{t.labels.endpoint}</span>
-          </div>
-          <CodeTabs tabs={tabs} label={t.labels.request} {...copyLabels} />
-          <p className="docs-note">{t.request.sample}</p>
-          <details className="docs-request-details"><summary>{t.labels.example} · JSON</summary><CodeBlock code={docsCode.requestJson} language="JSON" label={t.labels.example} {...copyLabels} /></details>
-        </section>
-
-        <section id="authentication">
-          <h2 tabIndex={-1}>{t.auth.title}</h2>
-          <p>{t.auth.body}</p>
-          <div className="docs-callout docs-callout-warning"><span className="mono-label">!</span><p>{t.auth.note}</p></div>
-        </section>
-
-        <section id="parameters">
-          <h2 tabIndex={-1}>{t.params.title}</h2>
-          <p>{t.params.body}</p><CodeBlock code={docsCode.headers} language="HTTP" label={locale === 'zh' ? '请求头' : 'Request headers'} {...copyLabels} />
-          <p className="doc-table-hint" id="params-table-hint">{t.labels.tableHint}</p>
-          <div className="doc-table-wrap" tabIndex={0} role="region" aria-label={t.params.title} aria-describedby="params-table-hint">
-            <table className="doc-table">
-              <caption className="visually-hidden">{t.params.title}</caption>
-              <thead><tr>{t.params.columns.map(column => <th key={column} scope="col">{column}</th>)}</tr></thead>
-              <tbody>{t.params.rows.map(row => <tr key={row.name}>
-                <th scope="row"><code>{row.name}</code></th>
-                <td><code>{row.type}</code></td>
-                <td><span className="required-tag">{row.required}</span></td>
-                <td>{row.description}</td>
-              </tr>)}</tbody>
-            </table>
-          </div>
-          <h3>{t.params.limitsTitle}</h3><p>{t.params.limitsNote}</p>
-          <ul className="docs-checklist">{t.params.limits.map(item => <li key={item}><span aria-hidden="true">·</span>{item}</li>)}</ul>
-        </section>
-
-        <section id="response">
-          <h2 tabIndex={-1}>{t.response.title}</h2>
-          <p>{t.response.body}</p>
-          <CodeBlock code={locale === 'zh' ? docsCode.responseJson.replace('"Model"', '"模型"') : docsCode.responseJson} language="JSON" label={t.labels.response} {...copyLabels} />
-          <p className="docs-note">{t.response.note}</p>
-          <div className="doc-table-wrap" tabIndex={0} role="region" aria-label={t.response.title}>
-            <table className="doc-table"><caption className="visually-hidden">{t.response.title}</caption>
-              <thead><tr>{t.params.columns.map(column => <th key={column} scope="col">{column}</th>)}</tr></thead>
-              <tbody>{t.response.rows.map(row => <tr key={row.name}>
-                <th scope="row"><code>{row.name}</code></th><td><code>{row.type}</code></td><td>{row.required}</td><td>{row.description}</td>
-              </tr>)}</tbody></table></div>
-        </section>
-
-        <section id="errors">
-          <h2 tabIndex={-1}>{t.errors.title}</h2>
-          <p>{t.errors.body}</p>
-          <p className="doc-table-hint" id="errors-table-hint">{t.labels.tableHint}</p>
-          <div className="doc-table-wrap" tabIndex={0} role="region" aria-label={t.errors.title} aria-describedby="errors-table-hint">
-            <table className="doc-table doc-table-compact">
-              <caption className="visually-hidden">{t.errors.title}</caption>
-              <thead><tr>{t.errors.columns.map(column => <th key={column} scope="col">{column}</th>)}</tr></thead>
-              <tbody>{t.errors.rows.map(row => <tr key={row.name}>
-                <td><code>{row.name}</code></td>
-                <td><code>{row.type}</code></td>
-                <td>{row.required}<span className="doc-table-detail">{row.description}</span></td>
-              </tr>)}</tbody>
-            </table>
-          </div>
-          <p>{t.errors.timeout}</p><p>{t.errors.retry}</p>
-        </section>
-
-        <section id="csv">
-          <h2 tabIndex={-1}>{t.csv.title}</h2><p>{t.csv.body}</p><p className="docs-note">{t.csv.note}</p>
-          <a className="docs-download" href="/api-examples/input.csv" download="input.csv">{locale === 'zh' ? '下载教学 CSV' : 'Download teaching CSV'} · input.csv</a>
-          <CodeBlock code={docsCode.csv} language="CSV" label={t.csv.title} {...copyLabels} />
-        </section>
-
-        <section id="next">
-          <h2 tabIndex={-1}>{t.next.title}</h2>
-          <p>{t.next.body}</p>
-          <ul className="docs-checklist">
-            {t.next.items.map(item => <li key={item}><span aria-hidden="true">·</span>{item}</li>)}
-          </ul>
-          <div className="docs-next-links">
-            <Link href={localized(locale, 'playground')}>{t.labels.openPlayground}<span aria-hidden="true">↗</span></Link>
-            <Link href={localized(locale, 'products')}>{t.labels.openModels}<span aria-hidden="true">↗</span></Link>
-          </div>
-        </section>
-      </article>
-
-      <aside className="docs-toc">
-        <span className="mono-label">{t.tocLabel}</span>
-        <nav aria-label={t.tocLabel}>
-          {allItems.map(item => <a key={item.id} href={`#${item.id}`} aria-current={active === item.id ? 'true' : undefined}>{item.label}</a>)}
-        </nav>
-      </aside>
-    </div>
+  return <div className={styles.layout}>
+    <aside className={styles.sidebar}>{menu}</aside>
+    <div className={styles.mobileMenu}><Disclosure label={labels.nav}>{menu}</Disclosure></div>
+    <article className={styles.article}>
+      <header><h1>{page.title[locale]}</h1><p>{page.intro[locale]}</p></header>
+      {page.sections.map((s,i) => <section key={s.id} aria-labelledby={s.id}>
+        {topic === 'quickstart' && s.id === 'next' && s.links ? <Disclosure headingId={s.id}
+          label={<><span className={styles.step}>{i+1}</span>{s.title[locale]}</>}>
+          {pageLinks(s.links)}
+        </Disclosure> : <>
+        <h2 id={s.id}>{topic === 'quickstart' && <span className={styles.step}>{i+1}</span>}{s.title[locale]}</h2>
+        {s.text && <p>{s.text[locale]}</p>}
+        {s.code && <CodeBlock code={s.code} language={s.language ?? 'Python'} label="" copyLabel={labels.copy} copiedLabel={labels.copied} failedLabel={labels.failed}/>}
+        {s.table && s.table.rows.length > 0 && <div className={styles.tableScroll} tabIndex={0} role="region" aria-labelledby={s.id}>
+          <table><thead><tr>{s.table.columns.map(c => <th key={c.en} scope="col">{c[locale]}</th>)}</tr></thead>
+            <tbody>{s.table.rows.map((row,index) => <tr key={index}>{row.map((cell,col) => <td key={col}>{cell[locale]}</td>)}</tr>)}</tbody>
+          </table></div>}
+        {s.links && pageLinks(s.links)}
+        {!s.text && !s.code && !s.links && !s.table?.rows.length && <p className={styles.pending}>{(s.placeholder ?? pending)[locale]}</p>}
+        </>}
+      </section>)}
+    </article>
+    <nav className={styles.toc} aria-label={labels.toc}><strong>{labels.toc}</strong>
+      {page.sections.map(s => <a key={s.id} href={'#'+s.id} aria-current={current === s.id ? 'location' : undefined}>{s.title[locale]}</a>)}
+    </nav>
   </div>;
 }

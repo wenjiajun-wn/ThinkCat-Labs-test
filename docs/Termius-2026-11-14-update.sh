@@ -4,7 +4,7 @@ set -Eeuo pipefail
 NAME='Thinkcat-Labs-2026-11-14-playground-deploy'
 EXPECTED='26ea3d2201243e743cb28902ad01f6f2a3de9efa1896da94d39df40552b2f3c2'
 WEB_ROOT='/var/www/thinkcat-labs'
-DOMAIN='thinkcat-labs.ai-calendar.xyz'
+DOMAIN='thinkcatlabs.ai'
 export WEB_ROOT
 
 [ "$(id -u)" -eq 0 ] || { echo '请先执行 sudo -i，再粘贴本段命令。'; exit 1; }

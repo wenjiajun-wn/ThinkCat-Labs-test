@@ -1,16 +1,16 @@
 # 模型接口结构示意
 
-> 自有模型服务尚未上线。本文地址及模型名称为占位示意，不是现有在线体验的调用协议；正式版本以上线公告为准。
+> 自有模型服务尚未上线。请求地址为 https://thinkcatlabs.ai/api/predict，模型名称以实际响应为准。
 
 ```http
-POST /api/model/predict
+POST /api/predict
 Content-Type: application/json
 Accept: application/json
 ```
 
 ## 请求参数
 
-以下为 JSON 请求结构示意，包含 rows 与 target_column。每行保留相同列名；特征填有限数字，目标填类别字符串或 JSON null。必填性和字段类型仍需在正式接口上线时确认。
+以下为 JSON 请求结构示意，包含 rows 与 target_column。每行保留相同列名；特征填有限数字，目标填类别字符串或 JSON null。
 
 | 字段 | 类型 | 要求 | 说明 |
 | --- | --- | --- | --- |

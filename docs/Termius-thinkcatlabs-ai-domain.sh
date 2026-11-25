@@ -44,15 +44,19 @@ starts = list(re.finditer(r'(?m)^\s*server\s*\{', source))
 if len(starts) != 2:
     raise SystemExit('原配置结构与已核对版本不同，未写入新站点。')
 https = source[starts[1].start():]
-required = ['listen 443 ssl;', 'server_name thinkcat-labs.ai-calendar.xyz;',
-    '/etc/letsencrypt/live/thinkcat-labs.ai-calendar.xyz/fullchain.pem',
-    '/etc/letsencrypt/live/thinkcat-labs.ai-calendar.xyz/privkey.pem',
+match = re.search(r'(?m)^\s*server_name ([a-zA-Z0-9.-]+);', https)
+if not match or match[1] in ('thinkcatlabs.ai', 'www.thinkcatlabs.ai'):
+    raise SystemExit('未找到可迁移的原域名。')
+legacy = match[1]
+required = ['listen 443 ssl;', f'server_name {legacy};',
+    f'/etc/letsencrypt/live/{legacy}/fullchain.pem',
+    f'/etc/letsencrypt/live/{legacy}/privkey.pem',
     'proxy_pass http://127.0.0.1:18000/predict;', 'root /var/www/thinkcat-labs/current;']
 if any(https.count(token) != 1 for token in required):
     raise SystemExit('原 HTTPS / 推理配置与已核对版本不同，停止。')
-https = https.replace('server_name thinkcat-labs.ai-calendar.xyz;',
+https = https.replace(f'server_name {legacy};',
     'server_name thinkcatlabs.ai www.thinkcatlabs.ai;')
-https = https.replace('/etc/letsencrypt/live/thinkcat-labs.ai-calendar.xyz/',
+https = https.replace(f'/etc/letsencrypt/live/{legacy}/',
     '/etc/letsencrypt-thinkcatlabs/live/thinkcatlabs.ai/')
 http = '''server {
     listen 80;

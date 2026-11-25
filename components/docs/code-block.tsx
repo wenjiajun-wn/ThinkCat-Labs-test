@@ -1,4 +1,5 @@
 'use client';
+import {copyText} from '../../lib/copy-text';
 import {Button} from '../ui/primitives';
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 
@@ -59,24 +60,10 @@ export function CodeBlock({code, language, label, copyLabel, copiedLabel, failed
     clearTimeout(reset.current);
     setStatus('copying');
     try {
-      await navigator.clipboard.writeText(code);
+      await copyText(code);
     } catch {
-      const focused = document.activeElement;
-      const textarea = document.createElement('textarea');
-      textarea.value = code;
-      textarea.className = 'visually-hidden';
-      textarea.readOnly = true;
-      document.body.appendChild(textarea);
-      try {
-        textarea.select();
-        if (!document.execCommand('copy')) throw new Error('Copy unavailable');
-      } catch {
-        setStatus('failed');
-        return;
-      } finally {
-        textarea.remove();
-        if (focused instanceof HTMLElement) focused.focus({preventScroll: true});
-      }
+      setStatus('failed');
+      return;
     }
     setStatus('copied');
     reset.current = setTimeout(() => setStatus('idle'), 2000);
@@ -90,7 +77,7 @@ export function CodeBlock({code, language, label, copyLabel, copiedLabel, failed
         <span aria-hidden="true">{status === 'copying' ? '…' : status === 'copied' ? '✓' : '⧉'}</span>
       </Button>
     </figcaption>
-    <pre tabIndex={0} aria-label={`${label} · ${language}`}><code>{tokenize(code, language)}</code></pre>
+    <pre tabIndex={0} aria-label={label ? `${label} · ${language}` : language}><code>{tokenize(code, language)}</code></pre>
     {status === 'failed' && <p className="code-feedback" role="alert">{failedLabel}</p>}
     <span className="visually-hidden" role="status">{status === 'copied' ? copiedLabel : ''}</span>
   </figure>;

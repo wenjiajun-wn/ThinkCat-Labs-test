@@ -10,7 +10,7 @@ The bundled `out/` was built without `NEXT_PUBLIC_SITE_URL`. It works as a site,
 - For a public production domain, rebuild from the project source with the real HTTPS origin:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://your-domain.example npm run build
+NEXT_PUBLIC_SITE_URL=https://thinkcatlabs.ai npm run build
 ```
 
 Then replace `out/` in this package with the new export before running `deploy.sh`. Do not hand-edit canonical tags in the generated HTML.
@@ -115,7 +115,7 @@ After the domain points at the server, for example with Certbot:
 
 ```bash
 sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d your-domain.example -d www.your-domain.example
+sudo certbot --nginx -d thinkcatlabs.ai -d www.thinkcatlabs.ai
 ```
 
 Do not enable HSTS until HTTPS and all subdomains are verified.
@@ -137,12 +137,39 @@ sudo chmod -R a+rX /var/www/thinkcat-labs/releases
 
 This is a static frontend only.
 
-- No backend, FastAPI, GPU worker or inference-service implementation is included in this package.
+- The static export requires a separately running service for each live prediction endpoint.
 - Playground calls the existing same-origin `POST /api/kumo/predict` route. Deployment must provide that route for live inference; the synthetic input sample is labelled, and prediction results come from the remote response.
 - API Docs are a front-end Draft.
 - Model links and contact details remain pending until verified.
 - The build may be `noindex` until rebuilt with the production origin.
 
 ## Existing inference gateway
+
+### Playground XGBoost
+
+XGBoost trains and predicts in a dedicated browser worker for built-in examples and uploaded CSVs.
+Deploy the complete static export including `workers/` and `vendor/`. Tabular data stays in the browser during XGBoost runs.
+The bundled @wlearn/xgboost 0.3.0 includes XGBoost 3.4.1 compiled to WebAssembly and its license notices.
+Training uses 50 CPU boosting rounds. Only the primary model can replay example recordings.
+
+To regenerate the recordings, install `numpy` and `xgboost` (tested with XGBoost 3.2.0)
+in your Python environment and run one of these commands from the repository root:
+
+```bash
+python scripts/generate-playground-benchmarks.py
+python scripts/generate-playground-benchmarks.py --api-url https://thinkcatlabs.ai/api/kumo/predict
+```
+
+The first command records a local five-neighbor CPU baseline in the primary slot.
+The second records the GPU response, using its reported elapsed time when available
+and the measured request time otherwise. Both commands train XGBoost on each dataset's
+support rows. The JSON is replaced after all 21 runs validate. Rebuild and deploy
+`out/` to publish refreshed results.
+
+Set `NEXT_PUBLIC_USE_LIVE_API=1` before building to enable live primary-model predictions,
+including uploads. Only the primary model uses recorded examples on service failure.
+For a local live preview, also set the variable when starting the preview, configure
+`KUMO_INFERENCE_URL`, and run `npm run preview -- --kumo`. Set `PYTHON` in the shell
+or in `.env.xgboost.local` to select an interpreter with the CPU dependencies.
 
 The Nginx file is a static-site example, not a replacement for an existing production vhost. Preserve the deployed `/api/kumo/predict` location and its upstream configuration. The deploy script now rejects incomplete localized exports and invalid Nginx configuration before switching releases. Post-switch HTTP/inference smoke testing and recovery still require the operator; the printed smoke-test command is not an automated health check.

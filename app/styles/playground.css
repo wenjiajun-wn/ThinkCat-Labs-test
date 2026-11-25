@@ -164,3 +164,11 @@
 .preview-pagination { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:16px; padding:12px 0; font-size:13px; }
 .preview-pagination button { padding:8px 12px; border:1px solid var(--line); border-radius:4px; }
 .preview-pagination button:disabled { opacity:.4; cursor:default; }
+
+.run-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-4); }
+.run-metric { display: grid; align-content: start; gap: var(--space-1); padding: var(--space-3) var(--space-4); color: var(--ink); background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: var(--helper-size); }
+.run-metric b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.run-metric small, .comparison-summary { color: var(--muted); font-size: var(--annotation-size); }
+.comparison-summary { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.comparison-summary strong { background: var(--accent-soft); color: var(--accent-text); padding: var(--space-1) var(--space-2); border-radius: var(--radius-xs); }
+@media (max-width: 480px) { .run-comparison { grid-template-columns: 1fr; } }

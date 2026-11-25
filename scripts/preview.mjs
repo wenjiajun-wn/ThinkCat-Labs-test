@@ -1,4 +1,5 @@
 // Preview only: serve the exported site, never source files or credentials.
+import {runDonationExample} from './donation-example.mjs';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -12,7 +13,7 @@ const upstreamEndpoint = kumoEnabled
   : undefined;
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.xml': 'application/xml', '.txt': 'text/plain', '.json': 'application/json', '.ico': 'image/x-icon' };
 
-async function forwardKumo(req, res) {
+async function forwardKumo(req, res, endpoint = upstreamEndpoint) {
   if (req.method !== 'POST') return res.writeHead(405, {Allow: 'POST'}).end();
   const origin = req.headers.origin;
   if (origin && origin !== `http://${host}:${port}` && origin !== `http://localhost:${port}`) {
@@ -35,7 +36,7 @@ async function forwardKumo(req, res) {
       }
       chunks.push(chunk);
     }
-    const upstream = await fetch(upstreamEndpoint, {
+    const upstream = await fetch(endpoint, {
       method: 'POST',
       headers: {'Content-Type': 'application/json', Accept: 'application/json'},
       body: Buffer.concat(chunks),
@@ -62,6 +63,14 @@ http.createServer((req, res) => {
   let pathname;
   try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); }
   catch { res.writeHead(400).end(); return; }
+  if (pathname === '/api/predict' || pathname === '/api/predict/') {
+    if (kumoEnabled) void forwardKumo(req, res); else void runDonationExample(req, res);
+    return;
+  }
+  if (pathname === '/api/xgboost/predict') {
+    void forwardKumo(req, res, 'http://127.0.0.1:8765/api/xgboost/predict');
+    return;
+  }
   if (kumoEnabled && pathname === '/api/kumo/predict') {
     void forwardKumo(req, res);
     return;
@@ -79,4 +88,5 @@ http.createServer((req, res) => {
 }).listen(port, host, () => {
   console.log(`Static production preview: http://${host}:${port}${kumoEnabled ? ' (Kumo proxy enabled)' : ''}`);
 });
+
 

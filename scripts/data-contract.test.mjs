@@ -11,8 +11,30 @@ async function load(file) {
   return import('data:text/javascript;base64,' + Buffer.from(outputText).toString('base64'));
 }
 const {parseCsv, displayCsvHeaders} = await load('lib/csv.ts');
-const {buildKumoDataset, predictWithKumo, kumoModel} = await load('lib/kumo-api.ts');
+const {buildKumoDataset, predictWithKumo, runPlaygroundPrediction, kumoModel} = await load('lib/kumo-api.ts');
 const {sampleCsv} = await load('lib/demo-data.ts');
+test('XGBoost starts a fresh local worker for each input and never fetches predictions', async t => {
+  const request = JSON.parse(readFileSync('public/api-examples/donation-request.json', 'utf8'));
+  const network = t.mock.method(globalThis, 'fetch', () => assert.fail('Unexpected network prediction'));
+  let terminated = 0;
+  class TestWorker {
+    constructor(url) { assert.equal(url, '/workers/xgboost.js'); }
+    postMessage(input) { assert.deepEqual(input, request); this.onmessage({data: {error: true}}); }
+    terminate() { terminated++; }
+  }
+  const previous = globalThis.Worker;
+  globalThis.Worker = TestWorker;
+  try {
+    for (const id of ['46913', null]) {
+      await assert.rejects(runPlaygroundPrediction({request}, new AbortController().signal, 'baseline', id), {code: 'invalid-response'});
+    }
+    assert.equal(terminated, 2);
+    assert.equal(network.mock.callCount(), 0);
+  } finally {
+    if (previous) globalThis.Worker = previous;
+    else delete globalThis.Worker;
+  }
+});
 const {evaluateClassification} = await load('lib/evaluation.ts');
 const {snapshotExampleEvaluation} = await load('lib/playground-evaluation.ts');
 
@@ -78,7 +100,7 @@ test('fourteen home application links use registered datasets with accurate clas
   let registry;
   for (const statement of source.statements) {
     if (!ts.isVariableStatement(statement)) continue;
-    registry ??= statement.declarationList.declarations.find(item => item.name.getText(source) === 'playgroundExamples')?.initializer;
+    registry ??= statement.declarationList.declarations.find(item => item.name.getText(source) === 'registeredExamples')?.initializer;
   }
   assert(registry && ts.isArrayLiteralExpression(registry), 'Use the actual Playground registry');
   const registered = registry.elements.map(item => item.properties.find(property => property.name?.getText(source).replaceAll('"', '').replaceAll("'", '') === 'id')?.initializer.text);
@@ -173,7 +195,7 @@ for (const id of exampleIds) {
     const dataset = buildKumoDataset(csv, labelIndex).data;
     const requests = [];
     t.mock.method(globalThis, 'fetch', async (url, options) => {
-      assert.equal(url, '/api/kumo/predict');
+      assert.equal(url, '/api/predict');
       assert.equal(options.method, 'POST');
       const request = JSON.parse(options.body);
       requests.push(request);

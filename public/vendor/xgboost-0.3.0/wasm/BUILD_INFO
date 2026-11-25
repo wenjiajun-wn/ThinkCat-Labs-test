@@ -1,0 +1,7 @@
+upstream: xgboost v3.4.1
+upstream_commit: 6fe8c547bdd21c73e4555d85b087d9260595d30d
+local_patches: 0001-check-sketch-size-on-wasm32.patch
+build_date: 2026-09-30T06:40:40Z
+emscripten: emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 5.0.2 (dc80f645ee70178c11666de0c3860d9e064d50e4)
+build_flags: -O2 -DDMLC_LOG_STACK_TRACE=0 SINGLE_FILE=1
+wasm_embedded: true

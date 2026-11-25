@@ -20,7 +20,7 @@ class NoRedirect(HTTPRedirectHandler):
 
 
 def api_origin():
-    value = os.environ.get("THINKCAT_API_ORIGIN", "").strip()
+    value = os.environ.get("THINKCAT_API_ORIGIN", "https://thinkcatlabs.ai").strip()
     if not value:
         raise ValueError("请先将 THINKCAT_API_ORIGIN 设置为已确认可访问的站点 origin。")
     parts = urlsplit(value)
@@ -74,7 +74,7 @@ def main():
         payload_path = Path(__file__).resolve().with_name("request.json")
         payload = json.loads(payload_path.read_text(encoding="utf-8"))
         request = Request(
-            origin + "/api/model/predict",
+            origin + "/api/predict",
             data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
             headers={"Content-Type": "application/json", "Accept": "application/json"},
             method="POST",

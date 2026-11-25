@@ -22,9 +22,9 @@ echo "部署完成，解压目录：$WORK/$NAME"
 THINKCAT_DEPLOY
 ```
 
-脚本会按现有 Nginx 配置选择 `thinkcatlabs.ai`，若未配置则选择原域名 `thinkcat-labs.ai-calendar.xyz`。它只更新静态文件，不修改 Nginx、域名、证书、API、SSH 隧道和 GPU 服务，不删除旧版本。
+脚本会按现有 Nginx 配置选择 `thinkcatlabs.ai`，缺少配置时停止。它只更新静态文件，不修改 Nginx、域名、证书、API、SSH 隧道和 GPU 服务，不删除旧版本。
 
-部署前 HTTPS 校验失败会停止；发布后内容校验失败会自动回退。不要使用 curl -k 绕过证书问题。若新域名 TLS 尚未完成，可以在同一段命令中将 `bash update-existing.sh` 改为 `DOMAIN=thinkcat-labs.ai-calendar.xyz bash update-existing.sh`，前提是原域名仍在当前 Nginx 中且 HTTPS 正常；这不是新域名配置修复。
+部署前 HTTPS 校验失败会停止；发布后内容校验失败会自动回退。不要使用 curl -k 绕过证书问题。请在正式域名的 HTTPS 校验通过后发布。
 
 成功后打开脚本打印的中文／英文文档地址，Ctrl+F5 刷新，并在 Playground 手动运行一个真实示例。包内代码不自动触发推理。
 

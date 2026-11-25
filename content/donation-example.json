@@ -1,0 +1,39 @@
+{
+  "rows": [
+    {
+      "months": 9,
+      "donations": 4,
+      "returned": "No"
+    },
+    {
+      "months": 25,
+      "donations": 6,
+      "returned": "No"
+    },
+    {
+      "months": 16,
+      "donations": 3,
+      "returned": "Yes"
+    },
+    {
+      "months": 2,
+      "donations": 2,
+      "returned": null
+    }
+  ],
+  "recording": {
+    "model": "XGBoost",
+    "row_indices": [
+      19
+    ],
+    "predictions": [
+      "Yes"
+    ],
+    "probabilities": [
+      {
+        "No": 0.3201129138469696,
+        "Yes": 0.6798871159553528
+      }
+    ]
+  }
+}

@@ -36,7 +36,7 @@ export type PlaygroundExample = {
   data: DatasetData;
 };
 
-export const playgroundExamples: readonly PlaygroundExample[] = [
+const registeredExamples: readonly PlaygroundExample[] = [
   {id: '46913', name: {zh: '献血记录', en: 'Blood donation records'}, domain: {zh: '献血服务', en: 'Blood donation services'}, source: 'https://www.openml.org/d/46913', originalSource: 'https://doi.org/10.24432/C5GS39', license: 'CC BY 4.0', attribution: 'Yeh, Yang & Ting (2009); TabArena Team', task: 'numeric-classification', data: blood},
   {id: '46941', name: {zh: '孕产健康风险', en: 'Maternal health risk'}, domain: {zh: '健康研究', en: 'Health research'}, source: 'https://www.openml.org/d/46941', originalSource: 'https://doi.org/10.24432/C5DP5D', license: 'CC BY 4.0', attribution: 'Ahmed et al. (2020); TabArena Team', task: 'numeric-classification', data: maternal},
   {id: '46979', name: {zh: '软件缺陷 · JM1', en: 'Software defects · JM1'}, domain: {zh: '软件质量', en: 'Software quality'}, source: 'https://www.openml.org/d/46979', originalSource: 'https://www.openml.org/d/1053', license: 'Public Domain', attribution: 'Menzies & Di Stefano (2004); TabArena Team', task: 'numeric-classification', data: defects},
@@ -60,6 +60,9 @@ export const playgroundExamples: readonly PlaygroundExample[] = [
 {"id": "46964", "name": {"zh": "葡萄酒质量分级", "en": "Wine quality grading"}, "domain": {"zh": "数值分类", "en": "Numerical classification"}, "source": "https://www.openml.org/d/46964", "originalSource": "https://doi.org/10.24432/C56S3T", "license": "CC BY 4.0", "attribution": "Cortez, Paulo, et al. 'Modeling wine preferences by data mining from physicochemical properties.' Decision support systems 47.4 (2009): 547-553. https://doi.org/10.1016/j.dss.2009.05.016; TabArena Team", "task": "numeric-classification", data: wineLarge},
 
 ];
+
+export const playgroundExamples: readonly PlaygroundExample[] = [...registeredExamples]
+  .sort((a, b) => b.data.rows.length - a.data.rows.length);
 
 export function exampleSource(example: PlaygroundExample) {
   const {data} = example;

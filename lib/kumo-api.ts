@@ -14,6 +14,9 @@ type Dataset = {
 };
 
 export type KumoResult = {
+  elapsedMs?: number;
+  requestMs?: number;
+  timing?: 'browser' | 'server' | 'request' | 'recordedGpu' | 'recordedRequest' | 'recordedNeighbors';
   model: string;
   predictions: {
     index: number;
@@ -76,11 +79,11 @@ function invalidResponse(): never {
   throw new KumoError('invalid-response');
 }
 
-function decodeResult(body: unknown, dataset: Dataset): KumoResult {
+function decodeResult(body: unknown, dataset: Dataset, expectedModel: string): KumoResult {
   if (!isRecord(body)) invalidResponse();
   const {model, row_indices, predictions, probabilities, classes} = body;
   const expected = new Set(dataset.queryIndices);
-  if (model !== kumoModel ||
+  if (model !== expectedModel ||
       !Array.isArray(row_indices) || !Array.isArray(predictions) || !Array.isArray(probabilities) ||
       row_indices.length !== expected.size || predictions.length !== expected.size || probabilities.length !== expected.size ||
       !Array.isArray(classes) || classes.length < 2 || classes.length > 10 ||
@@ -123,8 +126,10 @@ function decodeResult(body: unknown, dataset: Dataset): KumoResult {
   };
 }
 
-export async function predictWithKumo(dataset: Dataset, signal: AbortSignal): Promise<KumoResult> {
-  const response = await fetch('/api/kumo/predict', {
+async function predictRemote(dataset: Dataset, signal: AbortSignal, model: string): Promise<KumoResult> {
+  const started = performance.now();
+  const endpoint = '/api/predict';
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {'Content-Type': 'application/json', Accept: 'application/json'},
     body: JSON.stringify(dataset.request),
@@ -143,5 +148,63 @@ export async function predictWithKumo(dataset: Dataset, signal: AbortSignal): Pr
     if (signal.aborted) throw error;
     invalidResponse();
   }
-  return decodeResult(body, dataset);
+  const requestMs = performance.now() - started;
+  const elapsed = isRecord(body) ? body.elapsedMs : null;
+  const serverTimed = typeof elapsed === 'number' && Number.isFinite(elapsed) && elapsed >= 0;
+  return {...decodeResult(body, dataset, model), requestMs, elapsedMs: serverTimed ? elapsed : requestMs,
+    timing: serverTimed ? 'server' : 'request'};
+}
+
+export async function predictWithXGBoost(dataset: Dataset, signal: AbortSignal): Promise<KumoResult> {
+  signal.throwIfAborted();
+  const worker = new Worker('/workers/xgboost.js', {type: 'module'});
+  let abort: (() => void) | undefined;
+  try {
+    const body = await new Promise<Record<string, unknown>>((resolve, reject) => {
+      abort = () => reject(new KumoError('timeout'));
+      signal.addEventListener('abort', abort, {once: true});
+      worker.onerror = worker.onmessageerror = () => reject(new KumoError('invalid-response'));
+      worker.onmessage = event => resolve(event.data);
+      worker.postMessage(dataset.request);
+    });
+    return {...decodeResult(body, dataset, 'XGBoost'), elapsedMs: Number(body.elapsedMs), timing: 'browser'};
+  } finally {
+    if (abort) signal.removeEventListener('abort', abort);
+    worker.terminate();
+  }
+}
+
+export function predictWithKumo(dataset: Dataset, signal: AbortSignal) {
+  return predictRemote(dataset, signal, kumoModel);
+}
+
+export const liveApiEnabled = process.env.NEXT_PUBLIC_USE_LIVE_API === '1';
+
+export async function runPlaygroundPrediction(dataset: Dataset, signal: AbortSignal,
+  model: 'primary' | 'baseline', exampleId: string | null, datasetVersion?: string): Promise<KumoResult> {
+  if (model === 'baseline') return predictWithXGBoost(dataset, AbortSignal.any([signal, AbortSignal.timeout(120_000)]));
+  if (liveApiEnabled) {
+    const timeout = AbortSignal.timeout(120_000);
+    try {
+      return await predictWithKumo(dataset, AbortSignal.any([signal, timeout]));
+    } catch (error) {
+      signal.throwIfAborted();
+      if (!exampleId) throw timeout.aborted ? new KumoError('timeout') : error;
+    }
+  }
+  if (!exampleId) throw new KumoError('unavailable');
+  const [{default: recordings}] = await Promise.all([
+    import('../content/playground-precomputed.json'),
+    new Promise(resolve => setTimeout(resolve, 200)),
+  ]);
+  signal.throwIfAborted();
+  const entry = recordings[exampleId as keyof typeof recordings];
+  if (!entry || entry.datasetVersion !== datasetVersion) invalidResponse();
+  const saved = entry.thinkcat;
+  const local = saved.source === 'precomputed';
+  const expectedModel = local ? '5-NN' : kumoModel;
+  const result = decodeResult(saved, dataset, expectedModel);
+  const timing = local ? 'recordedNeighbors'
+    : saved.timing === 'request' ? 'recordedRequest' : 'recordedGpu';
+  return {...result, elapsedMs: saved.elapsedMs, timing};
 }

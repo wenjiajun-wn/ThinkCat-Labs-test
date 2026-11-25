@@ -20,6 +20,7 @@ type Props = {
   fileError: string | null;
   datasetError: string | null;
   children: ReactNode;
+  comparison: ReactNode;
   sourceName: string;
   onFile: (file: File) => void;
   onSample: () => void;
@@ -29,7 +30,7 @@ type Props = {
   onDownload: () => void;
 };
 
-export function SourcePanel({locale, csv, labelIndex, previewKey, reading, example, exampleCount, fileError, datasetError, children, sourceName, onFile, onSample, showTargetSelector, onTargetChange, state, onDownload}: Props) {
+export function SourcePanel({locale, csv, labelIndex, previewKey, reading, example, exampleCount, fileError, datasetError, children, comparison, sourceName, onFile, onSample, showTargetSelector, onTargetChange, state, onDownload}: Props) {
   const t = playgroundCopy[locale];
   const error = fileError ?? datasetError;
   const inputId = useId();
@@ -101,6 +102,7 @@ export function SourcePanel({locale, csv, labelIndex, previewKey, reading, examp
         {state.status === 'success' && <Button id="download-results" className="button button-outline" type="button" onClick={onDownload}>{t.results.download}</Button>}
       </div>
       {exampleCount < 2 && <p id="example-unavailable" className="dataset-source">{exampleCount === 0 ? t.source.pending : t.source.onlyOne}</p>}
+      {comparison}
     </div>
   </section>;
 }

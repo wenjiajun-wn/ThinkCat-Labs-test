@@ -53,22 +53,13 @@ export const homeCopy = {
       link: '研究方向',
     },
     developer: {
-      index: '05',
-      label: '开发者',
-      title: '迈向生产环境的第一步',
+      label: '开发者', curl: '在 Bash 中执行。',
+      title: '快速开始',
       body: 'API 文档展示自有模型服务上线前的接口示意。使用示例数据或自有 CSV 提交表格分类任务，运行时将调用远程推理服务。',
-      docs: 'API 文档',
-      docsDetail: '接口路由、参数结构、响应格式与异常定义',
-      playground: '在线体验',
-      playgroundDetail: '上传 CSV、运行表格分类并下载预测结果',
-      terminalLabel: '终端 / 接口规范',
-      draftLabel: '接口示意 · 待上线',
-      code: `POST /api/model/predict
-Content-Type: application/json
-rows: 已知标签与待预测记录
-target_column: 目标字段名
-
-待预测目标值: null`,
+      docs: 'API 文档', playground: '在线体验', copy: '复制', copied: '已复制 ✓', failed: '请手动复制',
+      response: 'JSON 响应', run: '试运行示例', running: '请求中…', language: '示例语言',
+      error: '请求失败', invalid: '响应缺少有效的预测数据。', timeout: '等待响应超时。', request: '请求', result: '响应', preview: '部分示例数据', pending: '待预测', total: '条记录',
+      columns: ['距上次献血月数', '累计献血次数', '是否再次献血'], idle: '运行示例可查看响应。', retry: '重新运行', unavailable: '推理服务暂时不可用。',
     },
   },
   en: {
@@ -125,22 +116,13 @@ target_column: 目标字段名
       link: 'Research directions',
     },
     developer: {
-      index: '05',
-      label: 'Developer',
-      title: 'Built for the next step.',
+      label: 'Developer', curl: 'Run in Bash.',
+      title: 'Quickstart',
       body: 'The API documentation illustrates the planned model service before launch. Run tabular classification on sample data or your own CSV using the remote inference service.',
-      docs: 'API documentation',
-      docsDetail: 'Endpoints, parameters, responses and errors',
-      playground: 'Playground',
-      playgroundDetail: 'Upload a CSV, run tabular classification and download predictions',
-      terminalLabel: 'Terminal / Contract',
-      draftLabel: 'Placeholder / not live',
-      code: `POST /api/model/predict
-Content-Type: application/json
-rows: labeled and query records
-target_column: target field name
-
-Unlabeled target value: null`,
+      docs: 'API docs', playground: 'Playground', copy: 'Copy', copied: 'Copied ✓', failed: 'Copy manually',
+      response: 'JSON response', run: 'Run example', running: 'Requesting…', language: 'Example language',
+      error: 'Request failed', invalid: 'The response contains no valid prediction.', timeout: 'The request timed out.', request: 'Request', result: 'Response', preview: 'Sample rows', pending: 'To predict', total: 'records',
+      columns: ['months', 'donations', 'returned'], idle: 'Run the example to see its response.', retry: 'Run again', unavailable: 'The inference service is unavailable.',
     },
   },
 } as const;

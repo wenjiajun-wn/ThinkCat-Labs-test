@@ -5,6 +5,8 @@ export const playgroundLanguageEvent = 'thinkcat:playground-language';
 export type PlaygroundLanguageState = {
   source: {csv: ParsedCsv | null; labelIndex: number; exampleId: string | null};
   runState: PlaygroundRunState;
+  selected?: 'primary' | 'baseline';
+  baseline?: PlaygroundRunState;
 };
 
 // One short-lived, in-memory handoff only. Never persist uploaded data in storage.

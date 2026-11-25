@@ -27,11 +27,7 @@ NGINX_CONFIG="$(nginx -T 2>/dev/null)"
   echo 'Nginx does not reference the expected current directory; stopped.'; exit 1;
 }
 HOSTS="$(printf '%s\n' "$NGINX_CONFIG" | awk '$1 == "server_name" {for(i=2;i<=NF;i++){gsub(/;/,"",$i);print $i}}')"
-if [[ -z "${DOMAIN:-}" ]]; then
-  for candidate in thinkcatlabs.ai thinkcat-labs.ai-calendar.xyz; do
-    if printf '%s\n' "$HOSTS" | grep -Fxq "$candidate"; then DOMAIN="$candidate"; break; fi
-  done
-fi
+DOMAIN="${DOMAIN:-thinkcatlabs.ai}"
 [[ -n "${DOMAIN:-}" && "$DOMAIN" =~ ^[a-zA-Z0-9.-]+$ ]] || { echo 'Set DOMAIN to the existing HTTPS domain.'; exit 1; }
 printf '%s\n' "$HOSTS" | grep -Fxq "$DOMAIN" || { echo 'DOMAIN is absent from server_name; stopped.'; exit 1; }
 unset NGINX_CONFIG HOSTS

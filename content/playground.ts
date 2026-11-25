@@ -1,5 +1,29 @@
 import type {KumoDatasetError, KumoRequestError} from '../lib/kumo-api';
 
+export const comparisonCopy = {
+  zh: {
+    model: '我们的模型', run: '运行 XGBoost', running: '正在运行 XGBoost…', time: '运行时间',
+    needLabels: '需真实标签', pending: '点击「运行模型」查看指标', pendingX: '点击「运行 XGBoost」查看指标',
+    neighbors: '基础模型', recordedNeighbors: '预置 · 5 近邻 CPU 基线耗时',
+    recordedGpu: '预置 · GPU 服务端耗时', recordedRequest: '预置 · GPU 请求耗时',
+    uploadMaintenance: '当前可使用 XGBoost 对上传的 CSV 进行实时训练和预测。',
+    browser: '本机训练与预测耗时', server: '服务端耗时', request: '请求耗时',
+    context: '主模型与 XGBoost 对比', mockContext: '基础模型与 XGBoost 对比',
+    faster: '快', slower: '慢', equalTime: '耗时持平',
+  },
+  en: {
+    model: 'Our model', run: 'Run XGBoost', running: 'Running XGBoost…', time: 'Runtime',
+    needLabels: 'True labels required', pending: 'Run the model to see metrics', pendingX: 'Run XGBoost to see metrics',
+    neighbors: 'Base model', recordedNeighbors: 'Recorded · 5-neighbor CPU baseline time',
+    recordedGpu: 'Recorded · GPU server time',
+    recordedRequest: 'Recorded · GPU request time',
+    uploadMaintenance: 'Run XGBoost to train and predict on your uploaded CSV.',
+    browser: 'On-device training and prediction time', server: 'Server time', request: 'Request time',
+    context: 'Primary model vs XGBoost', mockContext: 'Base model vs XGBoost',
+    faster: 'faster', slower: 'slower', equalTime: 'Equal runtime',
+  },
+};
+
 type PlaygroundCopy = {
   title: string;
   run: string;
@@ -127,7 +151,7 @@ export const playgroundCopy: {zh: PlaygroundCopy; en: PlaygroundCopy} = {
       timeout: '推理请求超时，请重试。',
     },
     evaluation: {
-      accuracy: '示例留出集准确率',
+      accuracy: '测试集准确率',
       correctCount: '条预测正确',
       actualLabel: '真实标签',
       correct: '预测正确',
@@ -205,7 +229,7 @@ export const playgroundCopy: {zh: PlaygroundCopy; en: PlaygroundCopy} = {
       timeout: 'The inference request timed out. Try again.',
     },
     evaluation: {
-      accuracy: 'Example holdout accuracy',
+      accuracy: 'Test set accuracy',
       correctCount: 'correct predictions',
       actualLabel: 'Actual label',
       correct: 'Correct',

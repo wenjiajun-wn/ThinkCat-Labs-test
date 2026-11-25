@@ -4,25 +4,21 @@ import {localized, type Locale, type Page} from '../../config/i18n';
 import {copy} from '../../content/i18n';
 import {site} from '../../config/site';
 
-const footerPages: readonly Page[] = ['products', 'research', 'docs', 'playground', 'contact'];
+const footerPages: readonly Page[] = ['products', 'docs', 'playground', 'contact'];
 
 export function SiteFooter({locale}:{locale:Locale}) {
   const t = copy[locale];
-  const legalPages: readonly Page[] = ['privacy', 'contact'];
   return <footer className="site-footer">
     <div className="footer-primary">
       <div className="footer-brand">
         <Brand locale={locale} />
-        <span>{t.mission}</span>
       </div>
       <nav className="footer-index" aria-label={t.footer.index}>
-        <span className="mono-label">{t.footer.index}</span>
-        {footerPages.map(page => <Link key={page} href={localized(locale, page)}>{t.titles[page]}</Link>)}
+        {footerPages.map(page => <Link key={page} href={localized(locale, page)}>{page === 'products' ? t.nav[1] : t.titles[page]}</Link>)}
       </nav>
       <div className="footer-meta">
-        <span className="mono-label">{t.footer.legal}</span>
-        {legalPages.map(page => <Link key={page} href={localized(locale, page)}>{t.titles[page]}</Link>)}
-        {site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : <span>{t.emailPending}</span>}
+        <Link href={localized(locale, 'privacy')}>{t.titles.privacy}</Link>
+        {site.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
       </div>
     </div>
     <div className="footer-legal">

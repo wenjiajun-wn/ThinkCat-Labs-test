@@ -20,3 +20,17 @@ export const models: readonly Model[] = [
   {id: 'time-series', index: '02', visual: 'time', status: 'research', version: null, github: null, huggingFace: null},
   {id: 'unified', index: '03', visual: 'unified', status: 'research', version: null, github: null, huggingFace: null},
 ];
+
+type Localized<T> = Record<import('./i18n').Locale, T>;
+
+export type PublishedModel = {
+  id: string;
+  name: string;
+  tasks: Localized<string[]>;
+  context?: {samples: number; unit: Localized<string>};
+  rowsPerSecond?: number;
+  /** Published price, including currency and billing unit. */
+  price?: Localized<string>;
+};
+
+export const publishedModels: readonly PublishedModel[] = [];

@@ -13,7 +13,7 @@ async function load(file) {
   });
   return import('data:text/javascript;base64,' + Buffer.from(outputText).toString('base64'));
 }
-const {docsCode, docsCopy} = await load('content/docs.ts');
+const {docsCode} = await load('content/docs.ts');
 const {parseCsv} = await load('lib/csv.ts');
 const {buildKumoDataset, predictWithKumo} = await load('lib/kumo-api.ts');
 const request = JSON.parse(docsCode.requestJson);
@@ -38,7 +38,7 @@ test('placeholder response stays separate from the unchanged live Playground con
   let called = false;
   t.mock.method(globalThis, 'fetch', async (url, options) => {
     called = true;
-    assert.equal(url, '/api/kumo/predict');
+    assert.equal(url, '/api/predict');
     assert.deepEqual(JSON.parse(options.body), request);
     assert(!new Headers(options.headers).has('Authorization'));
     return new Response(JSON.stringify(response), {status: 200});
@@ -49,19 +49,18 @@ test('placeholder response stays separate from the unchanged live Playground con
 });
 
 test('bilingual navigation covers every rendered section and obsolete API examples are absent', async () => {
-  const component = await readFile('components/developer-docs.tsx', 'utf8');
-  const sectionIds = [...component.matchAll(/<section id="([^"]+)"/g)].map(match => match[1]);
+  const {docIds, docGroups, docPath} = await load('content/docs-navigation.ts');
+  assert.deepEqual(docGroups.flatMap(group => group.pages), [...docIds]);
   for (const locale of ['zh', 'en']) {
-    assert.deepEqual(docsCopy[locale].groups.flatMap(group => group.items.map(item => item.id)), sectionIds);
+    assert.equal(docPath(locale, 'overview'), '/' + locale + '/docs/');
+    assert.equal(new Set(docIds.map(id => docPath(locale, id))).size, 6);
   }
-  assert.doesNotMatch(JSON.stringify({docsCopy, docsCode}), /kumo/i);
-  assert.match(docsCopy.zh.draftBody, /占位/);
-  assert.match(docsCopy.en.draftBody, /placeholders/);
-  assert.doesNotMatch(JSON.stringify(docsCopy.en), /\p{Script=Han}/u);
+  assert.deepEqual(JSON.parse(await readFile('sdk/python/thinkcat/donation.json', 'utf8')),
+    JSON.parse(await readFile('public/api-examples/donation-request.json', 'utf8')));
   for (const file of ['content/docs.ts', 'content/home.ts', 'content/products.ts', 'components/developer-docs.tsx']) {
     assert.doesNotMatch(await readFile(file, 'utf8'), /\/v1\/predict|Authorization: Bearer/);
   }
-  for (const code of Object.values(docsCode.tabs)) assert(code.includes('/api/model/predict'));
+  for (const code of Object.values(docsCode.tabs)) assert(code.includes('/api/predict'));
 });
 
 function run(command, args, cwd, origin) {
@@ -97,7 +96,7 @@ test('website and repository Python/JavaScript examples send the documented payl
       [process.execPath, ['web.mjs']], ['python', ['web.py']],
       [process.execPath, [path.resolve('docs/api/examples/predict.mjs')]],
       ['python', [path.resolve('docs/api/examples/predict.py')]],
-      [process.platform === 'win32' ? 'curl.exe' : 'curl', ['--fail-with-body', '--show-error', '--silent', '--max-time', '120', '-X', 'POST', `${origin}/api/model/predict`, '-H', 'Content-Type: application/json', '-H', 'Accept: application/json', '--data-binary', '@request.json']],
+      [process.platform === 'win32' ? 'curl.exe' : 'curl', ['--fail-with-body', '--show-error', '--silent', '--max-time', '120', '-X', 'POST', `${origin}/api/predict`, '-H', 'Content-Type: application/json', '-H', 'Accept: application/json', '--data-binary', '@request.json']],
     ];
     for (const [command, args] of cases) {
       for (const code of [200, 422, 503]) {
@@ -108,7 +107,7 @@ test('website and repository Python/JavaScript examples send the documented payl
         else assert(result.output.includes(String(code)), result.output);
         const sent = calls.at(-1);
         assert.equal(sent.method, 'POST');
-        assert.equal(sent.url, '/api/model/predict');
+        assert.equal(sent.url, '/api/predict');
         assert.equal(sent.headers['content-type'], 'application/json');
         assert.equal(sent.headers.authorization, undefined);
         assert.deepEqual(sent.body, request);

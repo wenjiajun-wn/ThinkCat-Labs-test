@@ -29,7 +29,6 @@ export function SiteHeader() {
 export function SiteFooter() {
   return <footer className="site-footer">
     <Link className="brand" href="/">thinkcat<span>labs</span></Link>
-    <p>构建面向全球结构化数据的基础模型。</p>
     <nav aria-label="页脚导航">{links.map(link => <Link key={link.en} href={link.href}>{link.zh}</Link>)}</nav>
     <div className="footer-legal"><span>© {new Date().getFullYear()} Thinkcat Labs</span><Link href="/privacy/">隐私说明 ↗</Link>{site.legalName && <span>{site.legalName}</span>}{site.icp && <a href="https://beian.miit.gov.cn/">{site.icp}</a>}{site.policeRecord && <span>{site.policeRecord}</span>}</div>
   </footer>;

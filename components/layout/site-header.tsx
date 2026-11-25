@@ -78,7 +78,7 @@ export function SiteHeader({locale, nav, menuLabel, closeLabel, languageLabel, s
     };
   }, [open]);
 
-  const isActive = (href: string) => pathname.replace(/\/$/, '') === href.replace(/\/$/, '');
+  const isActive = (href: string) => pathname.replace(/\/$/, '') === href.replace(/\/$/, '') || (href.endsWith('/docs/') && pathname.startsWith(href));
 
   return <>
     <a className="skip" href="#main">{skipLabel}</a>

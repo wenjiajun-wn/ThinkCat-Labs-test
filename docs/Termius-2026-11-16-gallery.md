@@ -24,7 +24,7 @@ echo "部署包解压目录：$WORK/$NAME"
 THINKCAT_DEPLOY
 ```
 
-脚本只适用于现有 `/var/www/thinkcat-labs/current` 符号链接部署；结构不符会停止。自动选择 Nginx 已配置的 `thinkcatlabs.ai`，没有时使用已配置的 `thinkcat-labs.ai-calendar.xyz`。不替换服务器配置，不重启 GPU，不改推理服务地址，不删除旧版本。静态文件发布无需重启 Nginx。
+脚本只适用于现有 `/var/www/thinkcat-labs/current` 符号链接部署；结构不符会停止。自动选择 Nginx 已配置的 `thinkcatlabs.ai`，缺少配置时停止。不替换服务器配置，不重启 GPU，不改推理服务地址，不删除旧版本。静态文件发布无需重启 Nginx。
 
 成功后刷新官网（必要时 Ctrl+F5）；浏览中英文首页并运行一次 Playground 公开示例。脚本只校验页面/图片响应，不发起 GPU 推理。若使用 CDN，还需按实际缓存策略刷新 HTML 和同名图片缓存。
 

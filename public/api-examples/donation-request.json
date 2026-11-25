@@ -1,0 +1,105 @@
+{
+  "rows": [
+    {
+      "months": 11,
+      "donations": 1,
+      "returned": "No"
+    },
+    {
+      "months": 4,
+      "donations": 7,
+      "returned": "No"
+    },
+    {
+      "months": 12,
+      "donations": 9,
+      "returned": "No"
+    },
+    {
+      "months": 4,
+      "donations": 5,
+      "returned": "No"
+    },
+    {
+      "months": 11,
+      "donations": 6,
+      "returned": "No"
+    },
+    {
+      "months": 14,
+      "donations": 2,
+      "returned": "No"
+    },
+    {
+      "months": 4,
+      "donations": 2,
+      "returned": "No"
+    },
+    {
+      "months": 4,
+      "donations": 2,
+      "returned": "No"
+    },
+    {
+      "months": 13,
+      "donations": 8,
+      "returned": "No"
+    },
+    {
+      "months": 23,
+      "donations": 8,
+      "returned": "No"
+    },
+    {
+      "months": 0,
+      "donations": 8,
+      "returned": "No"
+    },
+    {
+      "months": 2,
+      "donations": 8,
+      "returned": "Yes"
+    },
+    {
+      "months": 2,
+      "donations": 5,
+      "returned": "Yes"
+    },
+    {
+      "months": 16,
+      "donations": 1,
+      "returned": "No"
+    },
+    {
+      "months": 16,
+      "donations": 1,
+      "returned": "No"
+    },
+    {
+      "months": 16,
+      "donations": 10,
+      "returned": "No"
+    },
+    {
+      "months": 9,
+      "donations": 4,
+      "returned": "No"
+    },
+    {
+      "months": 25,
+      "donations": 6,
+      "returned": "No"
+    },
+    {
+      "months": 16,
+      "donations": 3,
+      "returned": "Yes"
+    },
+    {
+      "months": 2,
+      "donations": 2,
+      "returned": null
+    }
+  ],
+  "target_column": "returned"
+}

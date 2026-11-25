@@ -242,3 +242,18 @@ export const productsCopy: {zh: ProductsPageCopy; en: ProductsPageCopy} = {
     },
   },
 };
+
+export const modelTableCopy = {
+  zh: {
+    title: '数值基础模型',
+    columns: ['模型名称', '任务类型', '最大上下文规模', '推理吞吐量', '价格'],
+    empty: '暂无可用模型',
+    note: '模型信息将在正式发布后更新，敬请期待。',
+  },
+  en: {
+    title: 'Numerical foundation models',
+    columns: ['Model name', 'Task type', 'Maximum context size', 'Inference throughput', 'Price'],
+    empty: 'No models available',
+    note: 'Model information will appear here after release.',
+  },
+} as const;
